@@ -1,68 +1,11 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Calendar, Clock, ArrowRight, BookOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-
-const blogPosts = [
-  {
-    id: "why-saas-for-small-business",
-    title: "Why SaaS Is the Smartest Investment for Small Businesses in 2025",
-    excerpt: "Discover how affordable SaaS platforms are leveling the playing field for startups and SMEs across South Asia and beyond.",
-    category: "SaaS",
-    date: "Feb 28, 2025",
-    readTime: "5 min read",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=340&fit=crop",
-  },
-  {
-    id: "ai-driven-development",
-    title: "How AI-Driven Development Is Cutting Project Costs by 40%",
-    excerpt: "We share our internal methodology for using AI co-pilots, automated testing, and code generation to deliver faster without sacrificing quality.",
-    category: "Engineering",
-    date: "Feb 20, 2025",
-    readTime: "7 min read",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=340&fit=crop",
-  },
-  {
-    id: "restaurant-pos-guide",
-    title: "The Complete Guide to Choosing a Restaurant POS System",
-    excerpt: "From order management to inventory tracking — what every restaurant owner should know before picking a POS solution.",
-    category: "Products",
-    date: "Feb 12, 2025",
-    readTime: "6 min read",
-    image: "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=600&h=340&fit=crop",
-  },
-  {
-    id: "upwork-to-company",
-    title: "From Upwork Freelancing to a Registered Tech Company: Our Journey",
-    excerpt: "The engineersTech origin story — how a group of engineers turned side projects into a full-service software company.",
-    category: "Company",
-    date: "Jan 30, 2025",
-    readTime: "8 min read",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=340&fit=crop",
-  },
-  {
-    id: "ui-ux-mistakes",
-    title: "7 UI/UX Mistakes That Are Costing You Customers",
-    excerpt: "Common design pitfalls we see in client projects — and the straightforward fixes that boost conversion rates overnight.",
-    category: "Design",
-    date: "Jan 18, 2025",
-    readTime: "4 min read",
-    image: "https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=600&h=340&fit=crop",
-  },
-  {
-    id: "devops-essentials",
-    title: "DevOps Essentials Every Startup Should Implement From Day One",
-    excerpt: "CI/CD pipelines, containerisation, and monitoring — the non-negotiable infrastructure practices for scaling fast.",
-    category: "Engineering",
-    date: "Jan 5, 2025",
-    readTime: "6 min read",
-    image: "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=600&h=340&fit=crop",
-  },
-];
+import { blogPosts } from "@/data/blogPosts";
 
 const categories = ["All", ...Array.from(new Set(blogPosts.map((p) => p.category)))];
-
-import { useState } from "react";
 
 const Blog = () => {
   const [active, setActive] = useState("All");
