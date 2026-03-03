@@ -56,7 +56,7 @@ const Testimonials = () => {
     <section className="py-16 sm:py-24">
       <div className="container">
         <div className="text-center mb-10 sm:mb-16">
-          <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4">
+          <h2 className="font-bold mb-3 sm:mb-4">
             What Our <span className="gradient-text">Clients Say</span>
           </h2>
         </div>

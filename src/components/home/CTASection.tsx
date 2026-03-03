@@ -34,7 +34,7 @@ const CTASection = () => {
           <div className="absolute bottom-0 right-0 w-32 h-32 border-b border-r border-primary-foreground/10 rounded-br-3xl" />
 
           <div className="relative z-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-4">
+            <h2 className="font-bold text-primary-foreground mb-4">
               Ready to Build Something Great?
             </h2>
             <p className="text-primary-foreground/80 mb-8 max-w-lg mx-auto">

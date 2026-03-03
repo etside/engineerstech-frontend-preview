@@ -138,7 +138,7 @@ const Services = () => {
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-xs font-medium text-primary mb-6">
               <Rocket size={12} /> Our Expertise
             </span>
-            <h1 className="text-3xl sm:text-4xl lg:text-[48px] font-bold leading-tight mb-6">
+            <h1 className="font-bold leading-tight mb-6">
               Engineering Solutions{" "}
               <span className="gradient-text">That Scale</span>
             </h1>
@@ -185,7 +185,7 @@ const Services = () => {
                     <div className="w-14 h-14 rounded-xl gradient-bg flex items-center justify-center mb-6">
                       <service.icon size={26} className="text-primary-foreground" />
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
+                    <h3 className="font-bold mb-3 group-hover:text-primary transition-colors">
                       {service.title}
                     </h3>
                     <p className="text-muted-foreground leading-relaxed mb-6">
@@ -234,7 +234,7 @@ const Services = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+            <h2 className="font-bold mb-4">
               Our <span className="gradient-text">SaaS Products</span>
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
@@ -277,7 +277,7 @@ const Services = () => {
             viewport={{ once: true }}
             className="text-center"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+            <h2 className="font-bold mb-4">
               Need a Custom Solution?
             </h2>
             <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
