@@ -47,7 +47,7 @@ const BlogPost = () => {
       </section>
 
       {/* Content */}
-      <section className="pb-20 sm:pb-32">
+      <section>
         <div className="container max-w-3xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

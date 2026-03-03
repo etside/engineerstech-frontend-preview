@@ -79,7 +79,7 @@ const About = () => {
       </section>
 
       {/* Our Story Timeline */}
-      <section className="py-20">
+      <section>
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -126,7 +126,7 @@ const About = () => {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-20 relative">
+      <section className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary/30 to-transparent" />
         <div className="container relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -179,7 +179,7 @@ const About = () => {
       </section>
 
       {/* Why engineersTech */}
-      <section className="py-20">
+      <section>
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -224,7 +224,7 @@ const About = () => {
       </section>
 
       {/* Management Team */}
-      <section className="py-20 relative">
+      <section className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary/30 to-transparent" />
         <div className="container relative z-10">
           <motion.div
@@ -302,7 +302,7 @@ const About = () => {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-20">
+      <section>
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -112,7 +112,7 @@ const Contact = () => {
       </section>
 
       {/* Content */}
-      <section className="pb-20 sm:pb-32">
+      <section>
         <div className="container">
           <div className="grid lg:grid-cols-5 gap-10 lg:gap-14">
             {/* Form */}

@@ -9,7 +9,7 @@ const logos = [client1, client2, client3, client4, client5, client6];
 
 const ClientLogos = () => {
   return (
-    <section className="py-16 border-y border-border/30">
+    <section className="border-y border-border/30">
       <div className="container mb-8">
         <p className="text-center text-sm text-muted-foreground font-medium uppercase tracking-wider">
           Trusted by clients worldwide
