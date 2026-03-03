@@ -26,7 +26,7 @@ const services = [
 
 const ServicesOverview = () => {
   return (
-    <section className="py-24 relative">
+    <section className="relative">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

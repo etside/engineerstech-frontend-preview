@@ -116,7 +116,7 @@ const Services = () => {
       </section>
 
       {/* Service Categories */}
-      <section className="py-20">
+      <section>
         <div className="container">
           <div className="space-y-10">
             {serviceCategories.map((service, i) => (
@@ -220,7 +220,7 @@ const Services = () => {
 
 
       {/* Bottom CTA */}
-      <section className="py-20">
+      <section>
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

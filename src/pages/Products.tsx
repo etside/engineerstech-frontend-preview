@@ -117,7 +117,7 @@ const Products = () => {
       </section>
 
       {/* Products Grid */}
-      <section className="py-20">
+      <section>
         <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {products.map((product, i) => (
@@ -192,7 +192,7 @@ const Products = () => {
       </section>
 
       {/* Bottom CTA */}
-      <section className="py-20">
+      <section>
         <div className="container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

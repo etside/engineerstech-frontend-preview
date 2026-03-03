@@ -53,7 +53,7 @@ const Testimonials = () => {
   const [current, setCurrent] = useState(0);
 
   return (
-    <section className="py-16 sm:py-24">
+    <section>
       <div className="container">
         <div className="text-center mb-10 sm:mb-16">
           <h2 className="font-bold mb-3 sm:mb-4">

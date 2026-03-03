@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 const CTASection = () => {
   return (
-    <section className="py-24">
+    <section>
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

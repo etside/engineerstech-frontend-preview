@@ -78,6 +78,11 @@
   p {
     @apply text-xs sm:text-sm lg:text-base;
   }
+
+  /* Universal section spacing */
+  section {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
 }
 
 @layer utilities {
