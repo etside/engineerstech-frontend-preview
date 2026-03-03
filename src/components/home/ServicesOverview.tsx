@@ -34,7 +34,7 @@ const ServicesOverview = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+          <h2 className="font-bold mb-4">
             What We <span className="gradient-text">Deliver</span>
           </h2>
           <p className="text-muted-foreground max-w-xl mx-auto">
