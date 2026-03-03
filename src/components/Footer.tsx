@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <img src={logoDark} alt="engineersTech" className="h-8" />
+            <img src={logoDark} alt="engineersTech" className="h-6 sm:h-8" />
             <p className="text-sm text-muted-foreground leading-relaxed">
               High-performing software solutions driven by engineers. We build enterprise-grade products with affordable pricing.
             </p>
