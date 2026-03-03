@@ -99,7 +99,7 @@ const HeroSection = () => {
             transition={{ duration: 0.6 }}
             className="mb-6"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-xs font-medium text-primary">
+            <span className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-[10px] sm:text-xs font-medium text-primary">
               <Sparkles size={12} /> AI-Driven Software Engineering
             </span>
           </motion.div>
@@ -108,7 +108,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-3xl sm:text-4xl lg:text-[48px] font-bold leading-tight mb-6"
+            className="text-xl sm:text-3xl lg:text-[48px] font-bold leading-tight mb-4 sm:mb-6"
           >
             We Build Software{" "}
             <span className="gradient-text">That Drives</span>{" "}
@@ -119,7 +119,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-base sm:text-lg text-muted-foreground mb-8 max-w-2xl leading-relaxed"
+            className="text-xs sm:text-sm lg:text-base text-muted-foreground mb-6 sm:mb-8 max-w-2xl leading-relaxed"
           >
             Enterprise-grade software solutions from a lean team of skilled engineers.
             More value, affordable cost, powered by AI.{" "}
@@ -133,12 +133,12 @@ const HeroSection = () => {
             className="flex flex-col sm:flex-row gap-4"
           >
             <Link to="/contact">
-              <Button size="lg" className="gradient-bg border-0 text-primary-foreground hover:opacity-90 px-8 h-12 text-base">
-                Get Started <ArrowRight size={18} />
+              <Button size="lg" className="gradient-bg border-0 text-primary-foreground hover:opacity-90 px-6 sm:px-8 h-10 sm:h-12 text-xs sm:text-sm">
+                Get Started <ArrowRight size={16} />
               </Button>
             </Link>
             <Link to="/services">
-              <Button size="lg" variant="outline" className="h-12 text-base px-8 border-border/50 hover:bg-secondary">
+              <Button size="lg" variant="outline" className="h-10 sm:h-12 text-xs sm:text-sm px-6 sm:px-8 border-border/50 hover:bg-secondary">
                 Our Services
               </Button>
             </Link>
