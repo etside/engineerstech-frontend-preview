@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, Link, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard, Layers, Package, FileText, Users, MessageSquare,
@@ -23,7 +23,6 @@ const navItems = [
 const AdminLayout = () => {
   const { user, signOut, isAdmin, loading } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
@@ -35,8 +34,7 @@ const AdminLayout = () => {
   }
 
   if (!user) {
-    navigate("/admin/login");
-    return null;
+    return <Navigate to="/admin/login" replace />;
   }
 
   if (!isAdmin) {
