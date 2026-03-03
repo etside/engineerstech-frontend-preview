@@ -170,51 +170,96 @@ const Services = () => {
       {/* Service Categories */}
       <section className="py-20">
         <div className="container">
-          <div className="space-y-8">
+          <div className="space-y-10">
             {serviceCategories.map((service, i) => (
               <motion.div
                 key={service.title}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="glass-card rounded-2xl p-8 md:p-10 hover:border-primary/30 transition-all group"
+                transition={{ delay: i * 0.08, duration: 0.5 }}
+                className="relative group"
               >
-                <div className="flex flex-col lg:flex-row gap-8">
-                  <div className="flex-1">
-                    <div className="w-14 h-14 rounded-xl gradient-bg flex items-center justify-center mb-6">
-                      <service.icon size={26} className="text-primary-foreground" />
-                    </div>
-                    <h3 className="font-bold mb-3 group-hover:text-primary transition-colors">
-                      {service.title}
-                    </h3>
-                    <p className="text-muted-foreground leading-relaxed mb-6">
-                      {service.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {service.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-3 py-1 rounded-full bg-secondary text-xs text-muted-foreground border border-border/50"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="lg:w-80 shrink-0">
-                    <div className="bg-secondary/50 rounded-xl p-6 h-full">
-                      <h4 className="text-sm font-semibold text-primary mb-4 flex items-center gap-2">
-                        <Zap size={14} /> Key Capabilities
-                      </h4>
-                      <ul className="space-y-3">
-                        {service.features.map((feature) => (
-                          <li key={feature} className="flex items-start gap-3 text-sm text-muted-foreground">
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                            {feature}
-                          </li>
-                        ))}
-                      </ul>
+                {/* Outer glow on hover */}
+                <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-primary/0 via-primary/0 to-accent/0 group-hover:from-primary/40 group-hover:via-accent/30 group-hover:to-primary/40 transition-all duration-500 blur-[1px]" />
+                
+                <div className="relative glass-card rounded-2xl overflow-hidden">
+                  {/* Top accent bar */}
+                  <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent group-hover:via-primary transition-all duration-500" />
+                  
+                  <div className="p-6 sm:p-8 md:p-10">
+                    <div className="flex flex-col lg:flex-row gap-8">
+                      {/* Left content */}
+                      <div className="flex-1">
+                        <div className="flex items-start gap-5 mb-6">
+                          {/* Animated icon container */}
+                          <div className="relative shrink-0">
+                            <div className="absolute inset-0 rounded-xl gradient-bg blur-lg opacity-30 group-hover:opacity-60 transition-opacity duration-500" />
+                            <div className="relative w-14 h-14 rounded-xl gradient-bg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                              <service.icon size={24} className="text-primary-foreground" />
+                            </div>
+                          </div>
+                          <div>
+                            <h3 className="font-bold mb-1 group-hover:text-primary transition-colors duration-300">
+                              {service.title}
+                            </h3>
+                            <div className="h-[2px] w-0 group-hover:w-16 bg-primary/50 transition-all duration-500 rounded-full" />
+                          </div>
+                        </div>
+
+                        <p className="text-muted-foreground leading-relaxed mb-6">
+                          {service.description}
+                        </p>
+
+                        {/* Tech stack pills with subtle hover effect */}
+                        <div className="flex flex-wrap gap-2">
+                          {service.technologies.map((tech, ti) => (
+                            <motion.span
+                              key={tech}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              whileInView={{ opacity: 1, scale: 1 }}
+                              viewport={{ once: true }}
+                              transition={{ delay: i * 0.08 + ti * 0.05 }}
+                              className="px-3 py-1.5 rounded-lg bg-primary/5 border border-primary/10 text-xs text-muted-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-300 cursor-default"
+                            >
+                              {tech}
+                            </motion.span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Right: capabilities card */}
+                      <div className="lg:w-80 shrink-0">
+                        <div className="relative h-full rounded-xl overflow-hidden">
+                          {/* Subtle gradient background */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-accent/[0.04]" />
+                          <div className="absolute inset-0 border border-primary/10 rounded-xl" />
+                          
+                          <div className="relative p-6">
+                            <h4 className="text-xs font-semibold text-primary mb-5 flex items-center gap-2 uppercase tracking-wider">
+                              <div className="w-5 h-5 rounded-md gradient-bg flex items-center justify-center">
+                                <Zap size={10} className="text-primary-foreground" />
+                              </div>
+                              Key Capabilities
+                            </h4>
+                            <ul className="space-y-4">
+                              {service.features.map((feature, fi) => (
+                                <motion.li
+                                  key={feature}
+                                  initial={{ opacity: 0, x: 10 }}
+                                  whileInView={{ opacity: 1, x: 0 }}
+                                  viewport={{ once: true }}
+                                  transition={{ delay: i * 0.08 + fi * 0.08 }}
+                                  className="flex items-start gap-3 text-sm text-muted-foreground group/item"
+                                >
+                                  <div className="w-1.5 h-1.5 rounded-full bg-primary mt-[7px] shrink-0 group-hover/item:shadow-[0_0_6px_hsl(214,100%,50%)] transition-shadow duration-300" />
+                                  <span className="group-hover/item:text-foreground transition-colors duration-300">{feature}</span>
+                                </motion.li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
