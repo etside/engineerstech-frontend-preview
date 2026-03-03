@@ -14,7 +14,7 @@ const Blog = () => {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative py-16 sm:py-24 overflow-hidden">
+      <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-40" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
         <div className="container relative z-10 text-center">
