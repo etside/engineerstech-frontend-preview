@@ -8,6 +8,7 @@ import { Lock, Mail } from "lucide-react";
 import logoLight from "@/assets/logo-dark-bg.svg";
 
 const AdminLogin = () => {
+  
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
