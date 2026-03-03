@@ -95,8 +95,9 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border/50 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+          <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-4 text-xs text-muted-foreground text-center">
             <span>© {new Date().getFullYear()} engineersTech. All rights reserved.</span>
+            <span className="hidden sm:inline">·</span>
             <span>Reg: TRAD/DNCC/025495/2025</span>
           </div>
           <div className="flex items-center gap-3">
