@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin } from "lucide-react";
 import logoDark from "@/assets/logo-dark-bg.svg";
+import ecabLogo from "@/assets/ecab-logo.png";
 
 const Footer = () => {
   return (
@@ -9,7 +10,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <img src={logoDark} alt="engineersTech" className="h-10" />
+            <img src={logoDark} alt="engineersTech" className="h-8" />
             <p className="text-sm text-muted-foreground leading-relaxed">
               High-performing software solutions driven by engineers. We build enterprise-grade products with affordable pricing.
             </p>
@@ -74,9 +75,10 @@ const Footer = () => {
               href="https://e-cab.net/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-muted-foreground hover:text-primary transition-colors border border-border/50 px-3 py-1.5 rounded-md"
+              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors border border-border/50 px-3 py-1.5 rounded-md"
             >
-              e-CAB Member
+              <img src={ecabLogo} alt="e-CAB" className="h-5 brightness-0 invert" />
+              Member
             </a>
           </div>
         </div>
