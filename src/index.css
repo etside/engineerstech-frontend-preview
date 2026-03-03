@@ -56,11 +56,27 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased text-sm sm:text-base;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight;
+  h1 {
+    @apply text-xl sm:text-3xl lg:text-[48px] font-semibold tracking-tight;
+  }
+
+  h2 {
+    @apply text-lg sm:text-2xl lg:text-4xl font-semibold tracking-tight;
+  }
+
+  h3 {
+    @apply text-base sm:text-lg lg:text-xl font-semibold tracking-tight;
+  }
+
+  h4, h5, h6 {
+    @apply text-sm sm:text-base font-semibold tracking-tight;
+  }
+
+  p {
+    @apply text-xs sm:text-sm lg:text-base;
   }
 }
 

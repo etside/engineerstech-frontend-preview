@@ -36,7 +36,7 @@ const CountUp = ({ target, suffix }: { target: number; suffix: string }) => {
   }, [isInView, target]);
 
   return (
-    <div ref={ref} className="text-4xl sm:text-5xl font-bold gradient-text mb-2">
+    <div ref={ref} className="text-2xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-2">
       {count}{suffix}
     </div>
   );
@@ -57,7 +57,7 @@ const StatsSection = () => {
               className="text-center"
             >
               <CountUp target={stat.value} suffix={stat.suffix} />
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
+              <div className="text-[10px] sm:text-sm text-muted-foreground">{stat.label}</div>
             </motion.div>
           ))}
         </div>
