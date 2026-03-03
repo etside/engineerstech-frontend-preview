@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminApi } from "@/lib/api";
 import { Mail, MailOpen, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface Submission {
-  id: string;
+  id: number;
   name: string;
   email: string;
   phone: string | null;
@@ -20,9 +20,14 @@ const AdminSubmissions = () => {
   const [selected, setSelected] = useState<Submission | null>(null);
 
   const fetchItems = async () => {
-    const { data } = await supabase.from("contact_submissions").select("*").order("created_at", { ascending: false });
-    setItems((data as Submission[]) || []);
-    setLoading(false);
+    try {
+      const data = await adminApi.getSubmissions();
+      setItems(data || []);
+    } catch {
+      // silently ignore fetch errors on initial load
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchItems(); }, []);
@@ -30,16 +35,24 @@ const AdminSubmissions = () => {
   const markRead = async (item: Submission) => {
     setSelected(item);
     if (!item.is_read) {
-      await supabase.from("contact_submissions").update({ is_read: true }).eq("id", item.id);
-      setItems((prev) => prev.map((i) => i.id === item.id ? { ...i, is_read: true } : i));
+      try {
+        await adminApi.markSubmissionRead(item.id);
+        setItems((prev) => prev.map((i) => i.id === item.id ? { ...i, is_read: true } : i));
+      } catch {
+        // silently ignore mark-read errors
+      }
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     if (!confirm("Delete this submission?")) return;
-    await supabase.from("contact_submissions").delete().eq("id", id);
-    setItems((prev) => prev.filter((i) => i.id !== id));
-    if (selected?.id === id) setSelected(null);
+    try {
+      await adminApi.deleteSubmission(id);
+      setItems((prev) => prev.filter((i) => i.id !== id));
+      if (selected?.id === id) setSelected(null);
+    } catch {
+      // silently ignore delete errors
+    }
   };
 
   if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;

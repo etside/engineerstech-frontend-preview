@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 interface Testimonial {
-  id: string;
+  id: number;
   name: string;
   role: string | null;
   company: string | null;
@@ -28,9 +29,14 @@ const AdminTestimonials = () => {
   const [form, setForm] = useState({ name: "", role: "", company: "", quote: "", photo_url: "", rating: 5, is_active: true, display_order: 0 });
 
   const fetchItems = async () => {
-    const { data } = await supabase.from("testimonials").select("*").order("display_order");
-    setItems((data as Testimonial[]) || []);
-    setLoading(false);
+    try {
+      const data = await adminApi.getTestimonials();
+      setItems(data || []);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchItems(); }, []);
@@ -50,24 +56,30 @@ const AdminTestimonials = () => {
   const handleSave = async () => {
     if (!form.name.trim() || !form.quote.trim()) return;
     const payload = { name: form.name, role: form.role, company: form.company, quote: form.quote, photo_url: form.photo_url, rating: form.rating, is_active: form.is_active, display_order: form.display_order };
-    if (editing) {
-      const { error } = await supabase.from("testimonials").update(payload).eq("id", editing.id);
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Testimonial updated" });
-    } else {
-      const { error } = await supabase.from("testimonials").insert(payload);
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Testimonial created" });
+    try {
+      if (editing) {
+        await adminApi.updateTestimonial(editing.id, payload);
+        toast({ title: "Testimonial updated" });
+      } else {
+        await adminApi.createTestimonial(payload);
+        toast({ title: "Testimonial created" });
+      }
+      setShowForm(false);
+      fetchItems();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     }
-    setShowForm(false);
-    fetchItems();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     if (!confirm("Delete this testimonial?")) return;
-    await supabase.from("testimonials").delete().eq("id", id);
-    toast({ title: "Testimonial deleted" });
-    fetchItems();
+    try {
+      await adminApi.deleteTestimonial(id);
+      toast({ title: "Testimonial deleted" });
+      fetchItems();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
@@ -92,7 +104,7 @@ const AdminTestimonials = () => {
           </div>
           <div className="space-y-1"><Label>Quote</Label><Textarea value={form.quote} onChange={(e) => setForm({ ...form, quote: e.target.value })} rows={3} /></div>
           <div className="grid sm:grid-cols-3 gap-4">
-            <div className="space-y-1"><Label>Photo URL</Label><Input value={form.photo_url} onChange={(e) => setForm({ ...form, photo_url: e.target.value })} /></div>
+            <ImageUpload label="Photo" folder="testimonials" value={form.photo_url} onChange={(url) => setForm({ ...form, photo_url: url })} />
             <div className="space-y-1"><Label>Rating (1-5)</Label><Input type="number" min={1} max={5} value={form.rating} onChange={(e) => setForm({ ...form, rating: parseInt(e.target.value) || 5 })} /></div>
             <div className="space-y-1"><Label>Display Order</Label><Input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} /></div>
           </div>

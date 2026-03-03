@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -5,6 +6,7 @@ import {
   Award, Globe, Linkedin, MessageCircle, Code2, Zap, Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
 
 const timeline = [
   { year: "2017", title: "The Beginning", desc: "Started as a freelance agency on Upwork, delivering quality software to global clients." },
@@ -20,38 +22,27 @@ const values = [
   { icon: Shield, title: "Trust & Transparency", desc: "Honest communication, clear timelines, and no hidden surprises throughout the journey." },
 ];
 
-const team = [
-  {
-    name: "Nazmul Alom Sakib",
-    role: "Founder & CEO",
-    experience: "10+ years experience",
-    bio: "Visionary leader who started the company from Upwork freelancing and built it into a full-scale software engineering firm. Expert in enterprise architecture and team leadership.",
-    linkedin: "#",
-    whatsapp: "#",
-  },
-  {
-    name: "Al Shahriar",
-    role: "Co-founder & COO",
-    experience: "8+ years experience",
-    bio: "Operations strategist ensuring every project runs smoothly from kickoff to delivery. Specializes in process optimization and client relationship management.",
-    linkedin: "#",
-    whatsapp: "#",
-  },
-  {
-    name: "Sheikh Md. Junaeid",
-    role: "Co-Founder & CMO",
-    experience: "10+ years experience",
-    bio: "Marketing and growth expert driving brand visibility and business development. Passionate about connecting the right solutions with the right clients.",
-    linkedin: "#",
-    whatsapp: "#",
-  },
+const staticTeam = [
+  { name: "Nazmul Alom Sakib", designation: "Founder & CEO", bio: "Visionary leader who started the company from Upwork freelancing and built it into a full-scale software engineering firm. Expert in enterprise architecture and team leadership.", photo_url: null, linkedin_url: "#", whatsapp_number: "#" },
+  { name: "Al Shahriar", designation: "Co-founder & COO", bio: "Operations strategist ensuring every project runs smoothly from kickoff to delivery. Specializes in process optimization and client relationship management.", photo_url: null, linkedin_url: "#", whatsapp_number: "#" },
+  { name: "Sheikh Md. Junaeid", designation: "Co-Founder & CMO", bio: "Marketing and growth expert driving brand visibility and business development. Passionate about connecting the right solutions with the right clients.", photo_url: null, linkedin_url: "#", whatsapp_number: "#" },
 ];
 
+interface TeamMember { name: string; designation: string | null; bio: string | null; photo_url: string | null; linkedin_url: string | null; whatsapp_number: string | null; }
+
 const About = () => {
+  const [team, setTeam] = useState<TeamMember[]>(staticTeam);
+
+  useEffect(() => {
+    api.team().then((data: TeamMember[]) => {
+      if (data && data.length > 0) setTeam(data);
+    }).catch(() => {});
+  }, []);
+
   return (
     <>
       {/* Hero */}
-      <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 overflow-hidden">
+      <section className="relative min-h-[400px] flex items-center pb-8 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-[0.08]" />
         <div className="absolute top-1/3 -left-40 w-96 h-96 rounded-full bg-primary/10 blur-[120px]" />
         <div className="absolute bottom-0 -right-40 w-96 h-96 rounded-full bg-accent/10 blur-[120px]" />
@@ -252,23 +243,28 @@ const About = () => {
                 className="relative group"
               >
                 <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-b from-primary/0 to-accent/0 group-hover:from-primary/30 group-hover:to-accent/20 transition-all duration-500 blur-[1px]" />
-                
+
                 <div className="relative glass-card rounded-2xl overflow-hidden text-center">
                   <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent group-hover:via-primary transition-all duration-500" />
-                  
+
                   <div className="p-6 sm:p-8">
-                    {/* Avatar placeholder */}
-                    <div className="w-24 h-24 rounded-full mx-auto mb-5 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center ring-2 ring-primary/10 group-hover:ring-primary/30 transition-all duration-300">
-                      <span className="text-2xl font-bold gradient-text">
-                        {member.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
-                      </span>
-                    </div>
+                    {/* Avatar */}
+                    {member.photo_url ? (
+                      <img
+                        src={member.photo_url}
+                        alt={member.name}
+                        className="w-24 h-24 rounded-full mx-auto mb-5 object-cover ring-2 ring-primary/10 group-hover:ring-primary/30 transition-all duration-300"
+                      />
+                    ) : (
+                      <div className="w-24 h-24 rounded-full mx-auto mb-5 bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center ring-2 ring-primary/10 group-hover:ring-primary/30 transition-all duration-300">
+                        <span className="text-2xl font-bold gradient-text">
+                          {member.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
+                        </span>
+                      </div>
+                    )}
 
                     <h3 className="font-bold group-hover:text-primary transition-colors">{member.name}</h3>
-                    <p className="text-xs text-primary font-medium mt-1">{member.role}</p>
-                    <span className="inline-block text-[10px] text-muted-foreground mt-1 px-2 py-0.5 rounded-full bg-secondary border border-border/50">
-                      {member.experience}
-                    </span>
+                    <p className="text-xs text-primary font-medium mt-1">{member.designation}</p>
 
                     <p className="text-sm text-muted-foreground leading-relaxed mt-4 mb-5">
                       {member.bio}
@@ -276,22 +272,26 @@ const About = () => {
 
                     {/* Social links */}
                     <div className="flex items-center justify-center gap-3">
-                      <a
-                        href={member.linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-9 h-9 rounded-lg bg-secondary hover:bg-primary/20 flex items-center justify-center transition-colors group/icon"
-                      >
-                        <Linkedin size={15} className="text-muted-foreground group-hover/icon:text-primary transition-colors" />
-                      </a>
-                      <a
-                        href={member.whatsapp}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-9 h-9 rounded-lg bg-secondary hover:bg-green-500/20 flex items-center justify-center transition-colors group/icon"
-                      >
-                        <MessageCircle size={15} className="text-muted-foreground group-hover/icon:text-green-400 transition-colors" />
-                      </a>
+                      {member.linkedin_url && member.linkedin_url !== "#" && (
+                        <a
+                          href={member.linkedin_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-9 h-9 rounded-lg bg-secondary hover:bg-primary/20 flex items-center justify-center transition-colors group/icon"
+                        >
+                          <Linkedin size={15} className="text-muted-foreground group-hover/icon:text-primary transition-colors" />
+                        </a>
+                      )}
+                      {member.whatsapp_number && member.whatsapp_number !== "#" && (
+                        <a
+                          href={`https://wa.me/${member.whatsapp_number}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-9 h-9 rounded-lg bg-secondary hover:bg-green-500/20 flex items-center justify-center transition-colors group/icon"
+                        >
+                          <MessageCircle size={15} className="text-muted-foreground group-hover/icon:text-green-400 transition-colors" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>

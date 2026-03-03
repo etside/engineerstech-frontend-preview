@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,28 +29,36 @@ const AdminSettings = () => {
 
   useEffect(() => {
     const fetchSettings = async () => {
-      const { data } = await supabase.from("site_settings").select("*");
-      const map: Record<string, string> = {};
-      (data || []).forEach((row: any) => { map[row.key] = typeof row.value === "string" ? row.value : JSON.stringify(row.value); });
-      setSettings(map);
-      setLoading(false);
+      try {
+        const data = await adminApi.getSettings();
+        const map: Record<string, string> = {};
+        Object.entries(data || {}).forEach(([key, value]) => {
+          map[key] = typeof value === "string" ? value : JSON.stringify(value);
+        });
+        setSettings(map);
+      } catch (err: any) {
+        toast({ title: "Error", description: err.message, variant: "destructive" });
+      } finally {
+        setLoading(false);
+      }
     };
     fetchSettings();
   }, []);
 
   const handleSave = async () => {
     setSaving(true);
-    for (const { key } of settingKeys) {
-      const value = settings[key] || "";
-      const { data: existing } = await supabase.from("site_settings").select("id").eq("key", key).maybeSingle();
-      if (existing) {
-        await supabase.from("site_settings").update({ value: JSON.stringify(value) }).eq("key", key);
-      } else {
-        await supabase.from("site_settings").insert({ key, value: JSON.stringify(value) });
+    try {
+      const payload: Record<string, string> = {};
+      for (const { key } of settingKeys) {
+        payload[key] = settings[key] || "";
       }
+      await adminApi.updateSettings(payload);
+      toast({ title: "Settings saved" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    toast({ title: "Settings saved" });
   };
 
   if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;

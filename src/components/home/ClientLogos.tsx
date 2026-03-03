@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 import client1 from "@/assets/clients/client-1.png";
 import client2 from "@/assets/clients/client-2.png";
 import client3 from "@/assets/clients/client-3.png";
@@ -5,9 +7,28 @@ import client4 from "@/assets/clients/client-4.png";
 import client5 from "@/assets/clients/client-5.png";
 import client6 from "@/assets/clients/client-6.png";
 
-const logos = [client1, client2, client3, client4, client5, client6];
+const staticLogos = [client1, client2, client3, client4, client5, client6];
+
+interface LogoData {
+  id: number;
+  name: string;
+  logo_url: string | null;
+}
 
 const ClientLogos = () => {
+  const [logos, setLogos] = useState<{ src: string; alt: string }[]>(
+    staticLogos.map((src, i) => ({ src, alt: `Client ${i + 1}` }))
+  );
+
+  useEffect(() => {
+    api.logos().then((data: LogoData[]) => {
+      const withImages = data?.filter(l => l.logo_url);
+      if (withImages && withImages.length > 0) {
+        setLogos(withImages.map(l => ({ src: l.logo_url!, alt: l.name })));
+      }
+    }).catch(() => {});
+  }, []);
+
   return (
     <section className="border-y border-border/30">
       <div className="container mb-8">
@@ -20,8 +41,8 @@ const ClientLogos = () => {
           {[...logos, ...logos].map((logo, i) => (
             <img
               key={i}
-              src={logo}
-              alt={`Client ${(i % logos.length) + 1}`}
+              src={logo.src}
+              alt={logo.alt}
               className="h-10 md:h-12 opacity-80 object-contain"
             />
           ))}

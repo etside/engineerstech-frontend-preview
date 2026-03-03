@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X, Eye, EyeOff } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 interface BlogPost {
-  id: string;
+  id: number;
   title: string;
   slug: string;
   excerpt: string | null;
@@ -22,7 +22,6 @@ interface BlogPost {
 
 const AdminBlog = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
   const [items, setItems] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<BlogPost | null>(null);
@@ -30,9 +29,14 @@ const AdminBlog = () => {
   const [form, setForm] = useState({ title: "", slug: "", excerpt: "", content: "", cover_image: "", category: "", is_published: false });
 
   const fetchItems = async () => {
-    const { data } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
-    setItems((data as BlogPost[]) || []);
-    setLoading(false);
+    try {
+      const data = await adminApi.getBlog();
+      setItems(data || []);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchItems(); }, []);
@@ -57,26 +61,31 @@ const AdminBlog = () => {
       title: form.title, slug: form.slug, excerpt: form.excerpt, content: form.content,
       cover_image: form.cover_image, category: form.category, is_published: form.is_published,
       published_at: form.is_published ? new Date().toISOString() : null,
-      author_id: user?.id,
     };
-    if (editing) {
-      const { error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id);
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Post updated" });
-    } else {
-      const { error } = await supabase.from("blog_posts").insert(payload);
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Post created" });
+    try {
+      if (editing) {
+        await adminApi.updatePost(editing.id, payload);
+        toast({ title: "Post updated" });
+      } else {
+        await adminApi.createPost(payload);
+        toast({ title: "Post created" });
+      }
+      setShowForm(false);
+      fetchItems();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     }
-    setShowForm(false);
-    fetchItems();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     if (!confirm("Delete this post?")) return;
-    await supabase.from("blog_posts").delete().eq("id", id);
-    toast({ title: "Post deleted" });
-    fetchItems();
+    try {
+      await adminApi.deletePost(id);
+      toast({ title: "Post deleted" });
+      fetchItems();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
@@ -106,7 +115,7 @@ const AdminBlog = () => {
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1"><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} /></div>
-            <div className="space-y-1"><Label>Cover Image URL</Label><Input value={form.cover_image} onChange={(e) => setForm({ ...form, cover_image: e.target.value })} /></div>
+            <ImageUpload label="Cover Image" folder="blog" value={form.cover_image} onChange={(url) => setForm({ ...form, cover_image: url })} />
           </div>
           <div className="space-y-1"><Label>Excerpt</Label><Textarea value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} rows={2} /></div>
           <div className="space-y-1"><Label>Content</Label><Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={10} /></div>

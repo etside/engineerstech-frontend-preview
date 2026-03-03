@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 
 interface Service {
-  id: string;
+  id: number;
   title: string;
   description: string | null;
   icon: string | null;
@@ -25,9 +25,14 @@ const AdminServices = () => {
   const [form, setForm] = useState({ title: "", description: "", icon: "", display_order: 0, is_active: true });
 
   const fetchItems = async () => {
-    const { data } = await supabase.from("services").select("*").order("display_order");
-    setItems((data as Service[]) || []);
-    setLoading(false);
+    try {
+      const data = await adminApi.getServices();
+      setItems(data || []);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchItems(); }, []);
@@ -46,24 +51,30 @@ const AdminServices = () => {
 
   const handleSave = async () => {
     if (!form.title.trim()) return;
-    if (editing) {
-      const { error } = await supabase.from("services").update({ title: form.title, description: form.description, icon: form.icon, display_order: form.display_order, is_active: form.is_active }).eq("id", editing.id);
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Service updated" });
-    } else {
-      const { error } = await supabase.from("services").insert({ title: form.title, description: form.description, icon: form.icon, display_order: form.display_order, is_active: form.is_active });
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Service created" });
+    try {
+      if (editing) {
+        await adminApi.updateService(editing.id, { title: form.title, description: form.description, icon: form.icon, display_order: form.display_order, is_active: form.is_active });
+        toast({ title: "Service updated" });
+      } else {
+        await adminApi.createService({ title: form.title, description: form.description, icon: form.icon, display_order: form.display_order, is_active: form.is_active });
+        toast({ title: "Service created" });
+      }
+      setShowForm(false);
+      fetchItems();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     }
-    setShowForm(false);
-    fetchItems();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     if (!confirm("Delete this service?")) return;
-    await supabase.from("services").delete().eq("id", id);
-    toast({ title: "Service deleted" });
-    fetchItems();
+    try {
+      await adminApi.deleteService(id);
+      toast({ title: "Service deleted" });
+      fetchItems();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;

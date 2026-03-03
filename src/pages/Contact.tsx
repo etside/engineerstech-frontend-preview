@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, Clock, MessageSquare } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -80,29 +80,30 @@ const Contact = () => {
       return;
     }
     setSending(true);
-    const { error } = await supabase.from("contact_submissions").insert({
-      name: result.data.name,
-      email: result.data.email,
-      phone: result.data.phone || null,
-      subject: result.data.subject,
-      message: result.data.message,
-    });
-    setSending(false);
-    if (error) {
+    try {
+      await api.contact({
+        name: result.data.name,
+        email: result.data.email,
+        phone: result.data.phone || null,
+        subject: result.data.subject,
+        message: result.data.message,
+      });
+      toast({
+        title: "Message sent!",
+        description: "We'll get back to you within 24 hours.",
+      });
+      setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch (err: any) {
       toast({ title: "Error", description: "Failed to send. Please try again.", variant: "destructive" });
-      return;
+    } finally {
+      setSending(false);
     }
-    toast({
-      title: "Message sent!",
-      description: "We'll get back to you within 24 hours.",
-    });
-    setForm({ name: "", email: "", phone: "", subject: "", message: "" });
   };
 
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 overflow-hidden">
+      <section className="relative min-h-[400px] flex items-center pb-8 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-40" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
         <div className="container relative z-10 text-center">

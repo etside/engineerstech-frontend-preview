@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminApi } from "@/lib/api";
 import { Layers, Package, FileText, Users, Star, Image, Mail } from "lucide-react";
 
 const AdminDashboard = () => {
   const [counts, setCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    const tables = ["services", "products", "blog_posts", "team_members", "testimonials", "client_logos", "contact_submissions"];
-    Promise.all(
-      tables.map(async (t) => {
-        const { count } = await supabase.from(t as any).select("*", { count: "exact", head: true });
-        return [t, count ?? 0] as const;
-      })
-    ).then((results) => setCounts(Object.fromEntries(results)));
+    adminApi.stats().then((data) => {
+      setCounts({
+        services: data.services ?? 0,
+        products: data.products ?? 0,
+        blog_posts: data.blog_posts ?? 0,
+        team_members: data.team ?? 0,
+        testimonials: data.testimonials ?? 0,
+        client_logos: data.logos ?? 0,
+        contact_submissions: data.submissions ?? 0,
+      });
+    }).catch(() => {});
   }, []);
 
   const stats = [

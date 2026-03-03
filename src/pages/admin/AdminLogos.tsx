@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { adminApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 interface ClientLogo {
-  id: string;
+  id: number;
   name: string;
   logo_url: string | null;
   website_url: string | null;
@@ -24,9 +25,14 @@ const AdminLogos = () => {
   const [form, setForm] = useState({ name: "", logo_url: "", website_url: "", display_order: 0, is_active: true });
 
   const fetchItems = async () => {
-    const { data } = await supabase.from("client_logos").select("*").order("display_order");
-    setItems((data as ClientLogo[]) || []);
-    setLoading(false);
+    try {
+      const data = await adminApi.getLogos();
+      setItems(data || []);
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { fetchItems(); }, []);
@@ -46,24 +52,30 @@ const AdminLogos = () => {
   const handleSave = async () => {
     if (!form.name.trim()) return;
     const payload = { name: form.name, logo_url: form.logo_url, website_url: form.website_url, display_order: form.display_order, is_active: form.is_active };
-    if (editing) {
-      const { error } = await supabase.from("client_logos").update(payload).eq("id", editing.id);
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Logo updated" });
-    } else {
-      const { error } = await supabase.from("client_logos").insert(payload);
-      if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return; }
-      toast({ title: "Logo created" });
+    try {
+      if (editing) {
+        await adminApi.updateLogo(editing.id, payload);
+        toast({ title: "Logo updated" });
+      } else {
+        await adminApi.createLogo(payload);
+        toast({ title: "Logo created" });
+      }
+      setShowForm(false);
+      fetchItems();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     }
-    setShowForm(false);
-    fetchItems();
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: number) => {
     if (!confirm("Delete this logo?")) return;
-    await supabase.from("client_logos").delete().eq("id", id);
-    toast({ title: "Logo deleted" });
-    fetchItems();
+    try {
+      await adminApi.deleteLogo(id);
+      toast({ title: "Logo deleted" });
+      fetchItems();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
@@ -83,7 +95,7 @@ const AdminLogos = () => {
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1"><Label>Client Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-            <div className="space-y-1"><Label>Logo URL</Label><Input value={form.logo_url} onChange={(e) => setForm({ ...form, logo_url: e.target.value })} /></div>
+            <ImageUpload label="Logo Image" folder="logos" value={form.logo_url} onChange={(url) => setForm({ ...form, logo_url: url })} />
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1"><Label>Website URL</Label><Input value={form.website_url} onChange={(e) => setForm({ ...form, website_url: e.target.value })} /></div>
