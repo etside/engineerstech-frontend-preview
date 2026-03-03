@@ -12,22 +12,27 @@ const CountUp = ({ target, suffix }: { target: number; suffix: string }) => {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const hasAnimated = useRef(false);
 
   useEffect(() => {
-    if (!isInView) return;
-    let start = 0;
+    if (!isInView || hasAnimated.current) return;
+    hasAnimated.current = true;
+    
     const duration = 2000;
-    const step = Math.max(1, Math.floor(target / (duration / 16)));
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(start);
+    const startTime = performance.now();
+    
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // easeOutQuart for smooth deceleration
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setCount(Math.round(eased * target));
+      if (progress < 1) {
+        requestAnimationFrame(tick);
       }
-    }, 16);
-    return () => clearInterval(timer);
+    };
+    
+    requestAnimationFrame(tick);
   }, [isInView, target]);
 
   return (

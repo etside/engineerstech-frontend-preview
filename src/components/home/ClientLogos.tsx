@@ -22,7 +22,7 @@ const ClientLogos = () => {
               key={i}
               src={logo}
               alt={`Client ${(i % logos.length) + 1}`}
-              className="h-10 md:h-12 opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0 object-contain"
+              className="h-10 md:h-12 opacity-80 object-contain"
             />
           ))}
         </div>
