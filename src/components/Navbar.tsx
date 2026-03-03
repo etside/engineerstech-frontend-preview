@@ -7,8 +7,8 @@ import logoDark from "@/assets/logo-dark-bg.svg";
 const navLinks = [
   { label: "Home", to: "/" },
   { label: "Services", to: "/services" },
+  { label: "Products", to: "/products" },
   { label: "About Us", to: "/about" },
-  { label: "Blog", to: "/blog" },
   { label: "Contact", to: "/contact" },
 ];
 

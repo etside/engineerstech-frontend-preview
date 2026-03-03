@@ -2,8 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
   Monitor, Smartphone, Palette, LineChart, ArrowRight,
-  Database, ShoppingCart, Plane, Users, Hotel, BarChart3, MapPin, Sparkles,
-  Code2, Cloud, Shield, Cpu, Globe, Layers, Rocket, Zap
+  Sparkles, Code2, Cloud, Shield, Cpu, Globe, Layers, Rocket, Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -58,57 +57,6 @@ const serviceCategories = [
   },
 ];
 
-const saasProducts = [
-  {
-    icon: Sparkles,
-    name: "GlowUp",
-    description: "All-in-one beauty & wellness business management platform with booking, POS, and client management.",
-    color: "from-pink-500/20 to-purple-500/20",
-    link: "#",
-  },
-  {
-    icon: ShoppingCart,
-    name: "Restaurant POS",
-    description: "Complete point-of-sale system for restaurants with order management, kitchen display, and analytics.",
-    color: "from-orange-500/20 to-red-500/20",
-    link: "#",
-  },
-  {
-    icon: Plane,
-    name: "Tour Booking",
-    description: "End-to-end tour and travel booking platform with itinerary builder, payments, and customer portal.",
-    color: "from-sky-500/20 to-blue-500/20",
-    link: "#",
-  },
-  {
-    icon: Users,
-    name: "HRM System",
-    description: "Human resource management with attendance, payroll, leave management, and performance tracking.",
-    color: "from-green-500/20 to-emerald-500/20",
-    link: "#",
-  },
-  {
-    icon: Hotel,
-    name: "Hotel Booking",
-    description: "Hotel reservation and property management system with channel manager and revenue optimization.",
-    color: "from-amber-500/20 to-yellow-500/20",
-    link: "#",
-  },
-  {
-    icon: BarChart3,
-    name: "CRM Platform",
-    description: "Customer relationship management with sales pipeline, lead tracking, and automated follow-ups.",
-    color: "from-violet-500/20 to-indigo-500/20",
-    link: "#",
-  },
-  {
-    icon: MapPin,
-    name: "Staff Tracking",
-    description: "Field staff tracking and task management with GPS, geofencing, and real-time reporting.",
-    color: "from-teal-500/20 to-cyan-500/20",
-    link: "#",
-  },
-];
 
 const techIcons = [
   { icon: Code2, label: "Clean Code" },
@@ -269,49 +217,7 @@ const Services = () => {
         </div>
       </section>
 
-      {/* SaaS Products */}
-      <section className="py-20 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-secondary/30 to-transparent" />
-        <div className="container relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="font-bold mb-4">
-              Our <span className="gradient-text">SaaS Products</span>
-            </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">
-              Ready-to-deploy software products built by our engineers — customizable for your specific business needs.
-            </p>
-          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {saasProducts.map((product, i) => (
-              <motion.a
-                key={product.name}
-                href={product.link}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
-                className="glass-card rounded-xl p-6 hover:border-primary/30 transition-all group block"
-              >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${product.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <product.icon size={22} className="text-foreground" />
-                </div>
-                <h3 className="font-semibold mb-2 group-hover:text-primary transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {product.description}
-                </p>
-              </motion.a>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* Bottom CTA */}
       <section className="py-20">
