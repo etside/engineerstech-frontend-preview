@@ -1,96 +1,156 @@
-
-
 # engineersTech — Full Company Website & Admin Panel
 
-## Design System & Theme
-- **Dark theme** (primary background: near-black #0A0E1A) with blue gradient accent (#0052CC → #2684FF from your logo)
+## Project Overview
+A complete company website for **engineersTech**, a Bangladesh-based software engineering firm. Built with React + Vite + Tailwind CSS + TypeScript, powered by Lovable Cloud (Supabase) for backend.
+
+---
+
+## Tech Stack
+- **Frontend**: React 18, Vite, TypeScript, Tailwind CSS, Framer Motion, shadcn/ui
+- **Backend**: Lovable Cloud (Supabase) — PostgreSQL, Auth, RLS
+- **Routing**: React Router v6
+- **State**: React Query, React Context (Auth)
+- **Styling**: Dark theme with blue gradient accent (#0052CC → #2684FF)
 - **Font**: Poppins (all weights)
-- Consistent component library: buttons, cards, section headers, badges, inputs — all built first for reuse
-- Gradient icon accent matching the eticon SVG colors
-- Both logo variants (dark/light background) embedded as assets
+
+---
+
+## Database Schema (Supabase/PostgreSQL)
+
+### Tables
+| Table | Purpose | Key Columns |
+|-------|---------|-------------|
+| `services` | Service offerings | title, description, icon (lucide name), display_order, is_active |
+| `products` | SaaS products | name, description, icon (lucide name), external_url, display_order, is_active |
+| `blog_posts` | Blog content | slug, title, excerpt, content (text), category, cover_image (URL), is_published, published_at |
+| `team_members` | Leadership team | name, designation, bio, photo_url (URL), linkedin_url, whatsapp_number, display_order, is_active |
+| `testimonials` | Client testimonials | name, role, company, quote, photo_url (URL), rating, display_order, is_active |
+| `client_logos` | Client logo carousel | name, logo_url (URL), website_url, display_order, is_active |
+| `contact_submissions` | Contact form entries | name, email, phone, subject, message, is_read |
+| `site_settings` | Key-value site config | key, value (JSONB) |
+| `profiles` | User profiles | id (FK auth.users), full_name, avatar_url |
+| `user_roles` | RBAC roles | user_id (FK auth.users), role (enum: admin, moderator, user) |
+
+### Auth & Roles
+- Authentication via Supabase Auth (email/password)
+- Roles stored in `user_roles` table (NOT on profiles)
+- `has_role()` security definer function for RLS policies
+- Auto-confirm email enabled
+
+### RLS Policies
+- All content tables: Public SELECT, Admin-only INSERT/UPDATE/DELETE
+- `contact_submissions`: Anyone can INSERT, Admin-only SELECT/UPDATE
+- `user_roles`: Users can read own roles, Admins can manage all
+- `profiles`: Users can read/update own profile only
+
+---
+
+## ⚠️ IMPORTANT: Image Fields Use URLs, Not File Uploads
+
+The following fields accept **image URLs** (not file uploads):
+- `team_members.photo_url` — Team member photos
+- `testimonials.photo_url` — Testimonial author photos
+- `client_logos.logo_url` — Client logo images
+- `blog_posts.cover_image` — Blog post cover images
+- `profiles.avatar_url` — User avatar images
+
+**For production**: These should be replaced with a proper file upload system (e.g., Supabase Storage buckets) that uploads files and stores the resulting URL. Currently, admins must paste external image URLs manually in the admin panel.
 
 ---
 
 ## Frontend Pages
 
-### 1. Home Page
-- **Hero Section**: Bold headline with "drivenByEngineers" slogan, animated gradient text, CTA buttons (Get Started / Our Services), subtle background pattern/animation
-- **Services Overview**: 4 service cards (Enterprise & SaaS, Web & Mobile Apps, UI/UX & Design, Consultation & Strategy) with icons and brief descriptions
-- **Client Logos Carousel**: Auto-scrolling logos pulled from the existing site (client-1 through client-6 images)
-- **Stats/Numbers Section**: Years of experience, projects delivered, team members, clients served
-- **Featured SaaS Product**: GlowUp spotlight card with description and link
-- **Testimonials Carousel**: 3 testimonials from existing site (Jeremy Nathan, Freda Lin, Mynul Hasan) with photos, names, roles, quotes
-- **CTA Section**: Contact prompt with gradient background
+### Public Pages
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/` | `Index.tsx` | Home — Hero, Services overview, Client logos carousel, Stats, GlowUp spotlight, Testimonials, CTA |
+| `/services` | `Services.tsx` | 4 service categories with tech stacks and capabilities |
+| `/products` | `Products.tsx` | 7 SaaS products grid with status badges and links |
+| `/about` | `About.tsx` | Company story timeline, Mission/Vision, Values, Leadership team |
+| `/contact` | `Contact.tsx` | Contact form (saves to DB), Company info, Map placeholder |
+| `/blog` | `Blog.tsx` | Blog listing with cards |
+| `/blog/:id` | `BlogPost.tsx` | Individual blog post |
 
-### 2. Services Page
-- **Service Categories**: Detailed cards for each of the 4 service areas with expanded descriptions, key technologies, and icons
-- **SaaS Products Section**: Dynamic grid of products (GlowUp, Restaurant POS, Tour Booking, HRM, Hotel Booking, CRM, Staff Tracking, etc.) — each with name, short description, icon, and external link. Designed to be dynamically managed from admin panel
+### Admin Pages (Protected: `/admin/*`)
+| Route | Component | Description |
+|-------|-----------|-------------|
+| `/admin/login` | `AdminLogin.tsx` | Login/Signup form |
+| `/admin` | `AdminDashboard.tsx` | Overview stats |
+| `/admin/services` | `AdminServices.tsx` | CRUD for services |
+| `/admin/products` | `AdminProducts.tsx` | CRUD for products |
+| `/admin/blog` | `AdminBlog.tsx` | CRUD for blog posts |
+| `/admin/team` | `AdminTeam.tsx` | CRUD for team members |
+| `/admin/testimonials` | `AdminTestimonials.tsx` | CRUD for testimonials |
+| `/admin/logos` | `AdminLogos.tsx` | CRUD for client logos |
+| `/admin/submissions` | `AdminSubmissions.tsx` | View contact form submissions |
+| `/admin/settings` | `AdminSettings.tsx` | Site settings management |
 
-### 3. About Us Page
-- **Company Story**: Founded as a freelance agency on Upwork in 2017, transitioned to Bangladesh operations in 2023. Team of engineers — like Telegram's lean philosophy, keeping costs affordable. AI-driven approach offering more value at lower cost
-- **Mission & Vision**: Written compellingly (will be generated during implementation)
-- **Management Team**: 3 cards with photo placeholder, name, designation, short bio, LinkedIn & WhatsApp icons
-  1. Nazmul Alom Sakib — Founder & CEO, 10+ years product management & development
-  2. Al Shahriar — Co-Founder & COO, 8+ years DevOps experience
-  3. Sheikh Md. Junaeid — Co-Founder & CMO, 10+ years marketing experience
-- **Why engineersTech**: The name story — all team members are software engineers
-
-### 4. Blog Page
-- Blog listing with cards (thumbnail, title, excerpt, date, category)
-- Individual blog post page with full content rendering
-- All content managed dynamically from admin
-
-### 5. Contact Page
-- **Contact Form**: Name, email, phone, subject, message — with validation
-- **Company Info**: Address, phone numbers, email displayed alongside
-- **Embedded Map** placeholder for Dhaka location
-
-### 6. Footer (Global)
-- Logo + slogan "drivenByEngineers"
-- Quick links to all pages
-- Contact info: info@engineerstechbd.com, +880-18737-22228, 01689877007, Dhaka, Bangladesh
-- Registration: TRAD/DNCC/025495/2025
-- e-CAB member badge with link to https://e-cab.net/
-- Social media links
-
-### 7. Floating Widgets (Global)
-- **WhatsApp Popup**: Always-visible floating WhatsApp button linking to chat
-- **AI Chat Widget**: Floating chat bubble that opens a chatbot answering questions about engineersTech services (using static FAQ-style responses for frontend, can be connected to AI API later)
+### Global Components
+- **Navbar**: Logo, nav links (Home, Services, Products, About, Contact), mobile hamburger menu
+- **Footer**: Logo, quick links, services, contact info, e-CAB badge, social links. Collapsible accordion on mobile.
+- **FloatingWidgets**: WhatsApp button, AI chat widget placeholder
 
 ---
 
-## Admin Panel (Separate Route /admin)
-Full CRUD dashboard to manage all dynamic content:
-- **Dashboard**: Overview stats
-- **Hero Section**: Edit headline, subtext, CTA links
-- **Services**: Add/edit/delete service categories
-- **SaaS Products**: Add/edit/delete products with name, description, link, icon
-- **Team Members**: Manage management team profiles
-- **Client Logos**: Upload/manage client logos
-- **Testimonials**: Add/edit/delete testimonials with photo, name, role, quote
-- **Blog Posts**: Full blog management with rich text
-- **Company Info**: Edit about us content, contact details, registration info
-- **Contact Submissions**: View form submissions
+## Key Architecture Decisions
+
+### Authentication Flow
+1. User visits `/admin/login` → signs in with email/password
+2. `useAuth` context checks `user_roles` table for admin role
+3. `AdminLayout` redirects to login if no user, shows "Access Denied" if not admin
+4. Navigation uses `<Navigate>` component (not imperative `navigate()`)
+5. `onAuthStateChange` uses `setTimeout` for `checkAdmin` to avoid blocking
+
+### Design System
+- All colors use CSS custom properties (HSL) defined in `index.css`
+- Tailwind semantic tokens: `--background`, `--foreground`, `--primary`, `--accent`, etc.
+- Glass card effect: `glass-card` utility class
+- Gradient backgrounds: `gradient-bg` and `gradient-text` utility classes
+
+### Layout
+- Standardized hero heights with uniform responsive padding
+- Section spacing: `py-12` mobile, `py-20` desktop
+- Home hero capped at 70-80% viewport height
+- Admin layout: Fixed sidebar (desktop), overlay sidebar (mobile), fixed header
 
 ---
 
-## PHP Laravel Backend (as .txt files with documentation)
-Since Lovable can't run PHP, all backend files will be saved as `.txt` with a comprehensive `BACKEND_README.md` that maps every file, explains the API structure, and provides setup instructions so Claude AI can instantly understand and work with them:
+## Current Data (Seeded)
+- **4 Services**: Enterprise & SaaS, Web & Mobile, UI/UX & Motion, Consultation
+- **7 Products**: GlowUp, Restaurant POS, Tour Booking, HRM, Hotel Booking, CRM, Staff Tracking
+- **3 Testimonials**: Jeremy Nathan, Freda Lin, Mynul Hasan
+- **3 Team Members**: Nazmul Alom Sakib (CEO), Al Shahriar (COO), Sheikh Md. Junaeid (CMO)
+- **6 Blog Posts**: All published with full content
+- **6 Client Logos**: Placeholder names (need actual logo URLs)
 
-- **Database Migrations**: All MySQL tables (services, products, team_members, client_logos, testimonials, blog_posts, blog_categories, contact_submissions, site_settings, users)
-- **Models**: Eloquent models for each table
-- **Controllers**: API controllers with full CRUD for each resource
-- **Routes**: API route definitions (api.php)
-- **API Documentation**: Complete endpoint reference in the README
-- **Auth**: Laravel Sanctum setup for admin authentication
-- **File Upload**: Image upload handling for logos, team photos, testimonials
+---
+
+## What's Still Static (Not Yet Connected to DB)
+The public-facing pages currently render from **hardcoded static arrays** in each component file. To make them fully dynamic:
+- `ServicesOverview.tsx`, `Services.tsx` → fetch from `services` table
+- `Products.tsx` → fetch from `products` table
+- `About.tsx` (team section) → fetch from `team_members` table
+- `Testimonials.tsx` → fetch from `testimonials` table
+- `ClientLogos.tsx` → fetch from `client_logos` table
+- `Blog.tsx`, `BlogPost.tsx` → fetch from `blog_posts` table
+
+The admin panel CRUD pages already read/write to the database.
+
+---
+
+## Company Info (Hardcoded in Footer/Contact)
+- **Email**: info@engineerstechbd.com
+- **Phone**: +880-18737-22228, 01689877007
+- **Address**: Dhaka, Bangladesh
+- **Registration**: TRAD/DNCC/025495/2025
+- **e-CAB Member**: https://e-cab.net/
 
 ---
 
 ## Mobile-First Design
-- Every section designed mobile-first with responsive breakpoints
-- Hamburger navigation menu on mobile
-- Touch-friendly cards, buttons, and forms
-- Optimized image loading
+- Every section responsive with Tailwind breakpoints
+- Hamburger navigation on mobile
+- Touch-friendly cards, buttons, forms
+- Footer uses collapsible accordions on mobile
 - Floating widgets properly positioned on all screen sizes
-
+- Admin sidebar collapses to overlay on mobile
