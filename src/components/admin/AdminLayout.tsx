@@ -110,8 +110,8 @@ const AdminLayout = () => {
       )}
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        <header className="h-14 border-b border-border/50 flex items-center px-4 gap-3 sticky top-0 bg-background/80 backdrop-blur-sm z-40">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        <header className="h-14 border-b border-border/50 flex items-center px-4 gap-3 shrink-0 bg-background/80 backdrop-blur-sm z-40">
           <button
             className="lg:hidden p-2 rounded-lg hover:bg-secondary"
             onClick={() => setSidebarOpen(true)}
@@ -122,7 +122,7 @@ const AdminLayout = () => {
             {navItems.find((n) => isActive(n.to, n.exact))?.label || "Admin"}
           </h1>
         </header>
-        <main className="flex-1 p-4 sm:p-6">
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
           <Outlet />
         </main>
       </div>
