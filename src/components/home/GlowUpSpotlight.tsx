@@ -17,7 +17,7 @@ const GlowUpSpotlight = () => {
               <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-4">
                 <Sparkles size={12} /> Featured SaaS Product
               </span>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              <h2 className="font-bold mb-4">
                 <span className="gradient-text">GlowUp</span> — Bangladesh's Beauty & Wellness Platform
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
