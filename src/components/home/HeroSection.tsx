@@ -84,7 +84,7 @@ const HeroParticles = () => {
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <section className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center pt-24 sm:pt-28 pb-12 sm:pb-16 overflow-hidden">
       {/* Particle Network Background */}
       <HeroParticles />
       <div className="absolute inset-0 grid-pattern opacity-20" />
