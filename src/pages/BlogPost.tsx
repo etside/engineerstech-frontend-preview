@@ -71,8 +71,9 @@ const BlogPost = () => {
   const category = post?.category ?? staticPost!.category;
   const image = post?.cover_image ?? staticPost!.image;
   const date = post ? formatDate(post.published_at) : staticPost!.date;
+  const isHtml = post?.content ? /<[a-z][\s\S]*>/i.test(post.content) : false;
   const contentParagraphs: string[] = post
-    ? post.content.split(/\n\n|\n/).filter(Boolean)
+    ? (isHtml ? [] : post.content.split(/\n\n|\n/).filter(Boolean))
     : staticPost!.content;
 
   return (
@@ -146,19 +147,29 @@ const BlogPost = () => {
             </div>
 
             {/* Body */}
-            <div className="space-y-6">
-              {contentParagraphs.map((paragraph, i) => (
-                <motion.p
-                  key={i}
-                  className="text-muted-foreground leading-relaxed"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + i * 0.05 }}
-                >
-                  {paragraph}
-                </motion.p>
-              ))}
-            </div>
+            {isHtml ? (
+              <motion.div
+                className="blog-content text-muted-foreground leading-relaxed"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                dangerouslySetInnerHTML={{ __html: post!.content }}
+              />
+            ) : (
+              <div className="space-y-6">
+                {contentParagraphs.map((paragraph, i) => (
+                  <motion.p
+                    key={i}
+                    className="text-muted-foreground leading-relaxed"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + i * 0.05 }}
+                  >
+                    {paragraph}
+                  </motion.p>
+                ))}
+              </div>
+            )}
 
             {/* CTA */}
             <div className="mt-14 glass-card rounded-xl p-6 sm:p-8 text-center">

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X, Eye, EyeOff } from "lucide-react";
 import ImageUpload from "@/components/admin/ImageUpload";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 interface BlogPost {
   id: number;
@@ -118,7 +119,7 @@ const AdminBlog = () => {
             <ImageUpload label="Cover Image" folder="blog" value={form.cover_image} onChange={(url) => setForm({ ...form, cover_image: url })} />
           </div>
           <div className="space-y-1"><Label>Excerpt</Label><Textarea value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} rows={2} /></div>
-          <div className="space-y-1"><Label>Content</Label><Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={10} /></div>
+          <div className="space-y-1"><Label>Content</Label><RichTextEditor value={form.content} onChange={(html) => setForm({ ...form, content: html })} /></div>
           <div className="flex items-center gap-2"><input type="checkbox" checked={form.is_published} onChange={(e) => setForm({ ...form, is_published: e.target.checked })} /><Label>Published</Label></div>
           <Button onClick={handleSave} className="gradient-bg border-0">{editing ? "Update" : "Create"}</Button>
         </div>
