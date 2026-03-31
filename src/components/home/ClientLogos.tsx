@@ -43,7 +43,7 @@ const ClientLogos = () => {
               key={i}
               src={logo.src}
               alt={logo.alt}
-              className="h-10 md:h-12 opacity-80 object-contain"
+              className="h-14 md:h-16 opacity-80 object-contain"
             />
           ))}
         </div>
