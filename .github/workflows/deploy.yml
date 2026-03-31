@@ -40,4 +40,10 @@ jobs:
             **/.git*
             **/.git*/**
             **/node_modules/**
+            storage
             storage/**
+            index.php
+            .well-known
+            .well-known/**
+            cgi-bin
+            cgi-bin/**
