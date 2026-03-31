@@ -132,7 +132,7 @@ const AdminBlog = () => {
               <p className="text-xs text-muted-foreground">{item.category} · {item.slug}</p>
             </div>
             <div className="flex items-center gap-2">
-              {item.is_published ? <Eye size={14} className="text-green-400" /> : <EyeOff size={14} className="text-muted-foreground" />}
+              {item.is_published ? <a href={`/blog/${item.slug}`} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg hover:bg-secondary" title="View post"><Eye size={14} className="text-green-400" /></a> : <EyeOff size={14} className="text-muted-foreground" title="Unpublished" />}
               <button onClick={() => openEdit(item)} className="p-1.5 rounded-lg hover:bg-secondary"><Pencil size={14} className="text-muted-foreground" /></button>
               <button onClick={() => handleDelete(item.id)} className="p-1.5 rounded-lg hover:bg-destructive/10"><Trash2 size={14} className="text-destructive" /></button>
             </div>
