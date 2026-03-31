@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import glowupBanner from "@/assets/glowup-banner-for-web.png";
 
-const GlowUpSpotlight = () => {
+const glowupSpotlight = () => {
   return (
     <section>
       <div className="container">
@@ -18,7 +19,7 @@ const GlowUpSpotlight = () => {
                 <Sparkles size={12} /> Featured SaaS Product
               </span>
               <h2 className="font-bold mb-4">
-                <span className="gradient-text">GlowUp</span> — Bangladesh's Beauty & Wellness Platform
+                <span style={{ background: "linear-gradient(135deg, hsl(270, 70%, 55%) 0%, hsl(330, 80%, 60%) 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>glowup</span> — Bangladesh's Beauty & Wellness Platform
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
                 Book salon services, stylists & henna artists. Buy products, event tickets & courses.
@@ -26,12 +27,12 @@ const GlowUpSpotlight = () => {
               </p>
               <a href="https://glowupbd.app/" target="_blank" rel="noopener noreferrer">
                 <Button className="gradient-bg border-0 text-primary-foreground hover:opacity-90">
-                  Visit GlowUp <ArrowUpRight size={16} />
+                  Visit glowup <ArrowUpRight size={16} />
                 </Button>
               </a>
             </div>
-            <div className="w-full md:w-80 h-48 md:h-64 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-              <span className="text-6xl font-bold gradient-text">G</span>
+            <div className="w-full md:w-80 shrink-0">
+              <img src={glowupBanner} alt="glowup" className="w-full h-auto rounded-xl object-cover" />
             </div>
           </div>
         </motion.div>
@@ -40,4 +41,4 @@ const GlowUpSpotlight = () => {
   );
 };
 
-export default GlowUpSpotlight;
+export default glowupSpotlight;

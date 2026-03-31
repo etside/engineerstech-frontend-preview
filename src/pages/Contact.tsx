@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Send, Clock, MessageSquare } from "lucide-react";
+import { Mail, Phone, Send, MessageSquare } from "lucide-react";
 import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 
 const contactSchema = z.object({
@@ -38,20 +37,11 @@ const contactInfo = [
     value: "01689877007",
     href: "tel:+8801689877007",
   },
-  {
-    icon: MapPin,
-    label: "Visit Us",
-    value: "Dhaka, Bangladesh",
-  },
-  {
-    icon: Clock,
-    label: "Working Hours",
-    value: "Sun – Thu, 10 AM – 7 PM (BST)",
-  },
 ];
 
 const Contact = () => {
-  const { toast } = useToast();
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [form, setForm] = useState<ContactForm>({
     name: "",
     email: "",
@@ -88,13 +78,10 @@ const Contact = () => {
         subject: result.data.subject,
         message: result.data.message,
       });
-      toast({
-        title: "Message sent!",
-        description: "We'll get back to you within 24 hours.",
-      });
+      setSubmitted(true);
       setForm({ name: "", email: "", phone: "", subject: "", message: "" });
     } catch (err: any) {
-      toast({ title: "Error", description: "Failed to send. Please try again.", variant: "destructive" });
+      setSubmitError("Failed to send. Please try again.");
     } finally {
       setSending(false);
     }
@@ -103,10 +90,10 @@ const Contact = () => {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative min-h-[400px] flex items-center pb-8 overflow-hidden">
+      <section className="relative pt-16 md:pt-20 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-40" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="container relative z-10 text-center">
+        <div className="container relative z-10 text-center pt-10 sm:pt-12 pb-0">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-medium mb-6">
               <MessageSquare size={14} /> Get In Touch
@@ -210,6 +197,8 @@ const Contact = () => {
                       </span>
                     )}
                   </Button>
+                  {submitted && <p className="text-sm text-green-500 text-center">Message sent! We'll get back to you within 24 hours.</p>}
+                  {submitError && <p className="text-sm text-destructive text-center">{submitError}</p>}
                 </form>
               </div>
             </motion.div>
@@ -247,16 +236,6 @@ const Contact = () => {
                 </motion.div>
               ))}
 
-              {/* Map Placeholder */}
-              <div className="glass-card rounded-xl overflow-hidden h-48 relative">
-                <div className="absolute inset-0 grid-pattern opacity-60" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin size={28} className="text-primary mx-auto mb-2" />
-                    <p className="text-xs text-muted-foreground">Dhaka, Bangladesh</p>
-                  </div>
-                </div>
-              </div>
             </motion.div>
           </div>
         </div>

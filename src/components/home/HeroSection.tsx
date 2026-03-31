@@ -84,14 +84,14 @@ const HeroParticles = () => {
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center pb-8 sm:pb-12 overflow-hidden">
+    <section className="relative pt-16 md:pt-20 overflow-hidden">
       {/* Particle Network Background */}
       <HeroParticles />
       <div className="absolute inset-0 grid-pattern opacity-20" />
       <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/10 blur-[120px]" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-accent/10 blur-[120px]" />
 
-      <div className="container relative z-10">
+      <div className="container relative z-10 pt-10 sm:pt-12 pb-0">
         <div className="max-w-3xl">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -108,7 +108,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-xl sm:text-3xl lg:text-[48px] font-bold leading-tight mb-4 sm:mb-6"
+            className="font-bold leading-tight mb-4 sm:mb-6"
           >
             We Build Software{" "}
             <span className="gradient-text">That Drives</span>{" "}

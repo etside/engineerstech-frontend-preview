@@ -42,12 +42,12 @@ const About = () => {
   return (
     <>
       {/* Hero */}
-      <section className="relative min-h-[400px] flex items-center pb-8 overflow-hidden">
+      <section className="relative pt-16 md:pt-20 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-[0.08]" />
         <div className="absolute top-1/3 -left-40 w-96 h-96 rounded-full bg-primary/10 blur-[120px]" />
         <div className="absolute bottom-0 -right-40 w-96 h-96 rounded-full bg-accent/10 blur-[120px]" />
 
-        <div className="container relative z-10">
+        <div className="container relative z-10 pt-10 sm:pt-12 pb-0">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}

@@ -1,15 +1,59 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Calendar, Clock, ArrowLeft, Share2 } from "lucide-react";
+import { Calendar, ArrowLeft, Share2 } from "lucide-react";
+import etIcon from "@/assets/eticon.svg";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { blogPosts } from "@/data/blogPosts";
+import { api } from "@/lib/api";
+import { blogPosts as staticPosts } from "@/data/blogPosts";
+
+interface ApiBlogPost {
+  id: number;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  cover_image: string | null;
+  published_at: string;
+  author_id: number | null;
+}
+
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
 
 const BlogPost = () => {
-  const { id } = useParams<{ id: string }>();
-  const post = blogPosts.find((p) => p.id === id);
+  const { id: slug } = useParams<{ id: string }>();
+  const [post, setPost] = useState<ApiBlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [useStatic, setUseStatic] = useState(false);
 
-  if (!post) {
+  useEffect(() => {
+    if (!slug) return;
+    api.blogPost(slug)
+      .then((data: ApiBlogPost) => {
+        if (data) setPost(data);
+        else setUseStatic(true);
+      })
+      .catch(() => setUseStatic(true))
+      .finally(() => setLoading(false));
+  }, [slug]);
+
+  // Static fallback
+  const staticPost = staticPosts.find((p) => p.id === slug);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!post && (!useStatic || !staticPost)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -22,17 +66,28 @@ const BlogPost = () => {
     );
   }
 
-  const related = blogPosts.filter((p) => p.id !== post.id).slice(0, 3);
+  // Resolve display data
+  const title = post?.title ?? staticPost!.title;
+  const category = post?.category ?? staticPost!.category;
+  const image = post?.cover_image ?? staticPost!.image;
+  const date = post ? formatDate(post.published_at) : staticPost!.date;
+  const contentParagraphs: string[] = post
+    ? post.content.split(/\n\n|\n/).filter(Boolean)
+    : staticPost!.content;
 
   return (
     <div className="min-h-screen">
       {/* Hero Image */}
       <section className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">
-        <img
-          src={post.image.replace("w=600&h=340", "w=1400&h=500")}
-          alt={post.title}
-          className="w-full h-full object-cover"
-        />
+        {image ? (
+          <img
+            src={typeof image === "string" && image.includes("unsplash") ? image.replace("w=600&h=340", "w=1400&h=500") : image}
+            alt={title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-secondary" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
           <div className="container">
@@ -57,24 +112,21 @@ const BlogPost = () => {
             {/* Meta */}
             <div className="flex flex-wrap items-center gap-3 mb-5 -mt-6 relative z-10">
               <Badge variant="secondary" className="text-[10px] backdrop-blur-md bg-primary/10 text-primary border-primary/20">
-                {post.category}
+                {category}
               </Badge>
               <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Calendar size={12} /> {post.date}
-              </span>
-              <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                <Clock size={12} /> {post.readTime}
+                <Calendar size={12} /> {date}
               </span>
             </div>
 
             {/* Title */}
-            <h1 className="mb-8 leading-tight">{post.title}</h1>
+            <h1 className="mb-8 leading-tight">{title}</h1>
 
             {/* Author bar */}
             <div className="flex items-center justify-between glass-card rounded-xl p-4 mb-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-primary-foreground text-sm font-bold">
-                  eT
+                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                  <img src={etIcon} alt="engineersTech" className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-sm font-medium">engineersTech Team</p>
@@ -95,7 +147,7 @@ const BlogPost = () => {
 
             {/* Body */}
             <div className="space-y-6">
-              {post.content.map((paragraph, i) => (
+              {contentParagraphs.map((paragraph, i) => (
                 <motion.p
                   key={i}
                   className="text-muted-foreground leading-relaxed"
@@ -119,37 +171,6 @@ const BlogPost = () => {
               </Link>
             </div>
           </motion.div>
-
-          {/* Related Posts */}
-          {related.length > 0 && (
-            <div className="mt-16">
-              <h3 className="mb-6">More from the blog</h3>
-              <div className="grid sm:grid-cols-3 gap-5">
-                {related.map((r) => (
-                  <Link
-                    key={r.id}
-                    to={`/blog/${r.id}`}
-                    className="group glass-card rounded-xl overflow-hidden hover:border-primary/30 transition-colors"
-                  >
-                    <div className="h-28 overflow-hidden">
-                      <img
-                        src={r.image}
-                        alt={r.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="p-4">
-                      <p className="text-xs text-muted-foreground mb-1">{r.date}</p>
-                      <h4 className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                        {r.title}
-                      </h4>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </section>
     </div>

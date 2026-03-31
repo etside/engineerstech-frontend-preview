@@ -1,4 +1,4 @@
-const BASE = 'http://localhost/engineerstech/public/api';
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost/engineerstech/public/api';
 
 function getToken() {
   return localStorage.getItem('et_token');
@@ -118,6 +118,7 @@ export const adminApi = {
   // Submissions
   getSubmissions:     () => adminRequest('/submissions'),
   markSubmissionRead: (id: number|string) => adminRequest(`/submissions/${id}`, { method: 'PATCH' }),
+  deleteSubmission:   (id: number|string) => adminRequest(`/submissions/${id}`, { method: 'DELETE' }),
 
   // Settings
   getSettings:    () => adminRequest('/settings'),
