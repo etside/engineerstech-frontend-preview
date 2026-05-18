@@ -41,9 +41,9 @@ jobs:
             --exclude='.htaccess' \
             -e "ssh -i ~/.ssh/deploy_key" \
             ./dist/ \
-            root@103.132.96.251:/www/wwwroot/engineerstech/engineerstechbd.com/
+            root@103.132.96.251:/var/www/engineerstech/engineerstechbd.com/
 
       - name: Fix ownership on VPS
         run: |
           ssh -i ~/.ssh/deploy_key root@103.132.96.251 \
-            "chown -R www-data:www-data /www/wwwroot/engineerstech/engineerstechbd.com/"
+            "chown -R www-data:www-data /var/www/engineerstech/engineerstechbd.com/"
