@@ -85,9 +85,10 @@ const Footer = () => {
             <a href="tel:+8801314443311" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
               <Phone size={14} /> +88 01314 44 33 11
             </a>
-            <div className="flex items-start gap-2 text-sm text-muted-foreground">
-              <MapPin size={14} className="mt-0.5 shrink-0" /> Dhaka, Bangladesh
-            </div>
+            <a href="https://maps.app.goo.gl/jcPQ1mB5N83hoGrm7" target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+              <MapPin size={14} className="mt-0.5 shrink-0" />
+              <span>Rashi International, Level 6, Flat B6<br />Plot 9, Road 4, Sector 16/A<br />Uttara, Dhaka 1230</span>
+            </a>
           </FooterAccordion>
         </div>
 

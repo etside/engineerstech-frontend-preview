@@ -31,6 +31,12 @@ const contactInfo = [
     value: "+88 01314 44 33 11",
     href: "tel:+8801314443311",
   },
+  {
+    icon: MapPin,
+    label: "Visit Us",
+    value: "Rashi International, Level 6, Flat B6\nPlot 9, Road 4, Sector 16/A\nUttara, Dhaka 1230",
+    href: "https://maps.app.goo.gl/jcPQ1mB5N83hoGrm7",
+  },
 ];
 
 const Contact = () => {
@@ -219,11 +225,11 @@ const Contact = () => {
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
                       {item.href ? (
-                        <a href={item.href} className="text-sm font-medium hover:text-primary transition-colors">
+                        <a href={item.href} target={item.href.startsWith("http") ? "_blank" : undefined} rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined} className="text-sm font-medium hover:text-primary transition-colors whitespace-pre-line">
                           {item.value}
                         </a>
                       ) : (
-                        <p className="text-sm font-medium">{item.value}</p>
+                        <p className="text-sm font-medium whitespace-pre-line">{item.value}</p>
                       )}
                     </div>
                   </div>
