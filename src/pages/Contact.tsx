@@ -28,14 +28,8 @@ const contactInfo = [
   {
     icon: Phone,
     label: "Call Us",
-    value: "+880-18737-22228",
-    href: "tel:+8801873722228",
-  },
-  {
-    icon: Phone,
-    label: "Alternative",
-    value: "01689877007",
-    href: "tel:+8801689877007",
+    value: "+88 01314 44 33 11",
+    href: "tel:+8801314443311",
   },
 ];
 

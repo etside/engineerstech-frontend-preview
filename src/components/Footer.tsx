@@ -82,11 +82,8 @@ const Footer = () => {
             <a href="mailto:info@engineerstechbd.com" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
               <Mail size={14} /> info@engineerstechbd.com
             </a>
-            <a href="tel:+8801873722228" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-              <Phone size={14} /> +880-18737-22228
-            </a>
-            <a href="tel:+8801689877007" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-              <Phone size={14} /> 01689877007
+            <a href="tel:+8801314443311" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Phone size={14} /> +88 01314 44 33 11
             </a>
             <div className="flex items-start gap-2 text-sm text-muted-foreground">
               <MapPin size={14} className="mt-0.5 shrink-0" /> Dhaka, Bangladesh
