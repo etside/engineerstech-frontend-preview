@@ -7,6 +7,7 @@ import IndustriesSection from "@/components/home/IndustriesSection";
 import ProductsSection from "@/components/home/ProductsSection";
 import AIExcellenceSection from "@/components/home/AIExcellenceSection";
 import DeliveryBanner from "@/components/home/DeliveryBanner";
+import CaseStudiesSection from "@/components/home/CaseStudiesSection";
 import StatsSection from "@/components/home/StatsSection";
 import GlowUpSpotlight from "@/components/home/GlowUpSpotlight";
 import Testimonials from "@/components/home/Testimonials";
@@ -24,6 +25,7 @@ const Index = () => {
       <ProductsSection />
       <AIExcellenceSection />
       <DeliveryBanner />
+      <CaseStudiesSection />
       <StatsSection />
       <GlowUpSpotlight />
       <Testimonials />
