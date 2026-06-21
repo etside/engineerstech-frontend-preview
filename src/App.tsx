@@ -27,6 +27,11 @@ import AdminNavigation from "./pages/admin/AdminNavigation";
 import AdminCaseStudies from "./pages/admin/AdminCaseStudies";
 import CaseStudies from "./pages/CaseStudies";
 import CaseStudyDetail from "./pages/CaseStudyDetail";
+import Team from "./pages/Team";
+import Career from "./pages/Career";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
+import DataProtectionPolicy from "./pages/DataProtectionPolicy";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +52,11 @@ const App = () => (
               <Route path="/blog/:id" element={<BlogPost />} />
               <Route path="/case-studies" element={<CaseStudies />} />
               <Route path="/case-studies/:slug" element={<CaseStudyDetail />} />
+              <Route path="/team" element={<Team />} />
+              <Route path="/career" element={<Career />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/data-protection-policy" element={<DataProtectionPolicy />} />
             </Route>
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
