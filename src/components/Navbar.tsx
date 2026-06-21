@@ -40,10 +40,11 @@ const Navbar = () => {
     <>
       <nav
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          "fixed left-0 right-0 z-50 transition-all duration-300",
           "bg-background/70 backdrop-blur-2xl",
           scrolled ? "border-b border-border/60 shadow-lg shadow-black/10" : "border-b border-border/30"
         )}
+        style={{ top: "var(--announcement-height, 0px)" }}
       >
         <div className="container flex items-center justify-between h-16 md:h-[72px]">
           {/* Logo */}
@@ -116,7 +117,7 @@ const Navbar = () => {
           )}
         >
           {/* Spacer for navbar height */}
-          <div className="h-16" />
+          <div className="h-16" style={{ marginTop: "var(--announcement-height, 0px)" }} />
 
           <div className="px-6 py-6">
             {/* Nav items */}

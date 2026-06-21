@@ -79,12 +79,13 @@ export const MegaMenuDesktop = ({ item, isActive }: MegaMenuDesktopProps) => {
       {/* Full-width dropdown panel */}
       <div
         className={cn(
-          "fixed left-0 right-0 top-[64px] md:top-[80px] z-40",
+          "fixed left-0 right-0 z-40",
           "transition-all duration-300 ease-out",
           open
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 -translate-y-2 pointer-events-none"
         )}
+        style={{ top: "calc(var(--announcement-height, 0px) + 72px)" }}
       >
         {/* Backdrop blur layer */}
         <div className="absolute inset-0 bg-background/90 backdrop-blur-2xl border-b border-border/50" />

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const faqResponses: Record<string, string> = {
@@ -33,6 +33,18 @@ const FloatingWidgets = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-3">
+      {/* Schedule a Call */}
+      <a
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-full gradient-bg text-primary-foreground text-xs font-medium shadow-lg hover:opacity-90 transition-opacity animate-pulse-glow"
+        aria-label="Schedule a Call"
+      >
+        <Phone className="h-3.5 w-3.5" />
+        Schedule a Call
+      </a>
+
       {/* WhatsApp */}
       <a
         href="https://wa.me/8801873722228"

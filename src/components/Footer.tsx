@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, ChevronDown } from "lucide-react";
+import { Mail, Phone, MapPin, ChevronDown, ArrowUpRight } from "lucide-react";
 import { footerQuickLinks } from "@/data/navigation";
 import logoDark from "@/assets/logo-dark-bg.svg";
 import ecabLogo from "@/assets/ecab-logo.png";
@@ -46,14 +46,25 @@ const Footer = () => {
   return (
     <footer className="bg-card border-t border-border/50 pt-16 pb-8">
       <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-10 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-6 mb-12">
           {/* Brand */}
-          <div className="space-y-4 mb-4 md:mb-0">
+          <div className="space-y-4 lg:col-span-2">
             <img src={logoDark} alt="engineersTech" className="h-6 sm:h-8" />
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               High-performing software solutions driven by engineers. We build enterprise-grade products with affordable pricing.
             </p>
             <p className="text-xs font-semibold gradient-text">#drivenByEngineers</p>
+            <div className="flex items-center gap-3 pt-2">
+              <a
+                href="https://e-cab.net/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors border border-border/50 px-3 py-1.5 rounded-md"
+              >
+                <img src={ecabLogo} alt="e-CAB" className="h-5 brightness-0 invert" />
+                Member
+              </a>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -67,8 +78,16 @@ const Footer = () => {
 
           {/* Services */}
           <FooterAccordion title="Services">
-            {["Enterprise & SaaS Solutions", "Web & Mobile Apps", "UI/UX & Design", "Consultation & Strategy"].map((s) => (
-              <span key={s} className="text-sm text-muted-foreground">{s}</span>
+            {[
+              { label: "Staff Augmentation", to: "#" },
+              { label: "Managed Services", to: "#" },
+              { label: "MVP Development", to: "#" },
+              { label: "AI & ML Solutions", to: "#" },
+              { label: "Consulting", to: "#" },
+            ].map((s) => (
+              <Link key={s.label} to={s.to} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                {s.label}
+              </Link>
             ))}
           </FooterAccordion>
 
@@ -82,27 +101,22 @@ const Footer = () => {
             </a>
             <a href="https://maps.app.goo.gl/jcPQ1mB5N83hoGrm7" target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
               <MapPin size={14} className="mt-0.5 shrink-0" />
-              <span>Rashi International, Level 6, Flat B6<br />Plot 9, Road 4, Sector 16/A<br />Uttara, Dhaka 1230</span>
+              <span>Rashi International, Level 6<br />Uttara, Dhaka 1230</span>
             </a>
           </FooterAccordion>
         </div>
 
+        {/* Bottom bar */}
         <div className="border-t border-border/50 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-4 text-xs text-muted-foreground text-center">
             <span>© {new Date().getFullYear()} engineersTech. All rights reserved.</span>
             <span className="hidden sm:inline">·</span>
             <span>Reg: TRAD/DNCC/025495/2025</span>
           </div>
-          <div className="flex items-center gap-3">
-            <a
-              href="https://e-cab.net/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors border border-border/50 px-3 py-1.5 rounded-md"
-            >
-              <img src={ecabLogo} alt="e-CAB" className="h-5 brightness-0 invert" />
-              Member
-            </a>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
+            <Link to="/terms" className="hover:text-primary transition-colors">Terms</Link>
+            <Link to="/data-protection-policy" className="hover:text-primary transition-colors">Data Protection</Link>
           </div>
         </div>
       </div>

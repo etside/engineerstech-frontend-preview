@@ -245,6 +245,7 @@ const HeroSection = () => {
   return (
     <section
       className="relative pt-16 md:pt-20 overflow-hidden min-h-[600px] md:min-h-[650px] lg:min-h-[700px]"
+      style={{ paddingTop: "calc(var(--announcement-height, 0px) + 4rem)" }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
