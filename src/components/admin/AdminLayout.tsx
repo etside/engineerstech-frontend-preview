@@ -19,6 +19,7 @@ const navItems = [
   { to: "/admin/logos", icon: Image, label: "Client Logos" },
   { to: "/admin/submissions", icon: Mail, label: "Contact Submissions" },
   { to: "/admin/navigation", icon: Navigation, label: "Navigation" },
+  { to: "/admin/case-studies", icon: FileText, label: "Case Studies" },
   { to: "/admin/settings", icon: Settings, label: "Site Settings" },
 ];
 

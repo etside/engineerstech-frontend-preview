@@ -24,6 +24,9 @@ import AdminLogos from "./pages/admin/AdminLogos";
 import AdminSubmissions from "./pages/admin/AdminSubmissions";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminNavigation from "./pages/admin/AdminNavigation";
+import AdminCaseStudies from "./pages/admin/AdminCaseStudies";
+import CaseStudies from "./pages/CaseStudies";
+import CaseStudyDetail from "./pages/CaseStudyDetail";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +45,8 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogPost />} />
+              <Route path="/case-studies" element={<CaseStudies />} />
+              <Route path="/case-studies/:slug" element={<CaseStudyDetail />} />
             </Route>
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminLayout />}>
@@ -55,6 +60,7 @@ const App = () => (
               <Route path="submissions" element={<AdminSubmissions />} />
               <Route path="settings" element={<AdminSettings />} />
               <Route path="navigation" element={<AdminNavigation />} />
+              <Route path="case-studies" element={<AdminCaseStudies />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

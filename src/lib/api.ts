@@ -65,6 +65,8 @@ export const api = {
   testimonials: () => request('/testimonials'),
   logos:        () => request('/logos'),
   contact:      (data: Record<string, string>) => request('/contact', { method: 'POST', body: JSON.stringify(data) }),
+  caseStudies:  () => request('/case-studies'),
+  caseStudy:    (slug: string) => request(`/case-studies/${slug}`),
 };
 
 // ─── Admin ─────────────────────────────────────────────────────
@@ -119,6 +121,12 @@ export const adminApi = {
   getSubmissions:     () => adminRequest('/submissions'),
   markSubmissionRead: (id: number|string) => adminRequest(`/submissions/${id}`, { method: 'PATCH' }),
   deleteSubmission:   (id: number|string) => adminRequest(`/submissions/${id}`, { method: 'DELETE' }),
+
+  // Case Studies
+  getCaseStudies:    () => adminRequest('/case-studies'),
+  createCaseStudy:   (d: unknown) => adminRequest('/case-studies', { method: 'POST', body: body(d) }),
+  updateCaseStudy:   (id: number|string, d: unknown) => adminRequest(`/case-studies/${id}`, { method: 'PUT', body: body(d) }),
+  deleteCaseStudy:   (id: number|string) => adminRequest(`/case-studies/${id}`, { method: 'DELETE' }),
 
   // Settings
   getSettings:    () => adminRequest('/settings'),

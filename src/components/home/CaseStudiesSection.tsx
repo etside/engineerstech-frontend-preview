@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/hooks/useSettings";
+import { api } from "@/lib/api";
 
 interface CaseStudy {
   id: string;
@@ -79,10 +80,26 @@ const defaultCaseStudies: CaseStudy[] = [
 ];
 
 const CaseStudiesSection = () => {
-  const { getSetting } = useSettings();
-  const caseStudies = getSetting("case_studies", defaultCaseStudies);
-  const industries = ["All", ...new Set(caseStudies.map((c: CaseStudy) => c.industry))];
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>(defaultCaseStudies);
   const [activeFilter, setActiveFilter] = useState("All");
+
+  useEffect(() => {
+    api
+      .caseStudies()
+      .then((data: any[]) => {
+        if (data && data.length > 0) {
+          const parsed = data.map((s) => ({
+            ...s,
+            tags: typeof s.tags === "string" ? JSON.parse(s.tags) : s.tags || [],
+            metrics: typeof s.metrics === "string" ? JSON.parse(s.metrics) : s.metrics || [],
+          }));
+          setCaseStudies(parsed);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const industries = ["All", ...new Set(caseStudies.map((c) => c.industry))];
 
   const filtered =
     activeFilter === "All"
@@ -151,7 +168,7 @@ const CaseStudiesSection = () => {
                 transition={{ delay: i * 0.08, duration: 0.4 }}
               >
                 <Link
-                  to="#"
+                  to={item.slug ? `/case-studies/${item.slug}` : "#"}
                   className="group block glass-card rounded-2xl overflow-hidden border border-border/30 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 h-full"
                 >
                   {/* Top accent bar */}
@@ -229,7 +246,7 @@ const CaseStudiesSection = () => {
           transition={{ delay: 0.4, duration: 0.5 }}
           className="text-center mt-12"
         >
-          <Link to="#">
+          <Link to="/case-studies">
             <Button
               variant="outline"
               size="lg"
