@@ -78,11 +78,10 @@ const defaultCaseStudies: CaseStudy[] = [
   },
 ];
 
-const industries = ["All", ...new Set(caseStudies.map((c) => c.industry))];
-
 const CaseStudiesSection = () => {
   const { getSetting } = useSettings();
   const caseStudies = getSetting("case_studies", defaultCaseStudies);
+  const industries = ["All", ...new Set(caseStudies.map((c: CaseStudy) => c.industry))];
   const [activeFilter, setActiveFilter] = useState("All");
 
   const filtered =
