@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, ChevronDown } from "lucide-react";
+import { footerQuickLinks } from "@/data/navigation";
 import logoDark from "@/assets/logo-dark-bg.svg";
 import ecabLogo from "@/assets/ecab-logo.png";
 
@@ -57,13 +58,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <FooterAccordion title="Quick Links">
-            {[
-              { label: "Home", to: "/" },
-              { label: "Services", to: "/services" },
-              { label: "About Us", to: "/about" },
-              { label: "Blog", to: "/blog" },
-              { label: "Contact", to: "/contact" },
-            ].map((link) => (
+            {footerQuickLinks.map((link) => (
               <Link key={link.to} to={link.to} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 {link.label}
               </Link>
