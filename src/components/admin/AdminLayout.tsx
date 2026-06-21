@@ -2,7 +2,7 @@ import { Outlet, Link, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard, Layers, Package, FileText, Users, MessageSquare,
-  Image, Settings, Mail, LogOut, Menu, X, Star
+  Image, Settings, Mail, LogOut, Menu, X, Star, Navigation
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -18,6 +18,7 @@ const navItems = [
   { to: "/admin/testimonials", icon: Star, label: "Testimonials" },
   { to: "/admin/logos", icon: Image, label: "Client Logos" },
   { to: "/admin/submissions", icon: Mail, label: "Contact Submissions" },
+  { to: "/admin/navigation", icon: Navigation, label: "Navigation" },
   { to: "/admin/settings", icon: Settings, label: "Site Settings" },
 ];
 
