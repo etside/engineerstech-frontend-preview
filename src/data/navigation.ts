@@ -20,6 +20,15 @@ import {
   Cpu,
   Layers,
   BookOpen,
+  Briefcase,
+  FileText,
+  Handshake,
+  ShieldCheck,
+  Leaf,
+  Newspaper,
+  UserPlus,
+  FolderOpen,
+  TrendingUp,
   type LucideIcon,
 } from "lucide-react";
 
@@ -129,17 +138,28 @@ export const navigation: NavItem[] = [
     ],
   },
   {
-    label: "Company",
+    label: "Resources",
     megaMenu: [
       {
-        title: "About EngineersTech",
+        title: "Inside EngineersTech",
         items: [
           { label: "About Us", to: "/about", description: "Our story, mission & vision", icon: Building2 },
           { label: "Blog", to: "/blog", description: "Insights, tutorials & updates", icon: BookOpen },
-          { label: "Career", to: "#", description: "Join our growing team", icon: Users },
+          { label: "Case Studies", to: "#", description: "Real projects, real results", icon: FileText },
+          { label: "Career", to: "#", description: "Join our growing team", icon: Briefcase },
           { label: "Contact", to: "/contact", description: "Get in touch with us", icon: Code2 },
-          { label: "Portfolio", to: "#", description: "Our work & case studies", icon: Layers },
-          { label: "Team", to: "#", description: "Meet the people behind the code", icon: Users },
+          { label: "Our Resources", to: "#", description: "Whitepapers, guides & tools", icon: FolderOpen },
+          { label: "Investor Relations", to: "#", description: "Financials & growth reports", icon: TrendingUp },
+        ],
+      },
+      {
+        title: "Recognitions",
+        items: [
+          { label: "Partners", to: "#", description: "Technology & business partners", icon: Handshake },
+          { label: "Enterprise-Grade Security", to: "#", description: "ISO certified & compliant", icon: ShieldCheck },
+          { label: "Sustainability", to: "#", description: "Our commitment to the planet", icon: Leaf },
+          { label: "Media", to: "#", description: "Press releases & coverage", icon: Newspaper },
+          { label: "Join as Partner", to: "#", description: "Partner with EngineersTech", icon: UserPlus },
         ],
       },
     ],
