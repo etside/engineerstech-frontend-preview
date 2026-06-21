@@ -1,30 +1,13 @@
 import { motion } from "framer-motion";
+import { useSettings } from "@/hooks/useSettings";
 
-const techCategories = [
-  {
-    category: "Frontend",
-    items: ["React", "Next.js", "Vue.js", "Angular", "TypeScript", "Tailwind CSS"],
-  },
-  {
-    category: "Backend",
-    items: ["Node.js", "Python", "Laravel", "Java", ".NET", "Go"],
-  },
-  {
-    category: "Mobile",
-    items: ["React Native", "Flutter", "iOS", "Android", "Ionic"],
-  },
-  {
-    category: "Cloud & DevOps",
-    items: ["AWS", "Azure", "Docker", "Kubernetes", "CI/CD", "Terraform"],
-  },
-  {
-    category: "Database",
-    items: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "Firebase", "Supabase"],
-  },
-  {
-    category: "AI & Data",
-    items: ["OpenAI", "TensorFlow", "LangChain", "Python ML", "Power BI"],
-  },
+const defaultTechCategories = [
+  { category: "Frontend", items: ["React", "Next.js", "Vue.js", "Angular", "TypeScript", "Tailwind CSS"] },
+  { category: "Backend", items: ["Node.js", "Python", "Laravel", "Java", ".NET", "Go"] },
+  { category: "Mobile", items: ["React Native", "Flutter", "iOS", "Android", "Ionic"] },
+  { category: "Cloud & DevOps", items: ["AWS", "Azure", "Docker", "Kubernetes", "CI/CD", "Terraform"] },
+  { category: "Database", items: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "Firebase", "Supabase"] },
+  { category: "AI & Data", items: ["OpenAI", "TensorFlow", "LangChain", "Python ML", "Power BI"] },
 ];
 
 // Simple SVG logo component for each tech
@@ -80,6 +63,8 @@ const TechIcon = ({ name }: { name: string }) => {
 };
 
 const TechStackSection = () => {
+  const { getSetting } = useSettings();
+  const techCategories = getSetting("tech_stack", defaultTechCategories);
   return (
     <section className="py-20 lg:py-28 relative overflow-hidden">
       {/* Background */}

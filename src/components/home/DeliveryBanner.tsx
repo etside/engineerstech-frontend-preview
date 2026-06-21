@@ -1,13 +1,16 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import { Zap, ShieldCheck, Users, ArrowRight } from "lucide-react";
+import { useRef, useState, useEffect, useMemo } from "react";
+import { Zap, ShieldCheck, Users, ArrowRight, type LucideIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/hooks/useSettings";
 
-const stats = [
-  { icon: Zap, value: 2500, suffix: "+", label: "Projects Delivered" },
-  { icon: ShieldCheck, value: 100, suffix: "%", label: "IP Protection" },
-  { icon: Users, value: 1, suffix: "%", label: "Top Talent", prefix: "Top " },
+const iconMap: Record<string, LucideIcon> = { Zap, ShieldCheck, Users };
+
+const defaultStats = [
+  { value: 2500, suffix: "+", label: "Projects Delivered", icon: "Zap" },
+  { value: 100, suffix: "%", label: "IP Protection", icon: "ShieldCheck" },
+  { value: 1, suffix: "%", label: "Top Talent", icon: "Users", prefix: "Top " },
 ];
 
 const AnimatedCounter = ({
@@ -49,6 +52,17 @@ const AnimatedCounter = ({
 };
 
 const DeliveryBanner = () => {
+  const { getSetting } = useSettings();
+  const raw = getSetting("delivery_stats", defaultStats);
+
+  const stats = useMemo(() =>
+    raw.map((item: any) => ({
+      ...item,
+      Icon: iconMap[item.icon] || Zap,
+    })),
+    [raw]
+  );
+
   return (
     <section className="py-16 lg:py-20 relative overflow-hidden">
       {/* Gradient background */}
@@ -84,10 +98,10 @@ const DeliveryBanner = () => {
             {/* Right: Stats + CTA */}
             <div className="flex flex-col items-center gap-6">
               <div className="flex gap-8 sm:gap-12">
-                {stats.map((stat) => (
+                {stats.map((stat: any) => (
                   <div key={stat.label} className="text-center">
                     <div className="flex items-center justify-center gap-1.5 mb-1">
-                      <stat.icon className="h-4 w-4 text-primary" />
+                      <stat.Icon className="h-4 w-4 text-primary" />
                       <AnimatedCounter
                         target={stat.value}
                         suffix={stat.suffix}

@@ -1,44 +1,15 @@
 import { motion, useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import { BrainCircuit, Bug, Gauge, Rocket } from "lucide-react";
+import { useRef, useState, useEffect, useMemo } from "react";
+import { BrainCircuit, Bug, Gauge, Rocket, type LucideIcon } from "lucide-react";
+import { useSettings } from "@/hooks/useSettings";
 
-const metrics = [
-  {
-    icon: BrainCircuit,
-    value: 70,
-    suffix: "%",
-    label: "Faster Development",
-    subtitle: "Intelligent Coding",
-    description: "AI-powered code synthesis, auto-completion, and smart refactoring",
-    color: "#6366F1",
-  },
-  {
-    icon: Bug,
-    value: 99.9,
-    suffix: "%",
-    label: "Defect-Free Releases",
-    subtitle: "Bulletproof QA",
-    description: "Self-learning test suites, automated bug detection & fixes",
-    color: "#10B981",
-  },
-  {
-    icon: Gauge,
-    value: 40,
-    suffix: "%",
-    label: "Higher Efficiency",
-    subtitle: "Peak Performance",
-    description: "ML algorithms optimize resource allocation & sprint planning",
-    color: "#F59E0B",
-  },
-  {
-    icon: Rocket,
-    value: 90,
-    suffix: "%",
-    label: "Faster Deployments",
-    subtitle: "Zero-Downtime DevOps",
-    description: "AI-driven CI/CD pipelines with predictive rollback",
-    color: "#EF4444",
-  },
+const iconMap: Record<string, LucideIcon> = { BrainCircuit, Bug, Gauge, Rocket };
+
+const defaultMetrics = [
+  { value: 70, suffix: "%", label: "Faster Development", subtitle: "Intelligent Coding", description: "AI-powered code synthesis, auto-completion, and smart refactoring", icon: "BrainCircuit", color: "#6366F1" },
+  { value: 99.9, suffix: "%", label: "Defect-Free Releases", subtitle: "Bulletproof QA", description: "Self-learning test suites, automated bug detection & fixes", icon: "Bug", color: "#10B981" },
+  { value: 40, suffix: "%", label: "Higher Efficiency", subtitle: "Peak Performance", description: "ML algorithms optimize resource allocation & sprint planning", icon: "Gauge", color: "#F59E0B" },
+  { value: 90, suffix: "%", label: "Faster Deployments", subtitle: "Zero-Downtime DevOps", description: "AI-driven CI/CD pipelines with predictive rollback", icon: "Rocket", color: "#EF4444" },
 ];
 
 const AnimatedCounter = ({ target, suffix }: { target: number; suffix: string }) => {
@@ -76,13 +47,22 @@ const AnimatedCounter = ({ target, suffix }: { target: number; suffix: string })
 };
 
 const AIExcellenceSection = () => {
+  const { getSetting } = useSettings();
+  const raw = getSetting("ai_metrics", defaultMetrics);
+
+  const metrics = useMemo(() =>
+    raw.map((item: any) => ({
+      ...item,
+      Icon: iconMap[item.icon] || BrainCircuit,
+    })),
+    [raw]
+  );
+
   return (
     <section className="py-20 lg:py-28 relative overflow-hidden">
-      {/* Background effects */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full bg-primary/5 blur-[180px]" />
 
       <div className="container relative z-10">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -117,7 +97,7 @@ const AIExcellenceSection = () => {
                 className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-5 transition-transform duration-300 group-hover:scale-110"
                 style={{ backgroundColor: `${item.color}15` }}
               >
-                <item.icon className="h-6 w-6" style={{ color: item.color }} />
+                <item.Icon className="h-6 w-6" style={{ color: item.color }} />
               </div>
 
               {/* Counter */}

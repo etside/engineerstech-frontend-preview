@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/hooks/useSettings";
 
 interface CaseStudy {
   id: string;
@@ -11,11 +12,10 @@ interface CaseStudy {
   tags: string[];
   summary: string;
   metrics: { label: string; value: string }[];
-  image: string;
   color: string;
 }
 
-const caseStudies: CaseStudy[] = [
+const defaultCaseStudies: CaseStudy[] = [
   {
     id: "fintech-wallet",
     title: "Digital Wallet Platform for a Leading Bank",
@@ -81,12 +81,14 @@ const caseStudies: CaseStudy[] = [
 const industries = ["All", ...new Set(caseStudies.map((c) => c.industry))];
 
 const CaseStudiesSection = () => {
+  const { getSetting } = useSettings();
+  const caseStudies = getSetting("case_studies", defaultCaseStudies);
   const [activeFilter, setActiveFilter] = useState("All");
 
   const filtered =
     activeFilter === "All"
       ? caseStudies
-      : caseStudies.filter((c) => c.industry === activeFilter);
+      : caseStudies.filter((c: CaseStudy) => c.industry === activeFilter);
 
   return (
     <section className="py-20 lg:py-28 relative overflow-hidden">

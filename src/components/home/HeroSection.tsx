@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, ChevronLeft, ChevronRight, Users, Globe, Shield, Award, Rocket, Zap, Building2 } from "lucide-react";
+import { ArrowRight, Sparkles, ChevronLeft, ChevronRight, Users, Globe, Shield, Award, Rocket, Zap, Building2, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useSettings } from "@/hooks/useSettings";
+
+const iconMap: Record<string, LucideIcon> = {
+  Sparkles, Users, Globe, Shield, Award, Rocket, Zap, Building2,
+};
 
 /* ───── Particle Background ───── */
 
@@ -91,51 +96,27 @@ interface HeroSlide {
   stats: { value: string; label: string; icon: typeof Sparkles }[];
 }
 
-const slides: HeroSlide[] = [
+const defaultSlidesData = [
   {
-    badge: "AI-Driven Software Engineering",
-    badgeIcon: Sparkles,
-    headline: "Build Software",
-    highlight: "That Drives Your Business Forward",
-    subtext:
-      "Enterprise-grade software solutions from a lean team of skilled engineers. More value, affordable cost, powered by AI.",
-    ctaPrimary: { label: "Get Started", to: "/contact" },
-    ctaSecondary: { label: "Our Services", to: "/services" },
-    stats: [
-      { value: "50+", label: "Tech Professionals", icon: Users },
-      { value: "10+", label: "Countries Served", icon: Globe },
-      { value: "150+", label: "Projects Delivered", icon: Award },
-    ],
+    badge: "AI-Driven Software Engineering", badgeIcon: "Sparkles",
+    headline: "Build Software", highlight: "That Drives Your Business Forward",
+    subtext: "Enterprise-grade software solutions from a lean team of skilled engineers. More value, affordable cost, powered by AI.",
+    ctaPrimary: { label: "Get Started", to: "/contact" }, ctaSecondary: { label: "Our Services", to: "/services" },
+    stats: [{ value: "50+", label: "Tech Professionals", icon: "Users" }, { value: "10+", label: "Countries Served", icon: "Globe" }, { value: "150+", label: "Projects Delivered", icon: "Award" }],
   },
   {
-    badge: "Scale Your Dev Team",
-    badgeIcon: Users,
-    headline: "Top 1% Bangladeshi Talents",
-    highlight: "Ready in 4 Weeks",
-    subtext:
-      "Vetted AI & cloud experts, ISO-certified teams. Pay-per-talent flexibility with 90%+ employee retention rate.",
-    ctaPrimary: { label: "Hire Your Team Now", to: "#" },
-    ctaSecondary: { label: "Learn More", to: "#" },
-    stats: [
-      { value: "8+", label: "Years Experience", icon: Building2 },
-      { value: "90%+", label: "Team Retention", icon: Shield },
-      { value: "ISO", label: "Certified Teams", icon: Award },
-    ],
+    badge: "Scale Your Dev Team", badgeIcon: "Users",
+    headline: "Top 1% Bangladeshi Talents", highlight: "Ready in 4 Weeks",
+    subtext: "Vetted AI & cloud experts, ISO-certified teams. Pay-per-talent flexibility with 90%+ employee retention rate.",
+    ctaPrimary: { label: "Hire Your Team Now", to: "#" }, ctaSecondary: { label: "Learn More", to: "#" },
+    stats: [{ value: "8+", label: "Years Experience", icon: "Building2" }, { value: "90%+", label: "Team Retention", icon: "Shield" }, { value: "ISO", label: "Certified Teams", icon: "Award" }],
   },
   {
-    badge: "Digital Products",
-    badgeIcon: Rocket,
-    headline: "Launch Your Product",
-    highlight: "in 90 Days, Compliant",
-    subtext:
-      "From MVP to market-ready — fintech, e-commerce, enterprise SaaS. Full-cycle development with 100% IP protection.",
-    ctaPrimary: { label: "Book a Demo", to: "#" },
-    ctaSecondary: { label: "View Products", to: "/products" },
-    stats: [
-      { value: "90", label: "Days to Launch", icon: Zap },
-      { value: "100%", label: "IP Protection", icon: Shield },
-      { value: "10X", label: "Faster Delivery", icon: Rocket },
-    ],
+    badge: "Digital Products", badgeIcon: "Rocket",
+    headline: "Launch Your Product", highlight: "in 90 Days, Compliant",
+    subtext: "From MVP to market-ready — fintech, e-commerce, enterprise SaaS. Full-cycle development with 100% IP protection.",
+    ctaPrimary: { label: "Book a Demo", to: "#" }, ctaSecondary: { label: "View Products", to: "/products" },
+    stats: [{ value: "90", label: "Days to Launch", icon: "Zap" }, { value: "100%", label: "IP Protection", icon: "Shield" }, { value: "10X", label: "Faster Delivery", icon: "Rocket" }],
   },
 ];
 
@@ -186,8 +167,29 @@ const AnimatedValue = ({ value }: { value: string }) => {
 /* ───── Hero Section ───── */
 
 const HeroSection = () => {
+  const { getSetting } = useSettings();
+  const rawSlides = getSetting("hero_slides", defaultSlidesData);
+
+  const slides: HeroSlide[] = useMemo(() =>
+    rawSlides.map((s: any) => ({
+      badge: s.badge,
+      badgeIcon: iconMap[s.badgeIcon] || Sparkles,
+      headline: s.headline,
+      highlight: s.highlight,
+      subtext: s.subtext,
+      ctaPrimary: s.ctaPrimary,
+      ctaSecondary: s.ctaSecondary,
+      stats: s.stats.map((st: any) => ({
+        value: st.value,
+        label: st.label,
+        icon: iconMap[st.icon] || Sparkles,
+      })),
+    })),
+    [rawSlides]
+  );
+
   const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(0); // -1 left, 1 right
+  const [direction, setDirection] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
   const isPaused = useRef(false);
 
