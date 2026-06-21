@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import IconPicker from "@/components/admin/IconPicker";
 
 // ─── Setting definitions ───
 
@@ -47,7 +48,7 @@ const SETTINGS_CONFIG = [
     itemLabel: "Slide",
     itemFields: [
       { path: "badge", label: "Badge Text", type: "text" },
-      { path: "badgeIcon", label: "Badge Icon", type: "text" },
+      { path: "badgeIcon", label: "Badge Icon", type: "icon" },
       { path: "headline", label: "Headline", type: "text" },
       { path: "highlight", label: "Highlight", type: "text" },
       { path: "subtext", label: "Subtext", type: "textarea" },
@@ -62,7 +63,7 @@ const SETTINGS_CONFIG = [
       itemFields: [
         { path: "value", label: "Value", type: "text" },
         { path: "label", label: "Label", type: "text" },
-        { path: "icon", label: "Icon", type: "text" },
+        { path: "icon", label: "Icon", type: "icon" },
       ],
     },
   },
@@ -74,7 +75,7 @@ const SETTINGS_CONFIG = [
     itemFields: [
       { path: "name", label: "Name", type: "text" },
       { path: "description", label: "Description", type: "text" },
-      { path: "icon", label: "Icon", type: "text" },
+      { path: "icon", label: "Icon", type: "icon" },
       { path: "color", label: "Color", type: "color" },
       { path: "link", label: "Link", type: "text" },
     ],
@@ -86,7 +87,7 @@ const SETTINGS_CONFIG = [
     itemLabel: "Step",
     itemFields: [
       { path: "step", label: "Step #", type: "text" },
-      { path: "icon", label: "Icon", type: "text" },
+      { path: "icon", label: "Icon", type: "icon" },
       { path: "title", label: "Title", type: "text" },
       { path: "subtitle", label: "Subtitle", type: "text" },
     ],
@@ -121,7 +122,7 @@ const SETTINGS_CONFIG = [
       { path: "label", label: "Label", type: "text" },
       { path: "subtitle", label: "Subtitle", type: "text" },
       { path: "description", label: "Description", type: "text" },
-      { path: "icon", label: "Icon", type: "text" },
+      { path: "icon", label: "Icon", type: "icon" },
       { path: "color", label: "Color", type: "color" },
     ],
   },
@@ -134,7 +135,7 @@ const SETTINGS_CONFIG = [
       { path: "value", label: "Value", type: "number" },
       { path: "suffix", label: "Suffix", type: "text" },
       { path: "label", label: "Label", type: "text" },
-      { path: "icon", label: "Icon", type: "text" },
+      { path: "icon", label: "Icon", type: "icon" },
       { path: "prefix", label: "Prefix", type: "text" },
     ],
   },
@@ -215,6 +216,15 @@ const FieldInput = ({
   value: any;
   onChange: (val: any) => void;
 }) => {
+  if (field.type === "icon") {
+    return (
+      <IconPicker
+        value={value || ""}
+        onChange={(val) => onChange(val)}
+      />
+    );
+  }
+
   if (field.type === "toggle") {
     return (
       <div className="flex items-center gap-3">

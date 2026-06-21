@@ -11,6 +11,7 @@ import {
   FolderOpen, Folder, Link2, ArrowUp, ArrowDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import IconPicker from "@/components/admin/IconPicker";
 
 interface NavSubItem {
   label: string;
@@ -70,12 +71,10 @@ const SubItemEditor = ({
         />
       </div>
       <div className="space-y-1">
-        <Label className="text-[10px]">Icon (Lucide name)</Label>
-        <Input
+        <Label className="text-[10px]">Icon</Label>
+        <IconPicker
           value={item.icon || ""}
-          onChange={(e) => onChange({ ...item, icon: e.target.value })}
-          className="h-8 text-xs"
-          placeholder="e.g. Users, Rocket"
+          onChange={(iconName) => onChange({ ...item, icon: iconName })}
         />
       </div>
     </div>
