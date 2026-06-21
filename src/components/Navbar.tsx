@@ -1,13 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { navigation } from "@/data/navigation";
+import { defaultNavigation, parseNavigation, type NavItem } from "@/data/navigation";
+import { useSettings } from "@/hooks/useSettings";
 import { MegaMenuDesktop, MegaMenuMobile } from "@/components/MegaMenu";
 import { cn } from "@/lib/utils";
 import logoDark from "@/assets/logo-dark-bg.svg";
 
 const Navbar = () => {
+  const { getSetting } = useSettings();
+  const navData = getSetting("navigation", null);
+  const navigation: NavItem[] = useMemo(
+    () => (navData ? parseNavigation(navData) : defaultNavigation),
+    [navData]
+  );
+
   const [isOpen, setIsOpen] = useState(false);
   const [openMobileMenu, setOpenMobileMenu] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);

@@ -1,8 +1,18 @@
 import { useState, useEffect } from "react";
 import { X, Zap, ArrowRight } from "lucide-react";
+import { useSettings } from "@/hooks/useSettings";
 
 const AnnouncementBar = () => {
-  const [visible, setVisible] = useState(true);
+  const { getSetting } = useSettings();
+  const config = getSetting("announcement", {
+    visible: true,
+    highlight: "Limited Offer:",
+    text: "Free 60-min strategy session for new clients",
+    ctaLabel: "Book now",
+    ctaLink: "#",
+  });
+
+  const [visible, setVisible] = useState(config.visible ?? true);
 
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -19,12 +29,12 @@ const AnnouncementBar = () => {
         <div className="flex items-center gap-2 text-xs sm:text-sm">
           <Zap className="h-3.5 w-3.5 shrink-0" />
           <span>
-            <strong>Limited Offer:</strong> Free 60-min strategy session for new clients{" "}
+            <strong>{config.highlight}</strong> {config.text}{" "}
             <a
-              href="#"
+              href={config.ctaLink}
               className="underline underline-offset-2 inline-flex items-center gap-1 hover:opacity-80 transition-opacity"
             >
-              Book now <ArrowRight className="h-3 w-3 hidden sm:inline" />
+              {config.ctaLabel} <ArrowRight className="h-3 w-3 hidden sm:inline" />
             </a>
           </span>
         </div>

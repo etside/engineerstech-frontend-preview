@@ -1,35 +1,9 @@
 import {
-  Code2,
-  Users,
-  Rocket,
-  Lightbulb,
-  Sparkles,
-  BrainCircuit,
-  Smartphone,
-  Cloud,
-  Bug,
-  Link2,
-  Wallet,
-  HeartPulse,
-  ShoppingCart,
-  GraduationCap,
-  Radio,
-  Building2,
-  Store,
-  Zap,
-  Cpu,
-  Layers,
-  BookOpen,
-  Briefcase,
-  FileText,
-  Handshake,
-  ShieldCheck,
-  Leaf,
-  Newspaper,
-  UserPlus,
-  FolderOpen,
-  TrendingUp,
-  type LucideIcon,
+  Code2, Users, Rocket, Lightbulb, Sparkles, BrainCircuit, Smartphone,
+  Cloud, Bug, Link2, Wallet, HeartPulse, ShoppingCart, GraduationCap,
+  Radio, Building2, Store, Zap, Cpu, Layers, BookOpen, Briefcase,
+  FileText, Handshake, ShieldCheck, Leaf, Newspaper, UserPlus,
+  FolderOpen, TrendingUp, Search, Gauge, type LucideIcon,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -50,47 +24,56 @@ export interface NavItem {
   megaMenu?: NavMegaGroup[];
 }
 
-export const navigation: NavItem[] = [
-  {
-    label: "Home",
-    to: "/",
-  },
+// Icon map for dynamic resolution
+const iconMap: Record<string, LucideIcon> = {
+  Code2, Users, Rocket, Lightbulb, Sparkles, BrainCircuit, Smartphone,
+  Cloud, Bug, Link2, Wallet, HeartPulse, ShoppingCart, GraduationCap,
+  Radio, Building2, Store, Zap, Cpu, Layers, BookOpen, Briefcase,
+  FileText, Handshake, ShieldCheck, Leaf, Newspaper, UserPlus,
+  FolderOpen, TrendingUp, Search, Gauge,
+};
+
+export function resolveIcon(name?: string): LucideIcon | undefined {
+  if (!name) return undefined;
+  return iconMap[name];
+}
+
+// Convert settings nav data (with icon names) to NavItem[] (with icon components)
+export function parseNavigation(data: any[]): NavItem[] {
+  if (!Array.isArray(data)) return defaultNavigation;
+  return data.map((item) => {
+    if (item.megaMenu) {
+      return {
+        label: item.label,
+        megaMenu: item.megaMenu.map((group: any) => ({
+          title: group.title,
+          items: group.items.map((sub: any) => ({
+            label: sub.label,
+            to: sub.to,
+            description: sub.description,
+            icon: resolveIcon(sub.icon),
+          })),
+        })),
+      };
+    }
+    return { label: item.label, to: item.to };
+  });
+}
+
+// Default fallback navigation (hardcoded)
+export const defaultNavigation: NavItem[] = [
+  { label: "Home", to: "/" },
   {
     label: "Services",
     megaMenu: [
       {
         title: "Collaboration Models",
         items: [
-          {
-            label: "Staff Augmentation",
-            to: "#",
-            description: "Scale your team with vetted developers in 4 weeks",
-            icon: Users,
-          },
-          {
-            label: "Managed Services",
-            to: "#",
-            description: "End-to-end app & infrastructure support",
-            icon: Layers,
-          },
-          {
-            label: "MVP Development",
-            to: "#",
-            description: "Market-ready MVPs in 8–12 weeks",
-            icon: Rocket,
-          },
-          {
-            label: "Technology Consulting",
-            to: "#",
-            description: "Strategic audits to cut tech waste by 30%",
-            icon: Lightbulb,
-          },
-          {
-            label: "Digital Transformation",
-            to: "#",
-            description: "AI-driven automation for 50% efficiency gains",
-            icon: Sparkles,
-          },
+          { label: "Staff Augmentation", to: "#", description: "Scale your team with vetted developers in 4 weeks", icon: Users },
+          { label: "Managed Services", to: "#", description: "End-to-end app & infrastructure support", icon: Layers },
+          { label: "MVP Development", to: "#", description: "Market-ready MVPs in 8–12 weeks", icon: Rocket },
+          { label: "Technology Consulting", to: "#", description: "Strategic audits to cut tech waste by 30%", icon: Lightbulb },
+          { label: "Digital Transformation", to: "#", description: "AI-driven automation for 50% efficiency gains", icon: Sparkles },
         ],
       },
       {
@@ -107,35 +90,31 @@ export const navigation: NavItem[] = [
   },
   {
     label: "Industries",
-    megaMenu: [
-      {
-        title: "Industries We Serve",
-        items: [
-          { label: "Fintech", to: "#", description: "Payments, lending, digital banking", icon: Wallet },
-          { label: "Healthcare", to: "#", description: "Telemedicine, health records, compliance", icon: HeartPulse },
-          { label: "E-Commerce", to: "#", description: "Custom stores, marketplace solutions", icon: ShoppingCart },
-          { label: "Education", to: "#", description: "LMS, edtech platforms, assessments", icon: GraduationCap },
-          { label: "Telecom", to: "#", description: "Enterprise-grade telecom solutions", icon: Radio },
-          { label: "Real Estate", to: "#", description: "Property management, CRM systems", icon: Building2 },
-          { label: "Retail", to: "#", description: "Inventory, omnichannel, POS systems", icon: Store },
-          { label: "Startups", to: "#", description: "MVPs, product-market fit, scaling", icon: Zap },
-        ],
-      },
-    ],
+    megaMenu: [{
+      title: "Industries We Serve",
+      items: [
+        { label: "Fintech", to: "#", description: "Payments, lending, digital banking", icon: Wallet },
+        { label: "Healthcare", to: "#", description: "Telemedicine, health records, compliance", icon: HeartPulse },
+        { label: "E-Commerce", to: "#", description: "Custom stores, marketplace solutions", icon: ShoppingCart },
+        { label: "Education", to: "#", description: "LMS, edtech platforms, assessments", icon: GraduationCap },
+        { label: "Telecom", to: "#", description: "Enterprise-grade telecom solutions", icon: Radio },
+        { label: "Real Estate", to: "#", description: "Property management, CRM systems", icon: Building2 },
+        { label: "Retail", to: "#", description: "Inventory, omnichannel, POS systems", icon: Store },
+        { label: "Startups", to: "#", description: "MVPs, product-market fit, scaling", icon: Zap },
+      ],
+    }],
   },
   {
     label: "Products",
-    megaMenu: [
-      {
-        title: "Our Products",
-        items: [
-          { label: "GlowUp", to: "#", description: "Digital transformation platform", icon: Sparkles },
-          { label: "ERP Solutions", to: "#", description: "Enterprise resource planning", icon: Cpu },
-          { label: "LMS Platform", to: "#", description: "Learning management system", icon: BookOpen },
-          { label: "AI Tools", to: "#", description: "Custom AI/ML powered solutions", icon: BrainCircuit },
-        ],
-      },
-    ],
+    megaMenu: [{
+      title: "Our Products",
+      items: [
+        { label: "GlowUp", to: "#", description: "Digital transformation platform", icon: Sparkles },
+        { label: "ERP Solutions", to: "#", description: "Enterprise resource planning", icon: Cpu },
+        { label: "LMS Platform", to: "#", description: "Learning management system", icon: BookOpen },
+        { label: "AI Tools", to: "#", description: "Custom AI/ML powered solutions", icon: BrainCircuit },
+      ],
+    }],
   },
   {
     label: "Resources",
@@ -164,10 +143,7 @@ export const navigation: NavItem[] = [
       },
     ],
   },
-  {
-    label: "Contact",
-    to: "/contact",
-  },
+  { label: "Contact", to: "/contact" },
 ];
 
 export const footerQuickLinks = [

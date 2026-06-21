@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, ChevronDown, ArrowUpRight } from "lucide-react";
-import { footerQuickLinks } from "@/data/navigation";
+import { Mail, Phone, MapPin, ChevronDown } from "lucide-react";
+import { useSettings } from "@/hooks/useSettings";
 import logoDark from "@/assets/logo-dark-bg.svg";
 import ecabLogo from "@/assets/ecab-logo.png";
 
@@ -16,11 +16,9 @@ const FooterAccordion = ({
 
   return (
     <div>
-      {/* Desktop: always visible */}
       <h4 className="hidden md:block text-sm font-semibold mb-4">{title}</h4>
       <div className="hidden md:flex flex-col gap-2.5">{children}</div>
 
-      {/* Mobile: collapsible */}
       <button
         className="md:hidden flex items-center justify-between w-full py-3 border-b border-border/30"
         onClick={() => setOpen(!open)}
@@ -43,17 +41,45 @@ const FooterAccordion = ({
 };
 
 const Footer = () => {
+  const { getSetting } = useSettings();
+
+  const company = getSetting("company_info", {
+    name: "engineersTech",
+    tagline: "#drivenByEngineers",
+    description: "High-performing software solutions driven by engineers. We build enterprise-grade products with affordable pricing.",
+    email: "info@engineerstechbd.com",
+    phone: "+88 01314 44 33 11",
+    address: "Rashi International, Level 6, Flat B6, Plot 9, Road 4, Sector 16/A, Uttara, Dhaka 1230",
+    registration: "TRAD/DNCC/025495/2025",
+  });
+
+  const quickLinks = getSetting("footer_quick_links", [
+    { label: "About Us", to: "/about" },
+    { label: "Services", to: "/services" },
+    { label: "Products", to: "/products" },
+    { label: "Blog", to: "/blog" },
+    { label: "Contact", to: "/contact" },
+  ]);
+
+  const services = getSetting("footer_services", [
+    { label: "Staff Augmentation", to: "#" },
+    { label: "Managed Services", to: "#" },
+    { label: "MVP Development", to: "#" },
+    { label: "AI & ML Solutions", to: "#" },
+    { label: "Consulting", to: "#" },
+  ]);
+
   return (
     <footer className="bg-card border-t border-border/50 pt-16 pb-8">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-6 mb-12">
           {/* Brand */}
           <div className="space-y-4 lg:col-span-2">
-            <img src={logoDark} alt="engineersTech" className="h-6 sm:h-8" />
+            <img src={logoDark} alt={company.name} className="h-6 sm:h-8" />
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              High-performing software solutions driven by engineers. We build enterprise-grade products with affordable pricing.
+              {company.description}
             </p>
-            <p className="text-xs font-semibold gradient-text">#drivenByEngineers</p>
+            <p className="text-xs font-semibold gradient-text">{company.tagline}</p>
             <div className="flex items-center gap-3 pt-2">
               <a
                 href="https://e-cab.net/"
@@ -69,7 +95,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <FooterAccordion title="Quick Links">
-            {footerQuickLinks.map((link) => (
+            {quickLinks.map((link: any) => (
               <Link key={link.to} to={link.to} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 {link.label}
               </Link>
@@ -78,13 +104,7 @@ const Footer = () => {
 
           {/* Services */}
           <FooterAccordion title="Services">
-            {[
-              { label: "Staff Augmentation", to: "#" },
-              { label: "Managed Services", to: "#" },
-              { label: "MVP Development", to: "#" },
-              { label: "AI & ML Solutions", to: "#" },
-              { label: "Consulting", to: "#" },
-            ].map((s) => (
+            {services.map((s: any) => (
               <Link key={s.label} to={s.to} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 {s.label}
               </Link>
@@ -93,25 +113,24 @@ const Footer = () => {
 
           {/* Contact */}
           <FooterAccordion title="Contact">
-            <a href="mailto:info@engineerstechbd.com" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-              <Mail size={14} /> info@engineerstechbd.com
+            <a href={`mailto:${company.email}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Mail size={14} /> {company.email}
             </a>
-            <a href="tel:+8801314443311" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-              <Phone size={14} /> +88 01314 44 33 11
+            <a href={`tel:${company.phone}`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Phone size={14} /> {company.phone}
             </a>
             <a href="https://maps.app.goo.gl/jcPQ1mB5N83hoGrm7" target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
               <MapPin size={14} className="mt-0.5 shrink-0" />
-              <span>Rashi International, Level 6<br />Uttara, Dhaka 1230</span>
+              <span>{company.address}</span>
             </a>
           </FooterAccordion>
         </div>
 
-        {/* Bottom bar */}
         <div className="border-t border-border/50 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-4 text-xs text-muted-foreground text-center">
-            <span>© {new Date().getFullYear()} engineersTech. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} {company.name}. All rights reserved.</span>
             <span className="hidden sm:inline">·</span>
-            <span>Reg: TRAD/DNCC/025495/2025</span>
+            <span>Reg: {company.registration}</span>
           </div>
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
