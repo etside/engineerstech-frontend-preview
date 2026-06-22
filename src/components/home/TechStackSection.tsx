@@ -1,17 +1,112 @@
 import { motion } from "framer-motion";
 import { useSettings } from "@/hooks/useSettings";
 
+const DEVICON = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons";
+
 const defaultTechCategories = [
-  { category: "Frontend", items: ["React", "Next.js", "Vue.js", "Angular", "TypeScript", "Tailwind CSS"] },
-  { category: "Backend", items: ["Node.js", "Python", "Laravel", "Java", ".NET", "Go"] },
-  { category: "Mobile", items: ["React Native", "Flutter", "iOS", "Android", "Ionic"] },
-  { category: "Cloud & DevOps", items: ["AWS", "Azure", "Docker", "Kubernetes", "CI/CD", "Terraform"] },
-  { category: "Database", items: ["PostgreSQL", "MySQL", "MongoDB", "Redis", "Firebase", "Supabase"] },
-  { category: "AI & Data", items: ["OpenAI", "TensorFlow", "LangChain", "Python ML", "Power BI"] },
+  {
+    category: "Web Development",
+    items: [
+      { name: "HTML5", logo: `${DEVICON}/html5/html5-original.svg` },
+      { name: "CSS3", logo: `${DEVICON}/css3/css3-original.svg` },
+      { name: "JavaScript (ES6+)", logo: `${DEVICON}/javascript/javascript-original.svg` },
+      { name: "React.js", logo: `${DEVICON}/react/react-original.svg` },
+      { name: "Next.js", logo: `${DEVICON}/nextjs/nextjs-original.svg` },
+      { name: "Vue.js", logo: `${DEVICON}/vuejs/vuejs-original.svg` },
+      { name: "PHP (Laravel)", logo: `${DEVICON}/laravel/laravel-original.svg` },
+      { name: "Node.js", logo: `${DEVICON}/nodejs/nodejs-original.svg` },
+      { name: "MySQL", logo: `${DEVICON}/mysql/mysql-original.svg` },
+      { name: "PostgreSQL", logo: `${DEVICON}/postgresql/postgresql-original.svg` },
+      { name: "MongoDB", logo: `${DEVICON}/mongodb/mongodb-original.svg` },
+      { name: "REST API" },
+      { name: "WordPress", logo: `${DEVICON}/wordpress/wordpress-original.svg` },
+    ],
+  },
+  {
+    category: "Mobile App Development",
+    items: [
+      { name: "Flutter", logo: `${DEVICON}/flutter/flutter-original.svg` },
+      { name: "Native Android (Kotlin)", logo: `${DEVICON}/kotlin/kotlin-original.svg` },
+      { name: "Native iOS (Swift)", logo: `${DEVICON}/swift/swift-original.svg` },
+      { name: "Mobile UI/UX Design" },
+      { name: "Firebase", logo: `${DEVICON}/firebase/firebase-plain.svg` },
+      { name: "Push Notifications" },
+      { name: "Payment Integration" },
+    ],
+  },
+  {
+    category: "AI & Automation",
+    items: [
+      { name: "Python", logo: `${DEVICON}/python/python-original.svg` },
+      { name: "OpenAI API" },
+      { name: "OCR (Tesseract)" },
+      { name: "AWS Textract", logo: `${DEVICON}/amazonwebservices/amazonwebservices-original-wordmark.svg` },
+      { name: "Chatbot Development" },
+      { name: "Data Analytics & BI Tools" },
+    ],
+  },
+  {
+    category: "Business Software (CRM / ERP)",
+    items: [
+      { name: "Database Design" },
+      { name: "Custom CRM Development" },
+      { name: "Accounting Logic" },
+      { name: "Reporting Dashboards" },
+      { name: "User Role & Permission Systems" },
+    ],
+  },
+  {
+    category: "Digital Marketing Technology",
+    items: [
+      { name: "SEO Tools" },
+      { name: "Google Analytics" },
+      { name: "Google Ads API" },
+      { name: "Email Marketing Systems" },
+      { name: "Marketing Automation" },
+      { name: "Social Media API Integration" },
+    ],
+  },
+  {
+    category: "Cloud & DevOps",
+    items: [
+      { name: "AWS", logo: `${DEVICON}/amazonwebservices/amazonwebservices-original-wordmark.svg` },
+      { name: "Microsoft Azure", logo: `${DEVICON}/azure/azure-original.svg` },
+      { name: "Google Cloud", logo: `${DEVICON}/googlecloud/googlecloud-original.svg` },
+      { name: "Linux Server Administration", logo: `${DEVICON}/linux/linux-original.svg` },
+      { name: "Docker", logo: `${DEVICON}/docker/docker-original.svg` },
+      { name: "CI/CD Pipelines" },
+      { name: "Cloud Security" },
+      { name: "Backup & Disaster Recovery" },
+    ],
+  },
+  {
+    category: "UI/UX Design",
+    items: [
+      { name: "Figma", logo: `${DEVICON}/figma/figma-original.svg` },
+      { name: "Adobe XD", logo: `${DEVICON}/xd/xd-original.svg` },
+      { name: "UX Research" },
+      { name: "Wireframing & Prototyping" },
+      { name: "Responsive Design" },
+    ],
+  },
 ];
 
-// Simple SVG logo component for each tech
-const TechIcon = ({ name }: { name: string }) => {
+// Logos sit on a white chip so brand marks stay visible regardless of icon fill color on the dark theme
+const TechIcon = ({ name, logo }: { name: string; logo?: string }) => {
+  if (logo) {
+    return (
+      <div className="w-6 h-6 rounded-md bg-white flex items-center justify-center shrink-0 p-1">
+        <img
+          loading="lazy"
+          decoding="async"
+          src={logo}
+          alt={name}
+          className="w-full h-full object-contain"
+          onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = "none"; }}
+        />
+      </div>
+    );
+  }
   const colors: Record<string, string> = {
     React: "#61DAFB",
     "Next.js": "#FFFFFF",
@@ -51,7 +146,7 @@ const TechIcon = ({ name }: { name: string }) => {
 
   return (
     <div
-      className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0"
+      className="w-6 h-6 rounded-md flex items-center justify-center text-[9px] font-bold shrink-0"
       style={{
         backgroundColor: `${colors[name] || "#6366F1"}15`,
         color: colors[name] || "#6366F1",
@@ -66,7 +161,7 @@ const TechStackSection = () => {
   const { getSetting } = useSettings();
   const techCategories = getSetting("tech_stack", defaultTechCategories);
   return (
-    <section className="py-20 lg:py-28 relative overflow-hidden">
+    <section className="py-16 lg:py-20 relative overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent" />
 
@@ -77,45 +172,49 @@ const TechStackSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-14"
+          className="text-center mb-8"
         >
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-xs font-medium text-primary mb-4">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-xs font-medium text-primary mb-3">
             Tech Stack
           </span>
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3">
             Yes! We Cover <span className="gradient-text">Your Tech Stack</span>
           </h2>
-          <p className="text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
+          <p className="text-sm text-muted-foreground max-w-xl mx-auto">
             Our team has expertise across the full modern technology ecosystem — frontend, backend, mobile, cloud, and AI.
           </p>
         </motion.div>
 
         {/* Tech Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {techCategories.map((cat, catIndex) => (
             <motion.div
               key={cat.category}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: catIndex * 0.08, duration: 0.4 }}
-              className="glass-card rounded-2xl p-5 border border-border/30 hover:border-primary/20 transition-all duration-300"
+              transition={{ delay: catIndex * 0.06, duration: 0.4 }}
+              className="glass-card rounded-xl p-3.5 border border-border/30 hover:border-primary/20 transition-all duration-300"
             >
-              <h3 className="text-sm font-semibold text-primary mb-4">
+              <h3 className="text-xs font-semibold text-primary mb-2.5">
                 {cat.category}
               </h3>
-              <div className="flex flex-wrap gap-2">
-                {cat.items.map((tech) => (
-                  <div
-                    key={tech}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/[0.03] border border-border/20 hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 cursor-default"
-                  >
-                    <TechIcon name={tech} />
-                    <span className="text-xs font-medium text-foreground/80">
-                      {tech}
-                    </span>
-                  </div>
-                ))}
+              <div className="flex flex-wrap gap-1.5">
+                {cat.items.map((tech: string | { name: string; logo?: string }) => {
+                  const name = typeof tech === "string" ? tech : tech.name;
+                  const logo = typeof tech === "string" ? undefined : tech.logo;
+                  return (
+                    <div
+                      key={name}
+                      className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-white/[0.03] border border-border/20 hover:border-primary/30 hover:bg-primary/5 transition-all duration-200 cursor-default"
+                    >
+                      <TechIcon name={name} logo={logo} />
+                      <span className="text-[11px] font-medium text-foreground/80">
+                        {name}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </motion.div>
           ))}

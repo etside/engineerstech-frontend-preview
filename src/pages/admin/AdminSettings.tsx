@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Save, Plus, Trash2, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import IconPicker from "@/components/admin/IconPicker";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 // ─── Setting definitions ───
 
@@ -108,7 +109,10 @@ const SETTINGS_CONFIG = [
     arrayFields: {
       key: "items",
       label: "Technologies",
-      itemFields: [{ path: "_value", label: "Tech", type: "text" }],
+      itemFields: [
+        { path: "name", label: "Tech Name", type: "text" },
+        { path: "logo", label: "Logo", type: "image" },
+      ],
     },
   },
   {
@@ -221,6 +225,17 @@ const FieldInput = ({
       <IconPicker
         value={value || ""}
         onChange={(val) => onChange(val)}
+      />
+    );
+  }
+
+  if (field.type === "image") {
+    return (
+      <ImageUpload
+        label=""
+        folder="tech-logos"
+        value={value || ""}
+        onChange={(url) => onChange(url)}
       />
     );
   }
@@ -461,13 +476,22 @@ const NestedArrayEditor = ({
           ) : (
             <div className="flex-1 flex gap-2">
               {config.itemFields.map((field) => (
-                <Input
-                  key={field.path}
-                  value={getNestedValue(item, field.path) || ""}
-                  onChange={(e) => updateItem(index, setNestedValue(item, field.path, e.target.value))}
-                  placeholder={field.label}
-                  className="flex-1 h-8 text-xs"
-                />
+                <div key={field.path} className="flex-1 space-y-1">
+                  {field.type !== "image" && field.type !== "icon" ? (
+                    <Input
+                      value={getNestedValue(item, field.path) || ""}
+                      onChange={(e) => updateItem(index, setNestedValue(item, field.path, e.target.value))}
+                      placeholder={field.label}
+                      className="h-8 text-xs"
+                    />
+                  ) : (
+                    <FieldInput
+                      field={field}
+                      value={getNestedValue(item, field.path)}
+                      onChange={(val) => updateItem(index, setNestedValue(item, field.path, val))}
+                    />
+                  )}
+                </div>
               ))}
             </div>
           )}

@@ -119,10 +119,19 @@ const ProductDetail = () => {
                   </Button>
                 </a>
               )}
-              <Link to="/contact">
-                <Button variant="outline" className="px-6">Request Demo</Button>
-              </Link>
+              {product.show_demo_request !== false && (
+                <Link to="/contact">
+                  <Button variant="outline" className="px-6">Request Demo</Button>
+                </Link>
+              )}
             </div>
+
+            {product.demo_credentials && (
+              <div className="mt-6 rounded-xl border border-primary/20 bg-primary/5 p-4">
+                <p className="text-xs font-semibold text-primary mb-2 uppercase tracking-wide">Demo Access</p>
+                <p className="text-sm text-foreground/80 whitespace-pre-line">{product.demo_credentials}</p>
+              </div>
+            )}
           </motion.div>
         </div>
 

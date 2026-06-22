@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { MessageCircle, X, Send, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSettings } from "@/hooks/useSettings";
 
 const faqResponses: Record<string, string> = {
   services: "We offer Enterprise & SaaS Solutions (CRM, HRM, ERP), Web & Mobile Apps (Android & iOS), UI/UX & Design, and Consultation & Strategy.",
@@ -12,6 +13,10 @@ const faqResponses: Record<string, string> = {
 };
 
 const FloatingWidgets = () => {
+  const { getSetting } = useSettings();
+  const whatsapp = getSetting("company_info", { whatsapp: "8801873722228" }).whatsapp || "8801873722228";
+  const whatsappDigits = whatsapp.replace(/\D/g, "");
+
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<{ from: "user" | "bot"; text: string }[]>([
     { from: "bot", text: "Hi! 👋 I'm the engineersTech assistant. Ask me about our services, pricing, team, or GlowUp!" },
@@ -46,7 +51,7 @@ const FloatingWidgets = () => {
 
       {/* WhatsApp */}
       <a
-        href="https://wa.me/8801873722228"
+        href={`https://wa.me/${whatsappDigits}`}
         target="_blank"
         rel="noopener noreferrer"
         className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center shadow-lg hover:scale-110 transition-transform"

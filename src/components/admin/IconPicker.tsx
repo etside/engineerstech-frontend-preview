@@ -1,107 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import {
-  Code2, Users, Rocket, Lightbulb, Sparkles, BrainCircuit, Smartphone,
-  Cloud, Bug, Link2, Wallet, HeartPulse, ShoppingCart, GraduationCap,
-  Radio, Building2, Store, Zap, Cpu, Layers, BookOpen, Briefcase,
-  FileText, Handshake, ShieldCheck, Leaf, Newspaper, UserPlus,
-  FolderOpen, TrendingUp, Search, Gauge, Globe, Award, Shield,
-  Monitor, Palette, LineChart, Settings, Mail, Star, Image,
-  MessageSquare, Phone, MapPin, Calendar, Clock, Check, X,
-  ChevronDown, ChevronRight, Plus, Trash2, Save, Eye, EyeOff,
-  Lock, Unlock, Home, Menu, ArrowRight, ArrowLeft, ArrowUp,
-  ExternalLink, Download, Upload, Edit, Copy, Trash,
-  Bell, Heart, Flag, Bookmark, Tag, Hash, AtSign,
-  DollarSign, Percent, CreditCard, ShoppingCart as Cart,
-  Truck, Package, Box, Warehouse, Factory, Wrench,
-  Database, Server, HardDrive, Wifi, Bluetooth, Signal,
-  BarChart, PieChart, Activity, TrendingDown, Minus,
-  Layout, Grid, List, Columns, Rows, Sidebar,
-  type LucideIcon,
-} from "lucide-react";
+import { createPortal } from "react-dom";
+import { ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const iconEntries: { name: string; icon: LucideIcon }[] = [
-  { name: "Code2", icon: Code2 },
-  { name: "Users", icon: Users },
-  { name: "Rocket", icon: Rocket },
-  { name: "Lightbulb", icon: Lightbulb },
-  { name: "Sparkles", icon: Sparkles },
-  { name: "BrainCircuit", icon: BrainCircuit },
-  { name: "Smartphone", icon: Smartphone },
-  { name: "Cloud", icon: Cloud },
-  { name: "Bug", icon: Bug },
-  { name: "Link2", icon: Link2 },
-  { name: "Wallet", icon: Wallet },
-  { name: "HeartPulse", icon: HeartPulse },
-  { name: "ShoppingCart", icon: ShoppingCart },
-  { name: "GraduationCap", icon: GraduationCap },
-  { name: "Radio", icon: Radio },
-  { name: "Building2", icon: Building2 },
-  { name: "Store", icon: Store },
-  { name: "Zap", icon: Zap },
-  { name: "Cpu", icon: Cpu },
-  { name: "Layers", icon: Layers },
-  { name: "BookOpen", icon: BookOpen },
-  { name: "Briefcase", icon: Briefcase },
-  { name: "FileText", icon: FileText },
-  { name: "Handshake", icon: Handshake },
-  { name: "ShieldCheck", icon: ShieldCheck },
-  { name: "Leaf", icon: Leaf },
-  { name: "Newspaper", icon: Newspaper },
-  { name: "UserPlus", icon: UserPlus },
-  { name: "FolderOpen", icon: FolderOpen },
-  { name: "TrendingUp", icon: TrendingUp },
-  { name: "Search", icon: Search },
-  { name: "Gauge", icon: Gauge },
-  { name: "Globe", icon: Globe },
-  { name: "Award", icon: Award },
-  { name: "Shield", icon: Shield },
-  { name: "Monitor", icon: Monitor },
-  { name: "Palette", icon: Palette },
-  { name: "LineChart", icon: LineChart },
-  { name: "Settings", icon: Settings },
-  { name: "Mail", icon: Mail },
-  { name: "Star", icon: Star },
-  { name: "Image", icon: Image },
-  { name: "MessageSquare", icon: MessageSquare },
-  { name: "Phone", icon: Phone },
-  { name: "MapPin", icon: MapPin },
-  { name: "Calendar", icon: Calendar },
-  { name: "Clock", icon: Clock },
-  { name: "Check", icon: Check },
-  { name: "Eye", icon: Eye },
-  { name: "Lock", icon: Lock },
-  { name: "Home", icon: Home },
-  { name: "Menu", icon: Menu },
-  { name: "ArrowRight", icon: ArrowRight },
-  { name: "ExternalLink", icon: ExternalLink },
-  { name: "Download", icon: Download },
-  { name: "Upload", icon: Upload },
-  { name: "Edit", icon: Edit },
-  { name: "Copy", icon: Copy },
-  { name: "Bell", icon: Bell },
-  { name: "Heart", icon: Heart },
-  { name: "Flag", icon: Flag },
-  { name: "Bookmark", icon: Bookmark },
-  { name: "Tag", icon: Tag },
-  { name: "Hash", icon: Hash },
-  { name: "DollarSign", icon: DollarSign },
-  { name: "CreditCard", icon: CreditCard },
-  { name: "Truck", icon: Truck },
-  { name: "Package", icon: Package },
-  { name: "Box", icon: Box },
-  { name: "Factory", icon: Factory },
-  { name: "Wrench", icon: Wrench },
-  { name: "Database", icon: Database },
-  { name: "Server", icon: Server },
-  { name: "Wifi", icon: Wifi },
-  { name: "BarChart", icon: BarChart },
-  { name: "PieChart", icon: PieChart },
-  { name: "Activity", icon: Activity },
-  { name: "Layout", icon: Layout },
-  { name: "Grid", icon: Grid },
-  { name: "List", icon: List },
-];
+import { iconEntries } from "@/lib/icons";
 
 interface IconPickerProps {
   value: string;
@@ -112,18 +13,43 @@ interface IconPickerProps {
 const IconPicker = ({ value, onChange, className }: IconPickerProps) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [rect, setRect] = useState<{ top: number; left: number; width: number } | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
 
   // Close on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (
+        ref.current && !ref.current.contains(e.target as Node) &&
+        popoverRef.current && !popoverRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const openDropdown = () => {
+    const r = ref.current?.getBoundingClientRect();
+    if (r) setRect({ top: r.bottom + 4, left: r.left, width: r.width });
+    setOpen((o) => !o);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const update = () => {
+      const r = ref.current?.getBoundingClientRect();
+      if (r) setRect({ top: r.bottom + 4, left: r.left, width: r.width });
+    };
+    window.addEventListener("scroll", update, true);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", update);
+    };
+  }, [open]);
 
   const selectedEntry = iconEntries.find((e) => e.name === value);
   const SelectedIcon = selectedEntry?.icon;
@@ -139,7 +65,7 @@ const IconPicker = ({ value, onChange, className }: IconPickerProps) => {
       {/* Trigger */}
       <button
         type="button"
-        onClick={() => setOpen(!open)}
+        onClick={openDropdown}
         className="flex items-center gap-2 w-full h-8 px-2 rounded-md border border-border/30 bg-white/[0.03] hover:bg-white/[0.05] transition-colors text-left"
       >
         {SelectedIcon ? (
@@ -154,8 +80,12 @@ const IconPicker = ({ value, onChange, className }: IconPickerProps) => {
       </button>
 
       {/* Dropdown */}
-      {open && (
-        <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-card border border-border/50 rounded-xl shadow-xl overflow-hidden">
+      {open && rect && createPortal(
+        <div
+          ref={popoverRef}
+          className="fixed z-[100] bg-card border border-border/50 rounded-xl shadow-xl overflow-hidden"
+          style={{ top: rect.top, left: rect.left, width: rect.width }}
+        >
           {/* Search */}
           <div className="p-2 border-b border-border/20">
             <div className="relative">
@@ -217,7 +147,8 @@ const IconPicker = ({ value, onChange, className }: IconPickerProps) => {
               </button>
             </div>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import ImageUpload from "@/components/admin/ImageUpload";
+import IconPicker from "@/components/admin/IconPicker";
+import { upsertNavLink, removeNavLink, isInNav } from "@/lib/navSync";
 
 interface Service {
   id: number;
@@ -27,7 +29,10 @@ const emptyForm = {
   title: "", slug: "", description: "", long_description: "",
   icon: "", features: "", technologies: "", hero_image: "",
   display_order: 0, is_active: true, is_featured: false,
+  add_to_menu: false, nav_group: "Top Services",
 };
+
+const SERVICE_NAV_GROUPS = ["Collaboration Models", "Top Services"];
 
 const AdminServices = () => {
   const { toast } = useToast();
@@ -70,8 +75,15 @@ const AdminServices = () => {
       display_order: item.display_order,
       is_active: item.is_active,
       is_featured: item.is_featured,
+      add_to_menu: false,
+      nav_group: "Top Services",
     });
     setShowForm(true);
+    if (item.slug) {
+      isInNav("Services", `/services/${item.slug}`).then((inNav) =>
+        setForm((f) => ({ ...f, add_to_menu: inNav }))
+      );
+    }
   };
 
   const handleSave = async () => {
@@ -90,13 +102,30 @@ const AdminServices = () => {
       is_featured: form.is_featured,
     };
     try {
+      let saved: Service;
       if (editing) {
-        await adminApi.updateService(editing.id, payload);
+        saved = await adminApi.updateService(editing.id, payload);
         toast({ title: "Service updated" });
       } else {
-        await adminApi.createService(payload);
+        saved = await adminApi.createService(payload);
         toast({ title: "Service created" });
       }
+
+      const previousTo = editing?.slug ? `/services/${editing.slug}` : undefined;
+      const navTo = `/services/${saved.slug}`;
+      try {
+        if (form.add_to_menu) {
+          await upsertNavLink(
+            "Services",
+            form.nav_group,
+            { label: form.title, to: navTo, description: form.description || undefined, icon: form.icon || undefined },
+            previousTo
+          );
+        } else if (previousTo) {
+          await removeNavLink("Services", previousTo);
+        }
+      } catch {}
+
       setShowForm(false);
       fetchItems();
     } catch (err: any) {
@@ -139,13 +168,25 @@ const AdminServices = () => {
           <div className="space-y-1"><Label>Features (one per line)</Label><Textarea value={form.features} onChange={(e) => setForm({ ...form, features: e.target.value })} rows={4} /></div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1"><Label>Technologies (comma separated)</Label><Input value={form.technologies} onChange={(e) => setForm({ ...form, technologies: e.target.value })} placeholder="React, Node.js, AWS" /></div>
-            <div className="space-y-1"><Label>Icon (Lucide name)</Label><Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g. Rocket" /></div>
+            <div className="space-y-1"><Label>Icon</Label><IconPicker value={form.icon} onChange={(icon) => setForm({ ...form, icon })} /></div>
           </div>
           <ImageUpload label="Hero Image" folder="services" value={form.hero_image} onChange={(url) => setForm({ ...form, hero_image: url })} />
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="space-y-1"><Label>Display Order</Label><Input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} /></div>
             <div className="flex items-center gap-2 pt-6"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} /><Label>Active</Label></div>
             <div className="flex items-center gap-2 pt-6"><input type="checkbox" checked={form.is_featured} onChange={(e) => setForm({ ...form, is_featured: e.target.checked })} /><Label>Featured (homepage)</Label></div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2"><input type="checkbox" checked={form.add_to_menu} onChange={(e) => setForm({ ...form, add_to_menu: e.target.checked })} /><Label>Add to Services mega menu (optional)</Label></div>
+            {form.add_to_menu && (
+              <select
+                value={form.nav_group}
+                onChange={(e) => setForm({ ...form, nav_group: e.target.value })}
+                className="h-8 text-xs rounded-md border border-border/30 bg-white/[0.03] px-2"
+              >
+                {SERVICE_NAV_GROUPS.map((g) => <option key={g} value={g}>{g}</option>)}
+              </select>
+            )}
           </div>
           <Button onClick={handleSave} className="gradient-bg border-0">{editing ? "Update" : "Create"}</Button>
         </div>

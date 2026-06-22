@@ -9,6 +9,8 @@ import { Plus, Pencil, Trash2, X } from "lucide-react";
 import ImageUpload from "@/components/admin/ImageUpload";
 import GalleryUpload from "@/components/admin/GalleryUpload";
 import RichTextEditor from "@/components/admin/RichTextEditor";
+import IconPicker from "@/components/admin/IconPicker";
+import { upsertNavLink, removeNavLink, isInNav } from "@/lib/navSync";
 
 interface Industry {
   id: number;
@@ -29,6 +31,7 @@ const emptyForm = {
   name: "", slug: "", description: "", long_description: "",
   icon: "", color: "#6366F1", image_url: "", gallery: [] as string[],
   features: "", display_order: 0, is_active: true,
+  add_to_menu: false,
 };
 
 const AdminIndustries = () => {
@@ -72,8 +75,14 @@ const AdminIndustries = () => {
       features: (item.features || []).join("\n"),
       display_order: item.display_order,
       is_active: item.is_active,
+      add_to_menu: false,
     });
     setShowForm(true);
+    if (item.slug) {
+      isInNav("Industries", `/industries/${item.slug}`).then((inNav) =>
+        setForm((f) => ({ ...f, add_to_menu: inNav }))
+      );
+    }
   };
 
   const handleSave = async () => {
@@ -92,13 +101,30 @@ const AdminIndustries = () => {
       is_active: form.is_active,
     };
     try {
+      let saved: Industry;
       if (editing) {
-        await adminApi.updateIndustry(editing.id, payload);
+        saved = await adminApi.updateIndustry(editing.id, payload);
         toast({ title: "Industry updated" });
       } else {
-        await adminApi.createIndustry(payload);
+        saved = await adminApi.createIndustry(payload);
         toast({ title: "Industry created" });
       }
+
+      const previousTo = editing?.slug ? `/industries/${editing.slug}` : undefined;
+      const navTo = `/industries/${saved.slug}`;
+      try {
+        if (form.add_to_menu) {
+          await upsertNavLink(
+            "Industries",
+            "Industries We Serve",
+            { label: form.name, to: navTo, description: form.description || undefined, icon: form.icon || undefined },
+            previousTo
+          );
+        } else if (previousTo) {
+          await removeNavLink("Industries", previousTo);
+        }
+      } catch {}
+
       setShowForm(false);
       fetchItems();
     } catch (err: any) {
@@ -145,11 +171,14 @@ const AdminIndustries = () => {
             <RichTextEditor value={form.long_description} onChange={(html) => setForm({ ...form, long_description: html })} />
           </div>
           <div className="grid sm:grid-cols-3 gap-4">
-            <div className="space-y-1"><Label>Icon</Label><Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g. Wallet" /></div>
+            <div className="space-y-1"><Label>Icon</Label><IconPicker value={form.icon} onChange={(icon) => setForm({ ...form, icon })} /></div>
             <div className="space-y-1"><Label>Color</Label><Input type="color" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} className="h-10" /></div>
             <div className="space-y-1"><Label>Display Order</Label><Input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} /></div>
           </div>
-          <div className="flex items-center gap-2"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} /><Label>Active</Label></div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} /><Label>Active</Label></div>
+            <div className="flex items-center gap-2"><input type="checkbox" checked={form.add_to_menu} onChange={(e) => setForm({ ...form, add_to_menu: e.target.checked })} /><Label>Add to Industries mega menu (optional)</Label></div>
+          </div>
           <Button onClick={handleSave} className="gradient-bg border-0">{editing ? "Update" : "Create"}</Button>
         </div>
       )}

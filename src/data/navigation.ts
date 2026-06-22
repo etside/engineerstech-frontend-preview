@@ -5,6 +5,7 @@ import {
   FileText, Handshake, ShieldCheck, Leaf, Newspaper, UserPlus,
   FolderOpen, TrendingUp, Search, Gauge, Palette, type LucideIcon,
 } from "lucide-react";
+import { iconMap, resolveIcon } from "@/lib/icons";
 
 export interface NavSubItem {
   label: string;
@@ -24,19 +25,7 @@ export interface NavItem {
   megaMenu?: NavMegaGroup[];
 }
 
-// Icon map for dynamic resolution
-const iconMap: Record<string, LucideIcon> = {
-  Code2, Users, Rocket, Lightbulb, Sparkles, BrainCircuit, Smartphone,
-  Cloud, Bug, Link2, Wallet, HeartPulse, ShoppingCart, GraduationCap,
-  Radio, Building2, Store, Zap, Cpu, Layers, BookOpen, Briefcase,
-  FileText, Handshake, ShieldCheck, Leaf, Newspaper, UserPlus,
-  FolderOpen, TrendingUp, Search, Gauge, Palette,
-};
-
-export function resolveIcon(name?: string): LucideIcon | undefined {
-  if (!name) return undefined;
-  return iconMap[name];
-}
+export { resolveIcon };
 
 const iconNameMap = new Map<LucideIcon, string>(
   Object.entries(iconMap).map(([name, icon]) => [icon, name])

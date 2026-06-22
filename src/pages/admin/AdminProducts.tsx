@@ -9,6 +9,8 @@ import { Plus, Pencil, Trash2, X } from "lucide-react";
 import ImageUpload from "@/components/admin/ImageUpload";
 import GalleryUpload from "@/components/admin/GalleryUpload";
 import RichTextEditor from "@/components/admin/RichTextEditor";
+import IconPicker from "@/components/admin/IconPicker";
+import { upsertNavLink, removeNavLink, isInNav } from "@/lib/navSync";
 
 interface Product {
   id: number;
@@ -23,6 +25,8 @@ interface Product {
   price: string | null;
   features: string[] | null;
   external_url: string | null;
+  show_demo_request: boolean;
+  demo_credentials: string | null;
   display_order: number;
   is_active: boolean;
 }
@@ -30,7 +34,8 @@ interface Product {
 const emptyForm = {
   name: "", slug: "", description: "", long_description: "", category: "",
   icon: "", image_url: "", gallery: [] as string[], price: "", features: "",
-  external_url: "", display_order: 0, is_active: true,
+  external_url: "", show_demo_request: true, demo_credentials: "", display_order: 0, is_active: true,
+  add_to_menu: false,
 };
 
 const AdminProducts = () => {
@@ -74,10 +79,18 @@ const AdminProducts = () => {
       price: item.price || "",
       features: (item.features || []).join("\n"),
       external_url: item.external_url || "",
+      show_demo_request: item.show_demo_request ?? true,
+      demo_credentials: item.demo_credentials || "",
       display_order: item.display_order,
       is_active: item.is_active,
+      add_to_menu: false,
     });
     setShowForm(true);
+    if (item.slug) {
+      isInNav("Products", `/products/${item.slug}`).then((inNav) =>
+        setForm((f) => ({ ...f, add_to_menu: inNav }))
+      );
+    }
   };
 
   const handleSave = async () => {
@@ -94,17 +107,36 @@ const AdminProducts = () => {
       price: form.price,
       features: form.features.split("\n").map((s) => s.trim()).filter(Boolean),
       external_url: form.external_url,
+      show_demo_request: form.show_demo_request,
+      demo_credentials: form.demo_credentials,
       display_order: form.display_order,
       is_active: form.is_active,
     };
     try {
+      let saved: Product;
       if (editing) {
-        await adminApi.updateProduct(editing.id, payload);
+        saved = await adminApi.updateProduct(editing.id, payload);
         toast({ title: "Product updated" });
       } else {
-        await adminApi.createProduct(payload);
+        saved = await adminApi.createProduct(payload);
         toast({ title: "Product created" });
       }
+
+      const previousTo = editing?.slug ? `/products/${editing.slug}` : undefined;
+      const navTo = `/products/${saved.slug}`;
+      try {
+        if (form.add_to_menu) {
+          await upsertNavLink(
+            "Products",
+            "Our Products",
+            { label: form.name, to: navTo, description: form.description || undefined, icon: form.icon || undefined },
+            previousTo
+          );
+        } else if (previousTo) {
+          await removeNavLink("Products", previousTo);
+        }
+      } catch {}
+
       setShowForm(false);
       fetchItems();
     } catch (err: any) {
@@ -151,7 +183,7 @@ const AdminProducts = () => {
 
           <div className="grid sm:grid-cols-2 gap-4">
             <ImageUpload label="Cover Image" folder="products" value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} />
-            <div className="space-y-1"><Label>Icon (Lucide name)</Label><Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g. Sparkles" /></div>
+            <div className="space-y-1"><Label>Icon</Label><IconPicker value={form.icon} onChange={(icon) => setForm({ ...form, icon })} /></div>
           </div>
 
           <GalleryUpload label="Gallery (multiple images)" folder="products" value={form.gallery} onChange={(gallery) => setForm({ ...form, gallery })} />
@@ -161,11 +193,25 @@ const AdminProducts = () => {
             <RichTextEditor value={form.long_description} onChange={(html) => setForm({ ...form, long_description: html })} />
           </div>
 
+          <div className="space-y-1">
+            <Label>Demo Link & Credentials (optional, shown on product page)</Label>
+            <Textarea
+              value={form.demo_credentials}
+              onChange={(e) => setForm({ ...form, demo_credentials: e.target.value })}
+              rows={3}
+              placeholder={"Demo URL: https://demo.example.com\nUsername: demo@example.com\nPassword: demo1234"}
+            />
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1"><Label>External URL</Label><Input value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} /></div>
             <div className="space-y-1"><Label>Display Order</Label><Input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} /></div>
           </div>
-          <div className="flex items-center gap-2"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} /><Label>Active</Label></div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} /><Label>Active</Label></div>
+            <div className="flex items-center gap-2"><input type="checkbox" checked={form.show_demo_request} onChange={(e) => setForm({ ...form, show_demo_request: e.target.checked })} /><Label>Show "Request Demo" button</Label></div>
+          </div>
+          <div className="flex items-center gap-2"><input type="checkbox" checked={form.add_to_menu} onChange={(e) => setForm({ ...form, add_to_menu: e.target.checked })} /><Label>Add to Products mega menu (optional)</Label></div>
           <Button onClick={handleSave} className="gradient-bg border-0">{editing ? "Update" : "Create"}</Button>
         </div>
       )}
