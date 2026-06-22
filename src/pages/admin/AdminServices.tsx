@@ -6,15 +6,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 interface Service {
   id: number;
   title: string;
+  slug: string;
   description: string | null;
+  long_description: string | null;
   icon: string | null;
+  features: string[] | null;
+  technologies: string[] | null;
+  hero_image: string | null;
   display_order: number;
   is_active: boolean;
+  is_featured: boolean;
 }
+
+const emptyForm = {
+  title: "", slug: "", description: "", long_description: "",
+  icon: "", features: "", technologies: "", hero_image: "",
+  display_order: 0, is_active: true, is_featured: false,
+};
 
 const AdminServices = () => {
   const { toast } = useToast();
@@ -22,7 +35,7 @@ const AdminServices = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Service | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "", icon: "", display_order: 0, is_active: true });
+  const [form, setForm] = useState(emptyForm);
 
   const fetchItems = async () => {
     try {
@@ -39,24 +52,49 @@ const AdminServices = () => {
 
   const openNew = () => {
     setEditing(null);
-    setForm({ title: "", description: "", icon: "", display_order: items.length, is_active: true });
+    setForm({ ...emptyForm, display_order: items.length });
     setShowForm(true);
   };
 
   const openEdit = (item: Service) => {
     setEditing(item);
-    setForm({ title: item.title, description: item.description || "", icon: item.icon || "", display_order: item.display_order, is_active: item.is_active });
+    setForm({
+      title: item.title,
+      slug: item.slug || "",
+      description: item.description || "",
+      long_description: item.long_description || "",
+      icon: item.icon || "",
+      features: (item.features || []).join("\n"),
+      technologies: (item.technologies || []).join(", "),
+      hero_image: item.hero_image || "",
+      display_order: item.display_order,
+      is_active: item.is_active,
+      is_featured: item.is_featured,
+    });
     setShowForm(true);
   };
 
   const handleSave = async () => {
     if (!form.title.trim()) return;
+    const payload = {
+      title: form.title,
+      slug: form.slug,
+      description: form.description,
+      long_description: form.long_description,
+      icon: form.icon,
+      features: form.features.split("\n").map((s) => s.trim()).filter(Boolean),
+      technologies: form.technologies.split(",").map((s) => s.trim()).filter(Boolean),
+      hero_image: form.hero_image,
+      display_order: form.display_order,
+      is_active: form.is_active,
+      is_featured: form.is_featured,
+    };
     try {
       if (editing) {
-        await adminApi.updateService(editing.id, { title: form.title, description: form.description, icon: form.icon, display_order: form.display_order, is_active: form.is_active });
+        await adminApi.updateService(editing.id, payload);
         toast({ title: "Service updated" });
       } else {
-        await adminApi.createService({ title: form.title, description: form.description, icon: form.icon, display_order: form.display_order, is_active: form.is_active });
+        await adminApi.createService(payload);
         toast({ title: "Service created" });
       }
       setShowForm(false);
@@ -94,12 +132,20 @@ const AdminServices = () => {
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1"><Label>Title</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-            <div className="space-y-1"><Label>Icon (Lucide name)</Label><Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g. Monitor" /></div>
+            <div className="space-y-1"><Label>Slug (auto if blank)</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="e.g. mvp-development" /></div>
           </div>
-          <div className="space-y-1"><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} /></div>
+          <div className="space-y-1"><Label>Short Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} /></div>
+          <div className="space-y-1"><Label>Long Description (detail page)</Label><Textarea value={form.long_description} onChange={(e) => setForm({ ...form, long_description: e.target.value })} rows={4} /></div>
+          <div className="space-y-1"><Label>Features (one per line)</Label><Textarea value={form.features} onChange={(e) => setForm({ ...form, features: e.target.value })} rows={4} /></div>
           <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-1"><Label>Technologies (comma separated)</Label><Input value={form.technologies} onChange={(e) => setForm({ ...form, technologies: e.target.value })} placeholder="React, Node.js, AWS" /></div>
+            <div className="space-y-1"><Label>Icon (Lucide name)</Label><Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g. Rocket" /></div>
+          </div>
+          <ImageUpload label="Hero Image" folder="services" value={form.hero_image} onChange={(url) => setForm({ ...form, hero_image: url })} />
+          <div className="grid sm:grid-cols-3 gap-4">
             <div className="space-y-1"><Label>Display Order</Label><Input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} /></div>
             <div className="flex items-center gap-2 pt-6"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm({ ...form, is_active: e.target.checked })} /><Label>Active</Label></div>
+            <div className="flex items-center gap-2 pt-6"><input type="checkbox" checked={form.is_featured} onChange={(e) => setForm({ ...form, is_featured: e.target.checked })} /><Label>Featured (homepage)</Label></div>
           </div>
           <Button onClick={handleSave} className="gradient-bg border-0">{editing ? "Update" : "Create"}</Button>
         </div>
@@ -109,7 +155,10 @@ const AdminServices = () => {
         {items.map((item) => (
           <div key={item.id} className="glass-card rounded-lg p-4 flex items-center justify-between">
             <div>
-              <p className="font-medium text-sm">{item.title}</p>
+              <p className="font-medium text-sm">
+                {item.title} <span className="text-xs text-muted-foreground">/{item.slug}</span>
+                {item.is_featured && <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">Featured</span>}
+              </p>
               <p className="text-xs text-muted-foreground truncate max-w-md">{item.description}</p>
             </div>
             <div className="flex items-center gap-2">

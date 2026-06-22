@@ -62,11 +62,11 @@ const Footer = () => {
   ]);
 
   const services = getSetting("footer_services", [
-    { label: "Staff Augmentation", to: "#" },
-    { label: "Managed Services", to: "#" },
-    { label: "MVP Development", to: "#" },
-    { label: "AI & ML Solutions", to: "#" },
-    { label: "Consulting", to: "#" },
+    { label: "Staff Augmentation", to: "/services/staff-augmentation" },
+    { label: "Managed Services", to: "/services/managed-services" },
+    { label: "MVP Development", to: "/services/mvp-development" },
+    { label: "AI & ML Solutions", to: "/services/ai-machine-learning" },
+    { label: "Consulting", to: "/services/technology-consulting" },
   ]);
 
   return (

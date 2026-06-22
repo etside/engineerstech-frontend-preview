@@ -54,6 +54,13 @@ export const MegaMenuDesktop = ({ item, isActive }: MegaMenuDesktopProps) => {
     );
   }
 
+  const indexLinkMap: Record<string, string> = {
+    Services: "/services",
+    Products: "/products",
+    Resources: "/resources",
+  };
+  const indexLink = indexLinkMap[item.label];
+
   return (
     <div ref={ref} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
       {/* Trigger */}
@@ -108,16 +115,19 @@ export const MegaMenuDesktop = ({ item, isActive }: MegaMenuDesktopProps) => {
           <div className="mt-8 pt-6 border-t border-border/30 flex items-center justify-between">
             <p className="text-xs text-muted-foreground">
               Need help choosing?{" "}
-              <a href="#" className="text-primary hover:underline font-medium">
+              <Link to="/contact" onClick={() => setOpen(false)} className="text-primary hover:underline font-medium">
                 Talk to our experts
-              </a>
+              </Link>
             </p>
-            <a
-              href="#"
-              className="text-xs text-primary hover:underline font-medium flex items-center gap-1"
-            >
-              View all services <ArrowRight className="h-3 w-3" />
-            </a>
+            {indexLink && (
+              <Link
+                to={indexLink}
+                onClick={() => setOpen(false)}
+                className="text-xs text-primary hover:underline font-medium flex items-center gap-1"
+              >
+                View all {item.label.toLowerCase()} <ArrowRight className="h-3 w-3" />
+              </Link>
+            )}
           </div>
         </div>
       </div>

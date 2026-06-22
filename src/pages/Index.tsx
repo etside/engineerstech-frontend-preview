@@ -1,3 +1,4 @@
+import SEO from "@/components/SEO";
 import HeroSection from "@/components/home/HeroSection";
 import ClientLogos from "@/components/home/ClientLogos";
 import ServicesOverview from "@/components/home/ServicesOverview";
@@ -16,6 +17,11 @@ import CTASection from "@/components/home/CTASection";
 const Index = () => {
   return (
     <>
+      <SEO
+        title="Enterprise Software Development Company in Bangladesh"
+        description="engineersTech builds custom enterprise software, SaaS products, web & mobile apps for global clients. BASIS & e-CAB registered. Trusted engineering, delivered fast."
+        path="/"
+      />
       <HeroSection />
       <ClientLogos />
       <ServicesOverview />

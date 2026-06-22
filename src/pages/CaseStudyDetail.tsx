@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Clock, Users, CheckCircle2, Target, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SEO from "@/components/SEO";
 import { api } from "@/lib/api";
 
 const CaseStudyDetail = () => {
@@ -57,6 +58,12 @@ const CaseStudyDetail = () => {
 
   return (
     <>
+      <SEO
+        title={study.title}
+        description={study.summary || `${study.title} — a case study by engineersTech.`}
+        path={`/case-studies/${study.slug}`}
+        image={study.cover_image}
+      />
       {/* Hero */}
       <section className="pt-28 pb-12 relative overflow-hidden">
         <div

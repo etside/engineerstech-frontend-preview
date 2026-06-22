@@ -5,6 +5,7 @@ import { Calendar, ArrowLeft, Share2 } from "lucide-react";
 import etIcon from "@/assets/eticon.svg";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import SEO from "@/components/SEO";
 import { api } from "@/lib/api";
 import { blogPosts as staticPosts } from "@/data/blogPosts";
 
@@ -75,9 +76,12 @@ const BlogPost = () => {
   const contentParagraphs: string[] = post
     ? (isHtml ? [] : post.content.split(/\n\n|\n/).filter(Boolean))
     : staticPost!.content;
+  const excerpt = post?.excerpt ?? staticPost!.excerpt;
+  const postSlug = post?.slug ?? staticPost!.id;
 
   return (
     <div className="min-h-screen">
+      <SEO title={title} description={excerpt} path={`/blog/${postSlug}`} image={image} type="article" />
       {/* Hero Image */}
       <section className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">
         {image ? (

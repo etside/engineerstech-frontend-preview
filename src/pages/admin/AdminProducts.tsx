@@ -6,16 +6,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
+import ImageUpload from "@/components/admin/ImageUpload";
+import GalleryUpload from "@/components/admin/GalleryUpload";
+import RichTextEditor from "@/components/admin/RichTextEditor";
 
 interface Product {
   id: number;
   name: string;
+  slug: string;
   description: string | null;
+  long_description: string | null;
+  category: string | null;
   icon: string | null;
+  image_url: string | null;
+  gallery: string[] | null;
+  price: string | null;
+  features: string[] | null;
   external_url: string | null;
   display_order: number;
   is_active: boolean;
 }
+
+const emptyForm = {
+  name: "", slug: "", description: "", long_description: "", category: "",
+  icon: "", image_url: "", gallery: [] as string[], price: "", features: "",
+  external_url: "", display_order: 0, is_active: true,
+};
 
 const AdminProducts = () => {
   const { toast } = useToast();
@@ -23,7 +39,7 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name: "", description: "", icon: "", external_url: "", display_order: 0, is_active: true });
+  const [form, setForm] = useState(emptyForm);
 
   const fetchItems = async () => {
     try {
@@ -40,19 +56,47 @@ const AdminProducts = () => {
 
   const openNew = () => {
     setEditing(null);
-    setForm({ name: "", description: "", icon: "", external_url: "", display_order: items.length, is_active: true });
+    setForm({ ...emptyForm, display_order: items.length });
     setShowForm(true);
   };
 
   const openEdit = (item: Product) => {
     setEditing(item);
-    setForm({ name: item.name, description: item.description || "", icon: item.icon || "", external_url: item.external_url || "", display_order: item.display_order, is_active: item.is_active });
+    setForm({
+      name: item.name,
+      slug: item.slug || "",
+      description: item.description || "",
+      long_description: item.long_description || "",
+      category: item.category || "",
+      icon: item.icon || "",
+      image_url: item.image_url || "",
+      gallery: item.gallery || [],
+      price: item.price || "",
+      features: (item.features || []).join("\n"),
+      external_url: item.external_url || "",
+      display_order: item.display_order,
+      is_active: item.is_active,
+    });
     setShowForm(true);
   };
 
   const handleSave = async () => {
     if (!form.name.trim()) return;
-    const payload = { name: form.name, description: form.description, icon: form.icon, external_url: form.external_url, display_order: form.display_order, is_active: form.is_active };
+    const payload = {
+      name: form.name,
+      slug: form.slug,
+      description: form.description,
+      long_description: form.long_description,
+      category: form.category,
+      icon: form.icon,
+      image_url: form.image_url,
+      gallery: form.gallery,
+      price: form.price,
+      features: form.features.split("\n").map((s) => s.trim()).filter(Boolean),
+      external_url: form.external_url,
+      display_order: form.display_order,
+      is_active: form.is_active,
+    };
     try {
       if (editing) {
         await adminApi.updateProduct(editing.id, payload);
@@ -96,9 +140,27 @@ const AdminProducts = () => {
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1"><Label>Name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-            <div className="space-y-1"><Label>Icon</Label><Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g. ShoppingCart" /></div>
+            <div className="space-y-1"><Label>Slug (auto if blank)</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="e.g. glowup" /></div>
           </div>
-          <div className="space-y-1"><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} /></div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-1"><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="e.g. Enterprise" /></div>
+            <div className="space-y-1"><Label>Price</Label><Input value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="e.g. Starting $999" /></div>
+          </div>
+          <div className="space-y-1"><Label>Short Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} /></div>
+          <div className="space-y-1"><Label>Features (one per line)</Label><Textarea value={form.features} onChange={(e) => setForm({ ...form, features: e.target.value })} rows={4} /></div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            <ImageUpload label="Cover Image" folder="products" value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url })} />
+            <div className="space-y-1"><Label>Icon (Lucide name)</Label><Input value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} placeholder="e.g. Sparkles" /></div>
+          </div>
+
+          <GalleryUpload label="Gallery (multiple images)" folder="products" value={form.gallery} onChange={(gallery) => setForm({ ...form, gallery })} />
+
+          <div className="space-y-1">
+            <Label>Detailed Description (rich text, shown on product page)</Label>
+            <RichTextEditor value={form.long_description} onChange={(html) => setForm({ ...form, long_description: html })} />
+          </div>
+
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1"><Label>External URL</Label><Input value={form.external_url} onChange={(e) => setForm({ ...form, external_url: e.target.value })} /></div>
             <div className="space-y-1"><Label>Display Order</Label><Input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} /></div>
@@ -112,7 +174,7 @@ const AdminProducts = () => {
         {items.map((item) => (
           <div key={item.id} className="glass-card rounded-lg p-4 flex items-center justify-between">
             <div>
-              <p className="font-medium text-sm">{item.name}</p>
+              <p className="font-medium text-sm">{item.name} <span className="text-xs text-muted-foreground">/{item.slug}</span></p>
               <p className="text-xs text-muted-foreground truncate max-w-md">{item.description}</p>
             </div>
             <div className="flex items-center gap-2">

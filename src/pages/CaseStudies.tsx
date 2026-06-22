@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Clock } from "lucide-react";
+import SEO from "@/components/SEO";
 import { api } from "@/lib/api";
 
 interface CaseStudy {
@@ -65,6 +66,11 @@ const CaseStudies = () => {
 
   return (
     <>
+      <SEO
+        title="Case Studies"
+        description="Real client results from engineersTech — explore how we've helped fintech, healthcare, e-commerce and more businesses ship software that works."
+        path="/case-studies"
+      />
       {/* Hero Section */}
       <section className="pt-28 pb-12 relative overflow-hidden">
         <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-primary/10 blur-[120px]" />

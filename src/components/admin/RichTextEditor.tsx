@@ -1,6 +1,6 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
-import { Image } from "@tiptap/extension-image";
+import { Image as TiptapImage } from "@tiptap/extension-image";
 import { Table, TableRow, TableCell, TableHeader } from "@tiptap/extension-table";
 import { Color } from "@tiptap/extension-color";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -18,7 +18,27 @@ import {
   Highlighter, Palette, Undo, Redo, Minus, CodeSquare,
   Plus, Trash2, RowsIcon, ColumnsIcon,
 } from "lucide-react";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
+
+const ResizableImage = TiptapImage.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      width: {
+        default: "50%",
+        renderHTML: (attrs: any) => (attrs.width ? { style: `width: ${attrs.width}; height: auto;` } : {}),
+        parseHTML: (el: HTMLElement) => el.style.width || el.getAttribute("width") || "50%",
+      },
+    };
+  },
+});
+
+const IMAGE_SIZES = [
+  { label: "S", value: "25%" },
+  { label: "M", value: "50%" },
+  { label: "L", value: "75%" },
+  { label: "Full", value: "100%" },
+];
 
 interface Props {
   value: string;
@@ -40,6 +60,7 @@ const Separator = () => <div className="w-px h-5 bg-border mx-0.5" />;
 
 const RichTextEditor = ({ value, onChange }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [, forceTick] = useState(0);
 
   const editor = useEditor({
     extensions: [
@@ -52,7 +73,7 @@ const RichTextEditor = ({ value, onChange }: Props) => {
       Highlight.configure({ multicolor: true }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Link.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline" } }),
-      Image.configure({ HTMLAttributes: { class: "rounded-lg max-w-full" } }),
+      ResizableImage.configure({ HTMLAttributes: { class: "rounded-lg" } }),
       Table.configure({ resizable: true }),
       TableRow,
       TableCell,
@@ -63,6 +84,7 @@ const RichTextEditor = ({ value, onChange }: Props) => {
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
+    onSelectionUpdate: () => forceTick((t) => t + 1),
     editorProps: {
       attributes: {
         class: "prose prose-invert max-w-none min-h-[300px] p-4 focus:outline-none",
@@ -184,6 +206,27 @@ const RichTextEditor = ({ value, onChange }: Props) => {
           </>
         )}
       </div>
+
+      {/* Image size toolbar — shown when an image is selected */}
+      {editor.isActive("image") && (
+        <div className="flex items-center gap-2 px-3 py-1.5 border-b border-border bg-secondary/30">
+          <span className="text-xs text-muted-foreground">Image size:</span>
+          {IMAGE_SIZES.map((s) => (
+            <button
+              key={s.value}
+              type="button"
+              onClick={() => editor.chain().focus().updateAttributes("image", { width: s.value }).run()}
+              className={`px-2 py-0.5 rounded text-xs transition-colors ${
+                editor.getAttributes("image").width === s.value
+                  ? "bg-primary/20 text-primary"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+              }`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Editor */}
       <EditorContent editor={editor} />

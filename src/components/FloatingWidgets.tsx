@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { MessageCircle, X, Send, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -34,16 +35,14 @@ const FloatingWidgets = () => {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-3">
       {/* Schedule a Call */}
-      <a
-        href="#"
-        target="_blank"
-        rel="noopener noreferrer"
+      <Link
+        to="/contact"
         className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-full gradient-bg text-primary-foreground text-xs font-medium shadow-lg hover:opacity-90 transition-opacity animate-pulse-glow"
         aria-label="Schedule a Call"
       >
         <Phone className="h-3.5 w-3.5" />
         Schedule a Call
-      </a>
+      </Link>
 
       {/* WhatsApp */}
       <a

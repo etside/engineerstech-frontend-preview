@@ -57,8 +57,12 @@ export const auth = {
 
 // ─── Public ────────────────────────────────────────────────────
 export const api = {
-  services:     () => request('/services'),
+  services:     (opts?: { featured?: boolean }) => request(opts?.featured ? '/services?featured=1' : '/services'),
+  service:      (slug: string) => request(`/services/${slug}`),
+  industries:   () => request('/industries'),
+  industry:     (slug: string) => request(`/industries/${slug}`),
   products:     () => request('/products'),
+  product:      (slug: string) => request(`/products/${slug}`),
   blog:         () => request('/blog'),
   blogPost:     (slug: string) => request(`/blog/${slug}`),
   team:         () => request('/team'),
@@ -67,6 +71,9 @@ export const api = {
   contact:      (data: Record<string, string>) => request('/contact', { method: 'POST', body: JSON.stringify(data) }),
   caseStudies:  () => request('/case-studies'),
   caseStudy:    (slug: string) => request(`/case-studies/${slug}`),
+  resources:    () => request('/resources'),
+  requestResource: (id: number | string, data: { name?: string; email: string }) =>
+    request(`/resources/${id}/request`, { method: 'POST', body: JSON.stringify(data) }),
 };
 
 // ─── Admin ─────────────────────────────────────────────────────
@@ -86,6 +93,12 @@ export const adminApi = {
   createService:  (d: unknown) => adminRequest('/services', { method: 'POST', body: body(d) }),
   updateService:  (id: number|string, d: unknown) => adminRequest(`/services/${id}`, { method: 'PUT', body: body(d) }),
   deleteService:  (id: number|string) => adminRequest(`/services/${id}`, { method: 'DELETE' }),
+
+  // Industries
+  getIndustries:    () => adminRequest('/industries'),
+  createIndustry:   (d: unknown) => adminRequest('/industries', { method: 'POST', body: body(d) }),
+  updateIndustry:   (id: number|string, d: unknown) => adminRequest(`/industries/${id}`, { method: 'PUT', body: body(d) }),
+  deleteIndustry:   (id: number|string) => adminRequest(`/industries/${id}`, { method: 'DELETE' }),
 
   // Products
   getProducts:    () => adminRequest('/products'),
@@ -127,6 +140,13 @@ export const adminApi = {
   createCaseStudy:   (d: unknown) => adminRequest('/case-studies', { method: 'POST', body: body(d) }),
   updateCaseStudy:   (id: number|string, d: unknown) => adminRequest(`/case-studies/${id}`, { method: 'PUT', body: body(d) }),
   deleteCaseStudy:   (id: number|string) => adminRequest(`/case-studies/${id}`, { method: 'DELETE' }),
+
+  // Resources
+  getResources:    () => adminRequest('/resources'),
+  createResource:  (d: unknown) => adminRequest('/resources', { method: 'POST', body: body(d) }),
+  updateResource:  (id: number|string, d: unknown) => adminRequest(`/resources/${id}`, { method: 'PUT', body: body(d) }),
+  deleteResource:  (id: number|string) => adminRequest(`/resources/${id}`, { method: 'DELETE' }),
+  getResourceLeads: () => adminRequest('/resource-leads'),
 
   // Settings
   getSettings:    () => adminRequest('/settings'),

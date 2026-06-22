@@ -7,7 +7,11 @@ import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Services from "./pages/Services";
+import ServiceDetail from "./pages/ServiceDetail";
+import IndustryDetail from "./pages/IndustryDetail";
 import Products from "./pages/Products";
+import ProductDetail from "./pages/ProductDetail";
+import Resources from "./pages/Resources";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Blog from "./pages/Blog";
@@ -25,6 +29,8 @@ import AdminSubmissions from "./pages/admin/AdminSubmissions";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminNavigation from "./pages/admin/AdminNavigation";
 import AdminCaseStudies from "./pages/admin/AdminCaseStudies";
+import AdminIndustries from "./pages/admin/AdminIndustries";
+import AdminResources from "./pages/admin/AdminResources";
 import CaseStudies from "./pages/CaseStudies";
 import CaseStudyDetail from "./pages/CaseStudyDetail";
 import Team from "./pages/Team";
@@ -45,7 +51,11 @@ const App = () => (
             <Route element={<Layout />}>
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/services/:slug" element={<ServiceDetail />} />
+              <Route path="/industries/:slug" element={<IndustryDetail />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/products/:slug" element={<ProductDetail />} />
+              <Route path="/resources" element={<Resources />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/blog" element={<Blog />} />
@@ -71,6 +81,8 @@ const App = () => (
               <Route path="settings" element={<AdminSettings />} />
               <Route path="navigation" element={<AdminNavigation />} />
               <Route path="case-studies" element={<AdminCaseStudies />} />
+              <Route path="industries" element={<AdminIndustries />} />
+              <Route path="resources" element={<AdminResources />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

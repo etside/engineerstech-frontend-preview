@@ -1,14 +1,18 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
-  Monitor, Smartphone, Palette, LineChart, ArrowRight,
-  Sparkles, Code2, Cloud, Shield, Cpu, Globe, Layers, Rocket, Zap
+  ArrowRight, Code2, Cloud, Shield, Cpu, Globe, Layers, Rocket, Zap,
 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
+import { resolveIcon } from "@/data/navigation";
+import SEO from "@/components/SEO";
 
-const serviceCategories = [
+const fallbackServices = [
   {
-    icon: Monitor,
+    slug: "enterprise-saas-development",
+    icon: "Building2",
     title: "Enterprise & SaaS Solutions",
     description: "We architect and build large-scale, mission-critical software systems — CRM, HRM, ERP, inventory management, and custom enterprise platforms tailored to your unique workflows.",
     technologies: ["React", "Node.js", "PostgreSQL", "AWS", "Docker", "Kubernetes"],
@@ -20,7 +24,8 @@ const serviceCategories = [
     ],
   },
   {
-    icon: Smartphone,
+    slug: "web-mobile-applications",
+    icon: "Smartphone",
     title: "Web & Mobile Applications",
     description: "Cross-platform mobile apps for Android & iOS alongside high-performance responsive web applications — built with modern frameworks for speed, reliability, and beautiful UX.",
     technologies: ["React Native", "Flutter", "Next.js", "TypeScript", "Firebase", "GraphQL"],
@@ -32,7 +37,8 @@ const serviceCategories = [
     ],
   },
   {
-    icon: Palette,
+    slug: "uiux-motion-design",
+    icon: "Palette",
     title: "UI/UX, Graphics & Motion",
     description: "Pixel-perfect interfaces, brand identity systems, and motion graphics that captivate users. We combine design thinking with engineering precision to create memorable digital experiences.",
     technologies: ["Figma", "After Effects", "Framer", "Lottie", "Tailwind CSS", "GSAP"],
@@ -44,7 +50,8 @@ const serviceCategories = [
     ],
   },
   {
-    icon: LineChart,
+    slug: "technical-consultation",
+    icon: "Lightbulb",
     title: "Consultation & Strategy",
     description: "Technical consulting, product roadmapping, and strategic planning to accelerate your digital transformation. We help you make the right technology decisions from day one.",
     technologies: ["Jira", "Notion", "Miro", "Analytics", "CI/CD", "Agile"],
@@ -57,7 +64,6 @@ const serviceCategories = [
   },
 ];
 
-
 const techIcons = [
   { icon: Code2, label: "Clean Code" },
   { icon: Cloud, label: "Cloud Native" },
@@ -68,8 +74,35 @@ const techIcons = [
 ];
 
 const Services = () => {
+  const [serviceCategories, setServiceCategories] = useState(fallbackServices);
+
+  useEffect(() => {
+    api
+      .services()
+      .then((data: any[]) => {
+        if (data && data.length > 0) {
+          setServiceCategories(
+            data.map((s) => ({
+              slug: s.slug,
+              icon: s.icon || "Code2",
+              title: s.title,
+              description: s.long_description || s.description || "",
+              technologies: s.technologies || [],
+              features: s.features || [],
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <>
+      <SEO
+        title="Our Services"
+        description="Enterprise & SaaS development, web & mobile apps, staff augmentation, AI/ML, cloud & DevOps, and more — explore engineersTech's full service catalog."
+        path="/services"
+      />
       {/* Hero */}
       <section className="relative pt-16 md:pt-20 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-[0.08]" />
@@ -144,7 +177,10 @@ const Services = () => {
                           <div className="relative shrink-0">
                             <div className="absolute inset-0 rounded-xl gradient-bg blur-lg opacity-30 group-hover:opacity-60 transition-opacity duration-500" />
                             <div className="relative w-14 h-14 rounded-xl gradient-bg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                              <service.icon size={24} className="text-primary-foreground" />
+                              {(() => {
+                                const Icon = resolveIcon(service.icon) || Code2;
+                                return <Icon size={24} className="text-primary-foreground" />;
+                              })()}
                             </div>
                           </div>
                           <div>
@@ -174,6 +210,15 @@ const Services = () => {
                             </motion.span>
                           ))}
                         </div>
+
+                        {service.slug && (
+                          <Link
+                            to={`/services/${service.slug}`}
+                            className="inline-flex items-center gap-1 mt-5 text-sm font-medium text-primary hover:underline"
+                          >
+                            Learn more <ArrowRight size={14} />
+                          </Link>
+                        )}
                       </div>
 
                       {/* Right: capabilities card */}

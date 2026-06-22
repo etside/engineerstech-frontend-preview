@@ -20,7 +20,7 @@ const ServicesOverview = () => {
 
   useEffect(() => {
     api
-      .services()
+      .services({ featured: true })
       .then((data: any[]) => {
         if (data && data.length > 0) {
           setServices(

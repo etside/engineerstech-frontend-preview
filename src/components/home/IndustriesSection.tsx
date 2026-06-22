@@ -1,27 +1,35 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, Wallet, HeartPulse, ShoppingCart, GraduationCap, Radio, Building2, Store, Zap, type LucideIcon } from "lucide-react";
-import { useSettings } from "@/hooks/useSettings";
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { api } from "@/lib/api";
 
 const iconMap: Record<string, LucideIcon> = {
   Wallet, HeartPulse, ShoppingCart, GraduationCap, Radio, Building2, Store, Zap,
 };
 
 const defaultIndustries = [
-  { name: "Fintech", description: "Payments, lending, digital banking solutions", icon: "Wallet", color: "#10B981", link: "#" },
-  { name: "Healthcare", description: "Telemedicine, health records, compliance", icon: "HeartPulse", color: "#EF4444", link: "#" },
-  { name: "E-Commerce", description: "Custom stores, marketplace, payment integration", icon: "ShoppingCart", color: "#F59E0B", link: "#" },
-  { name: "Education", description: "LMS, edtech platforms, assessments", icon: "GraduationCap", color: "#8B5CF6", link: "#" },
-  { name: "Telecom", description: "Enterprise-grade telecom solutions", icon: "Radio", color: "#06B6D4", link: "#" },
-  { name: "Real Estate", description: "Property management, CRM systems", icon: "Building2", color: "#EC4899", link: "#" },
-  { name: "Retail", description: "Inventory, omnichannel, POS systems", icon: "Store", color: "#F97316", link: "#" },
-  { name: "Startups", description: "MVPs, product-market fit, scaling", icon: "Zap", color: "#6366F1", link: "#" },
+  { name: "Fintech", slug: "fintech", description: "Payments, lending, digital banking solutions", icon: "Wallet", color: "#10B981" },
+  { name: "Healthcare", slug: "healthcare", description: "Telemedicine, health records, compliance", icon: "HeartPulse", color: "#EF4444" },
+  { name: "E-Commerce", slug: "e-commerce", description: "Custom stores, marketplace, payment integration", icon: "ShoppingCart", color: "#F59E0B" },
+  { name: "Education", slug: "education", description: "LMS, edtech platforms, assessments", icon: "GraduationCap", color: "#8B5CF6" },
+  { name: "Telecom", slug: "telecom", description: "Enterprise-grade telecom solutions", icon: "Radio", color: "#06B6D4" },
+  { name: "Real Estate", slug: "real-estate", description: "Property management, CRM systems", icon: "Building2", color: "#EC4899" },
+  { name: "Retail", slug: "retail", description: "Inventory, omnichannel, POS systems", icon: "Store", color: "#F97316" },
+  { name: "Startups", slug: "startups", description: "MVPs, product-market fit, scaling", icon: "Zap", color: "#6366F1" },
 ];
 
 const IndustriesSection = () => {
-  const { getSetting } = useSettings();
-  const raw = getSetting("industries", defaultIndustries);
+  const [raw, setRaw] = useState<any[]>(defaultIndustries);
+
+  useEffect(() => {
+    api
+      .industries()
+      .then((data: any[]) => {
+        if (data && data.length > 0) setRaw(data);
+      })
+      .catch(() => {});
+  }, []);
 
   const industries = useMemo(() =>
     raw.map((item: any) => ({
@@ -64,7 +72,7 @@ const IndustriesSection = () => {
               transition={{ delay: i * 0.06, duration: 0.4 }}
             >
               <Link
-                to={item.link || "#"}
+                to={item.slug ? `/industries/${item.slug}` : "#"}
                 className="group block glass-card rounded-xl p-5 border border-border/30 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 h-full"
               >
                 <div

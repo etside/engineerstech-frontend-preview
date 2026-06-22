@@ -2,7 +2,7 @@ import { Outlet, Link, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard, Layers, Package, FileText, Users, MessageSquare,
-  Image, Settings, Mail, LogOut, Menu, X, Star, Navigation
+  Image, Settings, Mail, LogOut, Menu, X, Star, Navigation, Globe, FolderOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -12,6 +12,7 @@ import logoLight from "@/assets/logo-dark-bg.svg";
 const navItems = [
   { to: "/admin", icon: LayoutDashboard, label: "Dashboard", exact: true },
   { to: "/admin/services", icon: Layers, label: "Services" },
+  { to: "/admin/industries", icon: Globe, label: "Industries" },
   { to: "/admin/products", icon: Package, label: "Products" },
   { to: "/admin/blog", icon: FileText, label: "Blog Posts" },
   { to: "/admin/team", icon: Users, label: "Team" },
@@ -20,6 +21,7 @@ const navItems = [
   { to: "/admin/submissions", icon: Mail, label: "Contact Submissions" },
   { to: "/admin/navigation", icon: Navigation, label: "Navigation" },
   { to: "/admin/case-studies", icon: FileText, label: "Case Studies" },
+  { to: "/admin/resources", icon: FolderOpen, label: "Resources" },
   { to: "/admin/settings", icon: Settings, label: "Site Settings" },
 ];
 

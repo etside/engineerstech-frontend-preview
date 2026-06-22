@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Calendar, Clock, ArrowRight, BookOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import SEO from "@/components/SEO";
 import { api } from "@/lib/api";
 import { blogPosts as staticPosts } from "@/data/blogPosts";
 
@@ -45,6 +46,11 @@ const Blog = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Blog"
+        description="Insights on software engineering, SaaS, AI, and digital transformation from the engineersTech team."
+        path="/blog"
+      />
       {/* Hero */}
       <section className="relative pt-16 md:pt-20 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-40" />

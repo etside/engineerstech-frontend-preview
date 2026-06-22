@@ -6,6 +6,7 @@ import {
   Award, Globe, Linkedin, MessageCircle, Code2, Zap, Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SEO from "@/components/SEO";
 import { api } from "@/lib/api";
 
 const timeline = [
@@ -41,6 +42,11 @@ const About = () => {
 
   return (
     <>
+      <SEO
+        title="About Us"
+        description="Founded in 2017, engineersTech grew from freelance roots into a full-scale Bangladesh-based software engineering firm — BASIS & e-CAB registered, trusted by global clients."
+        path="/about"
+      />
       {/* Hero */}
       <section className="relative pt-16 md:pt-20 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-[0.08]" />

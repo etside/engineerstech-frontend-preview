@@ -3,7 +3,7 @@ import {
   Cloud, Bug, Link2, Wallet, HeartPulse, ShoppingCart, GraduationCap,
   Radio, Building2, Store, Zap, Cpu, Layers, BookOpen, Briefcase,
   FileText, Handshake, ShieldCheck, Leaf, Newspaper, UserPlus,
-  FolderOpen, TrendingUp, Search, Gauge, type LucideIcon,
+  FolderOpen, TrendingUp, Search, Gauge, Palette, type LucideIcon,
 } from "lucide-react";
 
 export interface NavSubItem {
@@ -30,7 +30,7 @@ const iconMap: Record<string, LucideIcon> = {
   Cloud, Bug, Link2, Wallet, HeartPulse, ShoppingCart, GraduationCap,
   Radio, Building2, Store, Zap, Cpu, Layers, BookOpen, Briefcase,
   FileText, Handshake, ShieldCheck, Leaf, Newspaper, UserPlus,
-  FolderOpen, TrendingUp, Search, Gauge,
+  FolderOpen, TrendingUp, Search, Gauge, Palette,
 };
 
 export function resolveIcon(name?: string): LucideIcon | undefined {
@@ -69,21 +69,21 @@ export const defaultNavigation: NavItem[] = [
       {
         title: "Collaboration Models",
         items: [
-          { label: "Staff Augmentation", to: "#", description: "Scale your team with vetted developers in 4 weeks", icon: Users },
-          { label: "Managed Services", to: "#", description: "End-to-end app & infrastructure support", icon: Layers },
-          { label: "MVP Development", to: "#", description: "Market-ready MVPs in 8–12 weeks", icon: Rocket },
-          { label: "Technology Consulting", to: "#", description: "Strategic audits to cut tech waste by 30%", icon: Lightbulb },
-          { label: "Digital Transformation", to: "#", description: "AI-driven automation for 50% efficiency gains", icon: Sparkles },
+          { label: "Staff Augmentation", to: "/services/staff-augmentation", description: "Scale your team with vetted developers in 4 weeks", icon: Users },
+          { label: "Managed Services", to: "/services/managed-services", description: "End-to-end app & infrastructure support", icon: Layers },
+          { label: "MVP Development", to: "/services/mvp-development", description: "Market-ready MVPs in 8–12 weeks", icon: Rocket },
+          { label: "Technology Consulting", to: "/services/technology-consulting", description: "Strategic audits to cut tech waste by 30%", icon: Lightbulb },
+          { label: "Digital Transformation", to: "/services/digital-transformation", description: "AI-driven automation for 50% efficiency gains", icon: Sparkles },
         ],
       },
       {
         title: "Top Services",
         items: [
-          { label: "AI & Machine Learning", to: "#", icon: BrainCircuit },
-          { label: "Web & Mobile Development", to: "#", icon: Smartphone },
-          { label: "Cloud & DevOps", to: "#", icon: Cloud },
-          { label: "QA Testing & Automation", to: "#", icon: Bug },
-          { label: "Blockchain Development", to: "#", icon: Link2 },
+          { label: "AI & Machine Learning", to: "/services/ai-machine-learning", icon: BrainCircuit },
+          { label: "Web & Mobile Development", to: "/services/web-mobile-development", icon: Smartphone },
+          { label: "Cloud & DevOps", to: "/services/cloud-devops", icon: Cloud },
+          { label: "QA Testing & Automation", to: "/services/qa-testing-automation", icon: Bug },
+          { label: "Blockchain Development", to: "/services/blockchain-development", icon: Link2 },
         ],
       },
     ],
@@ -93,14 +93,14 @@ export const defaultNavigation: NavItem[] = [
     megaMenu: [{
       title: "Industries We Serve",
       items: [
-        { label: "Fintech", to: "#", description: "Payments, lending, digital banking", icon: Wallet },
-        { label: "Healthcare", to: "#", description: "Telemedicine, health records, compliance", icon: HeartPulse },
-        { label: "E-Commerce", to: "#", description: "Custom stores, marketplace solutions", icon: ShoppingCart },
-        { label: "Education", to: "#", description: "LMS, edtech platforms, assessments", icon: GraduationCap },
-        { label: "Telecom", to: "#", description: "Enterprise-grade telecom solutions", icon: Radio },
-        { label: "Real Estate", to: "#", description: "Property management, CRM systems", icon: Building2 },
-        { label: "Retail", to: "#", description: "Inventory, omnichannel, POS systems", icon: Store },
-        { label: "Startups", to: "#", description: "MVPs, product-market fit, scaling", icon: Zap },
+        { label: "Fintech", to: "/industries/fintech", description: "Payments, lending, digital banking", icon: Wallet },
+        { label: "Healthcare", to: "/industries/healthcare", description: "Telemedicine, health records, compliance", icon: HeartPulse },
+        { label: "E-Commerce", to: "/industries/e-commerce", description: "Custom stores, marketplace solutions", icon: ShoppingCart },
+        { label: "Education", to: "/industries/education", description: "LMS, edtech platforms, assessments", icon: GraduationCap },
+        { label: "Telecom", to: "/industries/telecom", description: "Enterprise-grade telecom solutions", icon: Radio },
+        { label: "Real Estate", to: "/industries/real-estate", description: "Property management, CRM systems", icon: Building2 },
+        { label: "Retail", to: "/industries/retail", description: "Inventory, omnichannel, POS systems", icon: Store },
+        { label: "Startups", to: "/industries/startups", description: "MVPs, product-market fit, scaling", icon: Zap },
       ],
     }],
   },
@@ -109,10 +109,10 @@ export const defaultNavigation: NavItem[] = [
     megaMenu: [{
       title: "Our Products",
       items: [
-        { label: "GlowUp", to: "#", description: "Digital transformation platform", icon: Sparkles },
-        { label: "ERP Solutions", to: "#", description: "Enterprise resource planning", icon: Cpu },
-        { label: "LMS Platform", to: "#", description: "Learning management system", icon: BookOpen },
-        { label: "AI Tools", to: "#", description: "Custom AI/ML powered solutions", icon: BrainCircuit },
+        { label: "GlowUp", to: "/products/glowup", description: "AI-powered social media growth platform", icon: Sparkles },
+        { label: "Restaurant POS", to: "/products/restaurant-pos", description: "Smart restaurant point-of-sale system", icon: ShoppingCart },
+        { label: "HRM Suite", to: "/products/hrm-suite", description: "Payroll, attendance & performance tracking", icon: Briefcase },
+        { label: "CRM Platform", to: "/products/crm-platform", description: "Pipeline tracking & automation", icon: Cpu },
       ],
     }],
   },
@@ -124,21 +124,19 @@ export const defaultNavigation: NavItem[] = [
         items: [
           { label: "About Us", to: "/about", description: "Our story, mission & vision", icon: Building2 },
           { label: "Blog", to: "/blog", description: "Insights, tutorials & updates", icon: BookOpen },
-          { label: "Case Studies", to: "#", description: "Real projects, real results", icon: FileText },
-          { label: "Career", to: "#", description: "Join our growing team", icon: Briefcase },
+          { label: "Case Studies", to: "/case-studies", description: "Real projects, real results", icon: FileText },
+          { label: "Career", to: "/career", description: "Join our growing team", icon: Briefcase },
           { label: "Contact", to: "/contact", description: "Get in touch with us", icon: Code2 },
-          { label: "Our Resources", to: "#", description: "Whitepapers, guides & tools", icon: FolderOpen },
-          { label: "Investor Relations", to: "#", description: "Financials & growth reports", icon: TrendingUp },
+          { label: "Our Resources", to: "/resources", description: "Whitepapers, guides & tools", icon: FolderOpen },
         ],
       },
       {
         title: "Recognitions",
         items: [
-          { label: "Partners", to: "#", description: "Technology & business partners", icon: Handshake },
-          { label: "Enterprise-Grade Security", to: "#", description: "ISO certified & compliant", icon: ShieldCheck },
-          { label: "Sustainability", to: "#", description: "Our commitment to the planet", icon: Leaf },
-          { label: "Media", to: "#", description: "Press releases & coverage", icon: Newspaper },
-          { label: "Join as Partner", to: "#", description: "Partner with EngineersTech", icon: UserPlus },
+          { label: "Enterprise-Grade Security", to: "/resources#recognitions", description: "ISO certified & compliant", icon: ShieldCheck },
+          { label: "Sustainability", to: "/resources#recognitions", description: "Our commitment to the planet", icon: Leaf },
+          { label: "Media", to: "/resources#recognitions", description: "Press releases & coverage", icon: Newspaper },
+          { label: "Join as Partner", to: "/resources#recognitions", description: "Partner with EngineersTech", icon: UserPlus },
         ],
       },
     ],

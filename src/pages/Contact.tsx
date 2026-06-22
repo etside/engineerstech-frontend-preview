@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import SEO from "@/components/SEO";
 import { z } from "zod";
 
 const contactSchema = z.object({
@@ -89,6 +90,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO
+        title="Contact Us"
+        description="Get in touch with engineersTech for your next software project. Reach us by phone, email, or visit our Dhaka office — we typically reply within 24 hours."
+        path="/contact"
+      />
       {/* Hero */}
       <section className="relative pt-16 md:pt-20 overflow-hidden">
         <div className="absolute inset-0 grid-pattern opacity-40" />

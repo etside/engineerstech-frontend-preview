@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Briefcase, MapPin, Clock, ArrowRight, Users, Zap, Heart, Coffee } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import SEO from "@/components/SEO";
 
 const perks = [
   { icon: Users, title: "Great Team", desc: "Work with talented engineers who push each other to grow." },
@@ -13,6 +14,11 @@ const perks = [
 const Career = () => {
   return (
     <div className="pt-28 pb-20">
+      <SEO
+        title="Careers"
+        description="Join engineersTech — build enterprise software with a talented, remote-friendly team. Explore open roles and our engineering culture."
+        path="/career"
+      />
       {/* Hero */}
       <section className="container text-center mb-20">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
