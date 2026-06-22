@@ -38,6 +38,31 @@ export function resolveIcon(name?: string): LucideIcon | undefined {
   return iconMap[name];
 }
 
+const iconNameMap = new Map<LucideIcon, string>(
+  Object.entries(iconMap).map(([name, icon]) => [icon, name])
+);
+
+// Convert NavItem[] (with icon components) back to plain settings data (with icon names)
+export function serializeNavigation(nav: NavItem[]): any[] {
+  return nav.map((item) => {
+    if (item.megaMenu) {
+      return {
+        label: item.label,
+        megaMenu: item.megaMenu.map((group) => ({
+          title: group.title,
+          items: group.items.map((sub) => ({
+            label: sub.label,
+            to: sub.to,
+            description: sub.description,
+            icon: sub.icon ? iconNameMap.get(sub.icon) : undefined,
+          })),
+        })),
+      };
+    }
+    return { label: item.label, to: item.to };
+  });
+}
+
 // Convert settings nav data (with icon names) to NavItem[] (with icon components)
 export function parseNavigation(data: any[]): NavItem[] {
   if (!Array.isArray(data)) return defaultNavigation;

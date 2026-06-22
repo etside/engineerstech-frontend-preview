@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { useSettings } from "@/hooks/useSettings";
+import { defaultNavigation, serializeNavigation } from "@/data/navigation";
 import {
   Save, Plus, Trash2, ChevronDown, ChevronRight, GripVertical,
   FolderOpen, Folder, Link2, ArrowUp, ArrowDown,
@@ -291,7 +291,6 @@ const NavItemEditor = ({
 
 const AdminNavigation = () => {
   const { toast } = useToast();
-  const { getSetting } = useSettings();
   const [navItems, setNavItems] = useState<NavItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -300,7 +299,9 @@ const AdminNavigation = () => {
     adminApi
       .getSettings()
       .then((data) => {
-        setNavItems(data?.navigation || []);
+        setNavItems(
+          data?.navigation?.length ? data.navigation : serializeNavigation(defaultNavigation)
+        );
       })
       .catch((err: any) => {
         toast({ title: "Error", description: err.message, variant: "destructive" });
