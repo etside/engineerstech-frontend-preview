@@ -18,7 +18,7 @@ const Index = () => {
   return (
     <>
       <SEO
-        title="Enterprise Software Development Company in Bangladesh"
+        title="Custom Software Development Company in Bangladesh"
         description="engineersTech builds custom enterprise software, SaaS products, web & mobile apps for global clients. BASIS & e-CAB registered. Trusted engineering, delivered fast."
         path="/"
       />
