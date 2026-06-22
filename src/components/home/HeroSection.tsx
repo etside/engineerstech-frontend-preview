@@ -191,7 +191,7 @@ const HeroSection = () => {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(0);
   const timerRef = useRef<ReturnType<typeof setInterval>>();
-  const isPaused = useRef(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const goTo = useCallback(
     (index: number) => {
@@ -213,18 +213,17 @@ const HeroSection = () => {
 
   // Auto-play
   useEffect(() => {
-    if (isPaused.current) return;
+    if (isPaused) return;
     timerRef.current = setInterval(next, 6000);
     return () => clearInterval(timerRef.current);
-  }, [next, current]);
+  }, [next, current, isPaused]);
 
   const handleMouseEnter = () => {
-    isPaused.current = true;
-    clearInterval(timerRef.current);
+    setIsPaused(true);
   };
 
   const handleMouseLeave = () => {
-    isPaused.current = false;
+    setIsPaused(false);
   };
 
   const slide = slides[current];

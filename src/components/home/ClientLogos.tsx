@@ -16,18 +16,22 @@ interface LogoData {
 }
 
 const ClientLogos = () => {
-  const [logos, setLogos] = useState<{ src: string; alt: string }[]>(
-    staticLogos.map((src, i) => ({ src, alt: `Client ${i + 1}` }))
-  );
+  const [logos, setLogos] = useState<{ src: string; alt: string }[] | null>(null);
 
   useEffect(() => {
     api.logos().then((data: LogoData[]) => {
       const withImages = data?.filter(l => l.logo_url);
       if (withImages && withImages.length > 0) {
         setLogos(withImages.map(l => ({ src: l.logo_url!, alt: l.name })));
+      } else {
+        setLogos(staticLogos.map((src, i) => ({ src, alt: `Client ${i + 1}` })));
       }
-    }).catch(() => {});
+    }).catch(() => {
+      setLogos(staticLogos.map((src, i) => ({ src, alt: `Client ${i + 1}` })));
+    });
   }, []);
+
+  if (!logos) return null;
 
   return (
     <section className="border-y border-border/30">
@@ -36,15 +40,33 @@ const ClientLogos = () => {
           Trusted by clients worldwide
         </p>
       </div>
-      <div className="overflow-hidden">
-        <div className="flex animate-scroll-left gap-16 w-max">
+      <div className="overflow-hidden space-y-8">
+        <div className="flex animate-scroll-left gap-8 w-max">
           {[...logos, ...logos].map((logo, i) => (
-            <img loading="lazy" decoding="async"
-              key={i}
-              src={logo.src}
-              alt={logo.alt}
-              className="h-14 md:h-16 opacity-80 object-contain"
-            />
+            <div
+              key={`row1-${i}`}
+              className="h-20 md:h-24 w-40 md:w-48 bg-white/90 rounded-xl shrink-0 overflow-hidden"
+            >
+              <img loading="lazy" decoding="async"
+                src={logo.src}
+                alt={logo.alt}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+        <div className="flex animate-scroll-right gap-8 w-max">
+          {[...logos, ...logos].reverse().map((logo, i) => (
+            <div
+              key={`row2-${i}`}
+              className="h-20 md:h-24 w-40 md:w-48 bg-white/90 rounded-xl shrink-0 overflow-hidden"
+            >
+              <img loading="lazy" decoding="async"
+                src={logo.src}
+                alt={logo.alt}
+                className="w-full h-full object-cover"
+              />
+            </div>
           ))}
         </div>
       </div>
