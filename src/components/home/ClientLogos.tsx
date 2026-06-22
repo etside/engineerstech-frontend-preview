@@ -39,7 +39,7 @@ const ClientLogos = () => {
       <div className="overflow-hidden">
         <div className="flex animate-scroll-left gap-16 w-max">
           {[...logos, ...logos].map((logo, i) => (
-            <img
+            <img loading="lazy" decoding="async"
               key={i}
               src={logo.src}
               alt={logo.alt}

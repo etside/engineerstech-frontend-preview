@@ -256,7 +256,7 @@ const About = () => {
                   <div className="p-6 sm:p-8">
                     {/* Avatar */}
                     {member.photo_url ? (
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={member.photo_url}
                         alt={member.name}
                         className="w-24 h-24 rounded-full mx-auto mb-5 object-cover ring-2 ring-primary/10 group-hover:ring-primary/30 transition-all duration-300"

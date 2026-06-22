@@ -143,7 +143,7 @@ const CaseStudies = () => {
                   {/* Cover Image / Color Bar */}
                   <div className="relative h-48 overflow-hidden">
                     {study.cover_image ? (
-                      <img
+                      <img loading="lazy" decoding="async"
                         src={study.cover_image}
                         alt={study.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"

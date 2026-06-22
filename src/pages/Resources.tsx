@@ -59,7 +59,7 @@ const ResourceCard = ({ resource, i }: { resource: any; i: number }) => {
     >
       {resource.cover_image && (
         <div className="h-40 overflow-hidden relative">
-          <img src={resource.cover_image} alt={resource.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          <img loading="lazy" decoding="async" src={resource.cover_image} alt={resource.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent" />
           <span className="absolute bottom-3 left-4 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/20 backdrop-blur-sm text-primary text-[10px] font-bold uppercase tracking-wider">
             <Icon className="h-3 w-3" /> {resource.type}
@@ -218,7 +218,7 @@ const Resources = () => {
                     <Link to={`/blog/${post.slug}`} className="glass-card rounded-xl overflow-hidden border border-border/30 hover:border-primary/30 transition-all block h-full">
                       {post.cover_image && (
                         <div className="h-32 overflow-hidden">
-                          <img src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
+                          <img loading="lazy" decoding="async" src={post.cover_image} alt={post.title} className="w-full h-full object-cover" />
                         </div>
                       )}
                       <div className="p-4">

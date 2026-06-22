@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -5,41 +6,49 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { SettingsProvider } from "@/hooks/useSettings";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Services from "./pages/Services";
-import ServiceDetail from "./pages/ServiceDetail";
-import IndustryDetail from "./pages/IndustryDetail";
-import Products from "./pages/Products";
-import ProductDetail from "./pages/ProductDetail";
-import Resources from "./pages/Resources";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import AdminLogin from "./pages/AdminLogin";
-import AdminLayout from "./components/admin/AdminLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminServices from "./pages/admin/AdminServices";
-import AdminProducts from "./pages/admin/AdminProducts";
-import AdminBlog from "./pages/admin/AdminBlog";
-import AdminTeam from "./pages/admin/AdminTeam";
-import AdminTestimonials from "./pages/admin/AdminTestimonials";
-import AdminLogos from "./pages/admin/AdminLogos";
-import AdminSubmissions from "./pages/admin/AdminSubmissions";
-import AdminSettings from "./pages/admin/AdminSettings";
-import AdminNavigation from "./pages/admin/AdminNavigation";
-import AdminCaseStudies from "./pages/admin/AdminCaseStudies";
-import AdminIndustries from "./pages/admin/AdminIndustries";
-import AdminResources from "./pages/admin/AdminResources";
-import CaseStudies from "./pages/CaseStudies";
-import CaseStudyDetail from "./pages/CaseStudyDetail";
-import Team from "./pages/Team";
-import Career from "./pages/Career";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import Terms from "./pages/Terms";
-import DataProtectionPolicy from "./pages/DataProtectionPolicy";
+
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Services = lazy(() => import("./pages/Services"));
+const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
+const IndustryDetail = lazy(() => import("./pages/IndustryDetail"));
+const Products = lazy(() => import("./pages/Products"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Resources = lazy(() => import("./pages/Resources"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const CaseStudies = lazy(() => import("./pages/CaseStudies"));
+const CaseStudyDetail = lazy(() => import("./pages/CaseStudyDetail"));
+const Team = lazy(() => import("./pages/Team"));
+const Career = lazy(() => import("./pages/Career"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const Terms = lazy(() => import("./pages/Terms"));
+const DataProtectionPolicy = lazy(() => import("./pages/DataProtectionPolicy"));
+
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminServices = lazy(() => import("./pages/admin/AdminServices"));
+const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
+const AdminBlog = lazy(() => import("./pages/admin/AdminBlog"));
+const AdminTeam = lazy(() => import("./pages/admin/AdminTeam"));
+const AdminTestimonials = lazy(() => import("./pages/admin/AdminTestimonials"));
+const AdminLogos = lazy(() => import("./pages/admin/AdminLogos"));
+const AdminSubmissions = lazy(() => import("./pages/admin/AdminSubmissions"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
+const AdminNavigation = lazy(() => import("./pages/admin/AdminNavigation"));
+const AdminCaseStudies = lazy(() => import("./pages/admin/AdminCaseStudies"));
+const AdminIndustries = lazy(() => import("./pages/admin/AdminIndustries"));
+const AdminResources = lazy(() => import("./pages/admin/AdminResources"));
 
 const queryClient = new QueryClient();
+
+const RouteFallback = () => (
+  <div className="flex min-h-[60vh] items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
+  </div>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -47,6 +56,7 @@ const App = () => (
     <AuthProvider>
       <TooltipProvider>
         <BrowserRouter>
+          <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route element={<Layout />}>
               <Route path="/" element={<Index />} />
@@ -86,6 +96,7 @@ const App = () => (
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

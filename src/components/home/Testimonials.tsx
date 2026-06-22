@@ -57,7 +57,7 @@ const TestimonialCard = ({
     </p>
     <div className="flex items-center gap-3 pt-4 border-t border-border/30">
       {t.photo_url ? (
-        <img
+        <img loading="lazy" decoding="async"
           src={t.photo_url}
           alt={t.name}
           className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-primary/30"

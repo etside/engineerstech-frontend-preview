@@ -67,7 +67,7 @@ const ProductDetail = () => {
           {/* Gallery */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <div className="rounded-2xl overflow-hidden border border-border/30 aspect-[4/3]">
-              <img src={gallery[activeImg]} alt={product.name} className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src={gallery[activeImg]} alt={product.name} className="w-full h-full object-cover" />
             </div>
             {gallery.length > 1 && (
               <div className="flex gap-2 mt-3">
@@ -79,7 +79,7 @@ const ProductDetail = () => {
                       activeImg === i ? "border-primary" : "border-border/30 opacity-60 hover:opacity-100"
                     }`}
                   >
-                    <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>

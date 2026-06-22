@@ -122,7 +122,7 @@ const Products = () => {
                 <div className="grid lg:grid-cols-2">
                   {spotlight.image_url && (
                     <div className="h-56 lg:h-auto order-1 lg:order-none">
-                      <img src={spotlight.image_url} alt={spotlight.name} className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={spotlight.image_url} alt={spotlight.name} className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className="p-8 sm:p-10 flex flex-col justify-center">
@@ -175,7 +175,7 @@ const Products = () => {
                     >
                       {product.image_url && (
                         <div className="h-40 overflow-hidden">
-                          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <img loading="lazy" decoding="async" src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         </div>
                       )}
                       <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-primary/30 to-transparent group-hover:via-primary transition-all duration-500" />
@@ -261,7 +261,7 @@ const Products = () => {
                     <p className="text-sm text-foreground/80 leading-relaxed mb-4">"{t.quote}"</p>
                     <div className="flex items-center gap-3">
                       {t.photo_url ? (
-                        <img src={t.photo_url} alt={t.name} className="w-9 h-9 rounded-full object-cover" />
+                        <img loading="lazy" decoding="async" src={t.photo_url} alt={t.name} className="w-9 h-9 rounded-full object-cover" />
                       ) : (
                         <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                           {t.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2)}

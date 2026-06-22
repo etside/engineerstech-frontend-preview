@@ -64,7 +64,7 @@ const ServiceDetail = () => {
         <div className="grid lg:grid-cols-2 min-h-[420px]">
           {/* Image side */}
           <div className="relative h-64 lg:h-auto order-1">
-            <img
+            <img loading="lazy" decoding="async"
               src={heroImage}
               alt={service.title}
               className="absolute inset-0 w-full h-full object-cover"

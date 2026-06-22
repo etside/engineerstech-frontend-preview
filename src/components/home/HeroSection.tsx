@@ -260,7 +260,7 @@ const HeroSection = () => {
       <div className="container relative z-10 pt-10 sm:pt-12 pb-0 h-full">
         <div className="flex flex-col justify-between min-h-[500px] md:min-h-[550px]">
           {/* Content Area */}
-          <AnimatePresence mode="wait" custom={direction}>
+          <AnimatePresence mode="wait" custom={direction} initial={false}>
             <motion.div
               key={current}
               custom={direction}
@@ -319,7 +319,7 @@ const HeroSection = () => {
           {/* Bottom Bar: Stats + Controls */}
           <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 pb-8">
             {/* Stats */}
-            <AnimatePresence mode="wait" custom={direction}>
+            <AnimatePresence mode="wait" custom={direction} initial={false}>
               <motion.div
                 key={`stats-${current}`}
                 custom={direction}

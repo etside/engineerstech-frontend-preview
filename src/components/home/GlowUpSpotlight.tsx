@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import glowupBanner from "@/assets/glowup-banner-for-web.png";
+import glowupBanner from "@/assets/glowup-banner-for-web.webp";
 
 const glowupSpotlight = () => {
   return (
@@ -32,7 +32,7 @@ const glowupSpotlight = () => {
               </a>
             </div>
             <div className="w-full md:w-80 shrink-0">
-              <img src={glowupBanner} alt="glowup" className="w-full h-auto rounded-xl object-cover" />
+              <img loading="lazy" decoding="async" src={glowupBanner} alt="glowup" className="w-full h-auto rounded-xl object-cover" />
             </div>
           </div>
         </motion.div>

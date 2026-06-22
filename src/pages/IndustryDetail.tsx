@@ -61,7 +61,7 @@ const IndustryDetail = () => {
       />
       {/* Full-bleed image hero with color-tinted overlay */}
       <section className="relative h-[55vh] min-h-[380px] flex items-end overflow-hidden">
-        <img src={bgImage} alt={industry.name} className="absolute inset-0 w-full h-full object-cover" />
+        <img loading="lazy" decoding="async" src={bgImage} alt={industry.name} className="absolute inset-0 w-full h-full object-cover" />
         <div
           className="absolute inset-0"
           style={{ background: `linear-gradient(180deg, ${color}30 0%, transparent 50%, hsl(var(--background)) 95%)` }}
@@ -103,7 +103,7 @@ const IndustryDetail = () => {
             <div className="grid sm:grid-cols-3 gap-3">
               {industry.gallery.map((img: string, i: number) => (
                 <div key={i} className="rounded-xl overflow-hidden aspect-[4/3] border border-border/20">
-                  <img src={img} alt={`${industry.name} ${i + 1}`} className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={img} alt={`${industry.name} ${i + 1}`} className="w-full h-full object-cover" />
                 </div>
               ))}
             </div>

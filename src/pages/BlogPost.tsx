@@ -85,7 +85,7 @@ const BlogPost = () => {
       {/* Hero Image */}
       <section className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">
         {image ? (
-          <img
+          <img loading="lazy" decoding="async"
             src={typeof image === "string" && image.includes("unsplash") ? image.replace("w=600&h=340", "w=1400&h=500") : image}
             alt={title}
             className="w-full h-full object-cover"
@@ -131,7 +131,7 @@ const BlogPost = () => {
             <div className="flex items-center justify-between glass-card rounded-xl p-4 mb-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                  <img src={etIcon} alt="engineersTech" className="h-6 w-6" />
+                  <img loading="lazy" decoding="async" src={etIcon} alt="engineersTech" className="h-6 w-6" />
                 </div>
                 <div>
                   <p className="text-sm font-medium">engineersTech Team</p>

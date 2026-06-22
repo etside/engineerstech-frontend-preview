@@ -70,7 +70,7 @@ const Team = () => {
                 {/* Photo */}
                 <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden border-2 border-primary/20 group-hover:border-primary/50 transition-colors">
                   {member.photo_url ? (
-                    <img src={member.photo_url} alt={member.name} className="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={member.photo_url} alt={member.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-primary/10 flex items-center justify-center text-2xl font-bold text-primary">
                       {member.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
