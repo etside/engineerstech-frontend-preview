@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, ChevronDown } from "lucide-react";
+import { Mail, Phone, MapPin, ChevronDown, Linkedin, Facebook, Twitter, Instagram } from "lucide-react";
 import logoDark from "@/assets/logo-dark-bg.svg";
 import ecabLogo from "@/assets/ecab-logo.png";
+
+const socialLinks = [
+  { icon: Linkedin, href: "https://linkedin.com/company/engineerstech", label: "LinkedIn" },
+  { icon: Facebook, href: "https://facebook.com/engineerstechbd", label: "Facebook" },
+  { icon: Twitter, href: "https://twitter.com/engineerstechbd", label: "Twitter" },
+  { icon: Instagram, href: "https://instagram.com/engineerstechbd", label: "Instagram" },
+];
 
 const FooterAccordion = ({
   title,
@@ -53,6 +60,20 @@ const Footer = () => {
               High-performing software solutions driven by engineers. We build enterprise-grade products with affordable pricing.
             </p>
             <p className="text-xs font-semibold gradient-text">#drivenByEngineers</p>
+            <div className="flex items-center gap-3 pt-2">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg bg-secondary hover:bg-primary/20 flex items-center justify-center transition-colors"
+                  aria-label={social.label}
+                >
+                  <social.icon size={15} className="text-muted-foreground hover:text-primary transition-colors" />
+                </a>
+              ))}
+            </div>
           </div>
 
           {/* Quick Links */}
