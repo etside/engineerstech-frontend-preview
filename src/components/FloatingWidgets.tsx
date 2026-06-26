@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { MessageCircle, X, Send, Phone } from "lucide-react";
+import { MessageCircle, X, Send, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSettings } from "@/hooks/useSettings";
 
@@ -16,6 +15,7 @@ const FloatingWidgets = () => {
   const { getSetting } = useSettings();
   const whatsapp = getSetting("company_info", { whatsapp: "8801873722228" }).whatsapp || "8801873722228";
   const whatsappDigits = whatsapp.replace(/\D/g, "");
+  const scheduleUrl = getSetting("schedule_call_url", "https://calendar.app.google/EPrxGuqYSGBhL4WN7");
 
   const [chatOpen, setChatOpen] = useState(false);
   const [messages, setMessages] = useState<{ from: "user" | "bot"; text: string }[]>([
@@ -40,14 +40,16 @@ const FloatingWidgets = () => {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-3">
       {/* Schedule a Call */}
-      <Link
-        to="/contact"
+      <a
+        href={scheduleUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-full gradient-bg text-primary-foreground text-xs font-medium shadow-lg hover:opacity-90 transition-opacity animate-pulse-glow"
         aria-label="Schedule a Call"
       >
-        <Phone className="h-3.5 w-3.5" />
+        <CalendarDays className="h-3.5 w-3.5" />
         Schedule a Call
-      </Link>
+      </a>
 
       {/* WhatsApp */}
       <a

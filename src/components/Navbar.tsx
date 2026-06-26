@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { defaultNavigation, parseNavigation, type NavItem } from "@/data/navigation";
 import { useSettings } from "@/hooks/useSettings";
@@ -10,6 +10,7 @@ import logoDark from "@/assets/logo-dark-bg.svg";
 
 const Navbar = () => {
   const { getSetting } = useSettings();
+  const scheduleUrl = getSetting("schedule_call_url", "https://calendar.app.google/EPrxGuqYSGBhL4WN7");
   const navData = getSetting("navigation", null);
   const navigation: NavItem[] = useMemo(
     () => (navData ? parseNavigation(navData) : defaultNavigation),
@@ -81,14 +82,15 @@ const Navbar = () => {
               <Phone className="h-3.5 w-3.5" />
               <span className="hidden xl:inline">+88 01314 44 33 11</span>
             </a>
-            <Link to="/contact">
+            <a href={scheduleUrl} target="_blank" rel="noopener noreferrer">
               <Button
                 size="sm"
-                className="gradient-bg border-0 text-primary-foreground hover:opacity-90 font-medium px-5"
+                className="gradient-bg border-0 text-primary-foreground hover:opacity-90 font-medium px-5 gap-2"
               >
+                <CalendarDays className="h-3.5 w-3.5" />
                 Schedule a Call
               </Button>
-            </Link>
+            </a>
           </div>
 
           {/* Mobile Toggle */}
@@ -148,11 +150,12 @@ const Navbar = () => {
 
             {/* Mobile CTA */}
             <div className="mt-8 space-y-3">
-              <Link to="/contact">
-                <Button className="gradient-bg border-0 w-full text-primary-foreground font-medium">
+              <a href={scheduleUrl} target="_blank" rel="noopener noreferrer" className="block">
+                <Button className="gradient-bg border-0 w-full text-primary-foreground font-medium gap-2">
+                  <CalendarDays className="h-4 w-4" />
                   Schedule a Call
                 </Button>
-              </Link>
+              </a>
               <a
                 href="tel:+8801314443311"
                 className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
