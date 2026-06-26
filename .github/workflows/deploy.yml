@@ -31,23 +31,10 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -t ed25519 -H 103.132.96.251 >> ~/.ssh/known_hosts 2>/dev/null
 
-      - name: Deploy built files to VPS
-        run: |
-          rsync -avz --delete \
-            --exclude='storage' \
-            --exclude='index.php' \
-            --exclude='cron_publisher_engineerstechbd.php' \
-            --exclude='.well-known' \
-            --exclude='.htaccess' \
-            -e "ssh -i ~/.ssh/deploy_key" \
-            ./dist/ \
-            root@103.132.96.251:/var/www/engineerstech/engineerstechbd.com/
-
       - name: Sync source code to VPS
         run: |
           rsync -avz --delete \
             --exclude='node_modules' \
-            --exclude='dist' \
             --exclude='.git' \
             -e "ssh -i ~/.ssh/deploy_key" \
             ./ \
@@ -56,4 +43,4 @@ jobs:
       - name: Fix ownership on VPS
         run: |
           ssh -i ~/.ssh/deploy_key root@103.132.96.251 \
-            "chown -R www-data:www-data /var/www/engineerstech/engineerstechbd.com/ /var/www/engineerstech/etwebsite-frontend-src/"
+            "chown -R www-data:www-data /var/www/engineerstech/etwebsite-frontend-src/"
