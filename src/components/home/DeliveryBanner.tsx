@@ -44,9 +44,11 @@ const AnimatedCounter = ({
     requestAnimationFrame(tick);
   }, [isInView, target]);
 
+  const prefixStr = prefix ? (prefix.endsWith(" ") ? prefix : prefix + " ") : "";
+
   return (
     <span ref={ref} className="text-2xl sm:text-3xl lg:text-4xl font-bold">
-      {prefix || ""}{count}{suffix}
+      {prefixStr}{count}{suffix}
     </span>
   );
 };

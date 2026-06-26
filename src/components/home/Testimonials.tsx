@@ -184,12 +184,12 @@ const Testimonials = () => {
         {/* Clutch link */}
         <div className="text-center mt-10">
           <a
-            href="#"
+            href="https://www.google.com/search?q=engineerstechbd+reviews"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
           >
-            View all reviews on Clutch <ExternalLink className="h-3.5 w-3.5" />
+            View all reviews on Google <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
       </div>

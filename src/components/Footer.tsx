@@ -142,7 +142,7 @@ const Footer = () => {
             </a>
             <a href="https://maps.app.goo.gl/jcPQ1mB5N83hoGrm7" target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
               <MapPin size={14} className="mt-0.5 shrink-0" />
-              <span>{company.address}</span>
+              <span className="whitespace-pre-line">{company.address}</span>
             </a>
           </FooterAccordion>
         </div>
