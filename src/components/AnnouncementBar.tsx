@@ -12,7 +12,6 @@ const AnnouncementBar = () => {
     ctaLink: "#",
   });
 
-  const { loading } = useSettings();
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
