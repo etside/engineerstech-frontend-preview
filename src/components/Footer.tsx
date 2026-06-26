@@ -6,7 +6,7 @@ import logoDark from "@/assets/logo-dark-bg.svg";
 import ecabLogo from "@/assets/ecab-logo.png";
 
 const socialLinks = [
-  { icon: Linkedin, href: "https://linkedin.com/company/engineerstech", label: "LinkedIn" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/engineerstechbd/posts/?feedView=all", label: "LinkedIn" },
   { icon: Facebook, href: "https://www.facebook.com/engineerstech7", label: "Facebook" },
   { icon: Twitter, href: "https://twitter.com/engineerstechbd", label: "Twitter" },
   { icon: Instagram, href: "https://instagram.com/engineerstechbd", label: "Instagram" },
