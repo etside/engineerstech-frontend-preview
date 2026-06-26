@@ -81,14 +81,14 @@ const Navbar = () => {
               <Phone className="h-3.5 w-3.5" />
               <span className="hidden xl:inline">+88 01314 44 33 11</span>
             </a>
-            <a href="#" target="_blank" rel="noopener noreferrer">
+            <Link to="/contact">
               <Button
                 size="sm"
                 className="gradient-bg border-0 text-primary-foreground hover:opacity-90 font-medium px-5"
               >
                 Schedule a Call
               </Button>
-            </a>
+            </Link>
           </div>
 
           {/* Mobile Toggle */}
@@ -148,11 +148,11 @@ const Navbar = () => {
 
             {/* Mobile CTA */}
             <div className="mt-8 space-y-3">
-              <a href="#" target="_blank" rel="noopener noreferrer">
+              <Link to="/contact">
                 <Button className="gradient-bg border-0 w-full text-primary-foreground font-medium">
                   Schedule a Call
                 </Button>
-              </a>
+              </Link>
               <a
                 href="tel:+8801314443311"
                 className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"

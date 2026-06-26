@@ -50,7 +50,7 @@ const ClientLogos = () => {
               <img loading="lazy" decoding="async"
                 src={logo.src}
                 alt={logo.alt}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain p-3"
               />
             </div>
           ))}
@@ -64,7 +64,7 @@ const ClientLogos = () => {
               <img loading="lazy" decoding="async"
                 src={logo.src}
                 alt={logo.alt}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain p-3"
               />
             </div>
           ))}

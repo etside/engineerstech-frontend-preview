@@ -3,7 +3,7 @@ import { X, Zap, ArrowRight } from "lucide-react";
 import { useSettings } from "@/hooks/useSettings";
 
 const AnnouncementBar = () => {
-  const { getSetting } = useSettings();
+  const { getSetting, loading } = useSettings();
   const config = getSetting("announcement", {
     visible: true,
     highlight: "Limited Offer:",
@@ -12,7 +12,12 @@ const AnnouncementBar = () => {
     ctaLink: "#",
   });
 
-  const [visible, setVisible] = useState(config.visible ?? true);
+  const { loading } = useSettings();
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (!loading) setVisible(config.visible ?? true);
+  }, [loading, config.visible]);
 
   useEffect(() => {
     document.documentElement.style.setProperty(

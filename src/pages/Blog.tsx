@@ -26,6 +26,7 @@ const Blog = () => {
   const [active, setActive] = useState("All");
   const [posts, setPosts] = useState<ApiBlogPost[]>([]);
   const [useStatic, setUseStatic] = useState(false);
+  const [loadingPosts, setLoadingPosts] = useState(true);
 
   useEffect(() => {
     api.blog()
@@ -33,7 +34,8 @@ const Blog = () => {
         if (data && data.length > 0) setPosts(data);
         else setUseStatic(true);
       })
-      .catch(() => setUseStatic(true));
+      .catch(() => setUseStatic(true))
+      .finally(() => setLoadingPosts(false));
   }, []);
 
   // Derive categories and filtered list
@@ -95,8 +97,13 @@ const Blog = () => {
       {/* Grid */}
       <section className="pb-20 sm:pb-32">
         <div className="container">
-          {filtered.length === 0 && !useStatic && (
-            <p className="text-center text-muted-foreground py-12">Loading posts...</p>
+          {loadingPosts && (
+            <div className="flex justify-center py-12">
+              <div className="h-8 w-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+            </div>
+          )}
+          {!loadingPosts && filtered.length === 0 && (
+            <p className="text-center text-muted-foreground py-12">No posts found.</p>
           )}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((post, i) => (
