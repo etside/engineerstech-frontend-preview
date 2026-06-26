@@ -8,7 +8,7 @@ import ecabLogo from "@/assets/ecab-logo.png";
 const socialLinks = [
   { icon: Linkedin, href: "https://www.linkedin.com/company/engineerstechbd/posts/?feedView=all", label: "LinkedIn" },
   { icon: Facebook, href: "https://www.facebook.com/engineerstech7", label: "Facebook" },
-  { icon: Twitter, href: "https://twitter.com/engineerstechbd", label: "Twitter" },
+  { icon: Twitter, href: "https://x.com/engineerstech7", label: "Twitter" },
   { icon: Instagram, href: "https://instagram.com/engineerstechbd", label: "Instagram" },
 ];
 
