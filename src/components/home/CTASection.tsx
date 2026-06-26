@@ -42,7 +42,7 @@ const CTASection = () => {
             </p>
             <Link to="/contact">
               <Button size="lg" className="bg-background text-foreground hover:bg-background/90 h-12 px-8 text-base">
-                Contact Us <ArrowRight size={18} />
+                Get Started <ArrowRight size={18} />
               </Button>
             </Link>
           </div>

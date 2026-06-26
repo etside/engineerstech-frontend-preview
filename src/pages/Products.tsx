@@ -297,7 +297,7 @@ const Products = () => {
             </p>
             <Link to="/contact">
               <Button size="lg" className="gradient-bg border-0 text-primary-foreground hover:opacity-90 px-8 h-12">
-                Let's Talk <ArrowRight size={18} />
+                Get Started <ArrowRight size={18} />
               </Button>
             </Link>
           </motion.div>

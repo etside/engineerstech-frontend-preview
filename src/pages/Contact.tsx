@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import SEO from "@/components/SEO";
+import { Checkbox } from "@/components/ui/checkbox";
 import { z } from "zod";
 
 const contactSchema = z.object({
@@ -34,9 +35,15 @@ const contactInfo = [
   },
   {
     icon: MapPin,
-    label: "Visit Us",
+    label: "Office Address",
     value: "Rashi International, Level 6, Flat B6\nPlot 9, Road 4, Sector 16/A\nUttara, Dhaka 1230",
     href: "https://maps.app.goo.gl/jcPQ1mB5N83hoGrm7",
+  },
+  {
+    icon: MapPin,
+    label: "Registered Address",
+    value: "Faydabad Madrasha Road\nDakshinkhan, Dhaka 1230",
+    href: null,
   },
 ];
 
@@ -52,6 +59,7 @@ const Contact = () => {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ContactForm, string>>>({});
   const [sending, setSending] = useState(false);
+  const [consent, setConsent] = useState(false);
 
   const handleChange = (field: keyof ContactForm, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -191,7 +199,20 @@ const Contact = () => {
                     {errors.message && <p className="text-xs text-destructive">{errors.message}</p>}
                   </div>
 
-                  <Button type="submit" size="lg" className="w-full gradient-bg border-0" disabled={sending}>
+                  <div className="flex items-start gap-2">
+                    <Checkbox
+                      id="consent"
+                      checked={consent}
+                      onCheckedChange={(checked) => setConsent(checked as boolean)}
+                      className="mt-0.5"
+                    />
+                    <Label htmlFor="consent" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                      I agree to the processing of my personal data in accordance with the{" "}
+                      <a href="/privacy-policy" className="text-primary hover:underline">Privacy Policy</a>.
+                    </Label>
+                  </div>
+
+                  <Button type="submit" size="lg" className="w-full gradient-bg border-0" disabled={sending || !consent}>
                     {sending ? (
                       <span className="flex items-center gap-2">
                         <span className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
