@@ -24,5 +24,6 @@ jobs:
              git checkout ${{ github.ref_name }} && \
              git pull origin ${{ github.ref_name }} && \
              npm install && \
-             npm run build && \
+             npx playwright install --with-deps chromium && \
+             SITEMAP_URL=https://engineerstechbd.com/sitemap.xml SITE_URL=https://engineerstechbd.com npm run build:prerender && \
              chown -R www-data:www-data dist/"
