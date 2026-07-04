@@ -58,6 +58,21 @@ const ServiceDetail = () => {
         description={service.description || `Learn about engineersTech's ${service.title} service.`}
         path={`/services/${service.slug}`}
         image={heroImage}
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Service",
+            name: service.title,
+            description: service.long_description || service.description,
+            provider: { "@type": "Organization", name: "engineersTech", url: "https://engineerstechbd.com" },
+            areaServed: "Worldwide",
+          },
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Services", path: "/services" },
+            { name: service.title, path: `/services/${service.slug}` },
+          ]),
+        ]}
       />
       {/* Split hero: image left, content right */}
       <section className="pt-16 md:pt-20 relative overflow-hidden">
