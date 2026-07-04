@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { resolveIcon } from "@/data/navigation";
-import SEO from "@/components/SEO";
+import SEO, { breadcrumbSchema } from "@/components/SEO";
 
 const fallbackServices = [
   {
@@ -99,9 +99,10 @@ const Services = () => {
   return (
     <>
       <SEO
-        title="Our Services"
-        description="Enterprise & SaaS development, web & mobile apps, staff augmentation, AI/ML, cloud & DevOps, and more — explore engineersTech's full service catalog."
+        title="Software Development Services"
+        description="Enterprise & SaaS development, web & mobile apps, staff augmentation, AI/ML, cloud & DevOps, and more — custom software solutions for clients in Bangladesh and worldwide."
         path="/services"
+        schema={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }])]}
       />
       {/* Hero */}
       <section className="relative pt-16 md:pt-20 overflow-hidden">

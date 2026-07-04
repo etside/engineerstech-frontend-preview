@@ -10,9 +10,23 @@ interface SEOProps {
   path?: string;
   image?: string;
   type?: "website" | "article";
+  /** Extra JSON-LD objects (Service, Product, BreadcrumbList, etc.) to inject on this page. */
+  schema?: Record<string, unknown>[];
 }
 
-const SEO = ({ title, description, path = "", image = DEFAULT_IMAGE, type = "website" }: SEOProps) => {
+/** Builds a BreadcrumbList JSON-LD block from a list of {name, path} crumbs. */
+export const breadcrumbSchema = (crumbs: { name: string; path: string }[]) => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: crumbs.map((c, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: c.name,
+    item: `${SITE_URL}${c.path}`,
+  })),
+});
+
+const SEO = ({ title, description, path = "", image = DEFAULT_IMAGE, type = "website", schema = [] }: SEOProps) => {
   const fullTitle = `${title} | ${SITE_NAME}`;
   const url = `${SITE_URL}${path}`;
 
@@ -33,6 +47,12 @@ const SEO = ({ title, description, path = "", image = DEFAULT_IMAGE, type = "web
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
+
+      {schema.map((s, i) => (
+        <script key={i} type="application/ld+json">
+          {JSON.stringify(s)}
+        </script>
+      ))}
     </Helmet>
   );
 };
