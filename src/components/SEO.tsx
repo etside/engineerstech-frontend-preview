@@ -49,9 +49,7 @@ const SEO = ({ title, description, path = "", image = DEFAULT_IMAGE, type = "web
       <meta name="twitter:image" content={image} />
 
       {schema.map((s, i) => (
-        <script key={i} type="application/ld+json">
-          {JSON.stringify(s)}
-        </script>
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(s) }} />
       ))}
     </Helmet>
   );
