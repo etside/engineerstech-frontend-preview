@@ -67,11 +67,6 @@ const ServiceDetail = () => {
             provider: { "@type": "Organization", name: "engineersTech", url: "https://engineerstechbd.com" },
             areaServed: "Worldwide",
           },
-          breadcrumbSchema([
-            { name: "Home", path: "/" },
-            { name: "Services", path: "/services" },
-            { name: service.title, path: `/services/${service.slug}` },
-          ]),
         ]}
       />
       {/* Split hero: image left, content right */}
