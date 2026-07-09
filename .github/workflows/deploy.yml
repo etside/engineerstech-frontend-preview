@@ -79,11 +79,12 @@ jobs:
           SSH_HOST: ${{ secrets.VPS_HOST }}
           SSH_USER: ${{ secrets.VPS_USER }}
           FRONTEND_DEPLOY_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH || '/var/www/engineerstech/et-website-frontend' }}
+          VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
         run: |
           set -euo pipefail
           echo "Deploying Frontend to $SSH_USER@$SSH_HOST:$FRONTEND_DEPLOY_PATH"
           
-          ssh -i ~/.ssh/deploy_key -o ConnectTimeout=10 -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" << 'DEPLOY_FRONTEND'
+          ssh -i ~/.ssh/deploy_key -o ConnectTimeout=10 -o StrictHostKeyChecking=no -p "$VPS_PORT" "$SSH_USER@$SSH_HOST" << 'DEPLOY_FRONTEND'
           set -euo pipefail
           FRONTEND_DEPLOY_PATH="${{ secrets.FRONTEND_DEPLOY_PATH || '/var/www/engineerstech/et-website-frontend' }}"
           cd "$FRONTEND_DEPLOY_PATH"
