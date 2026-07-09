@@ -1,0 +1,169 @@
+name: Build & Deploy Frontend to VPS
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.ts'
+      - 'tsconfig.json'
+      - '.github/workflows/deploy.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate workflow
+        run: |
+          echo "✓ Validating frontend deployment to production"
+          echo "  - Repository: ${{ github.repository }}"
+          echo "  - Branch: ${{ github.ref_name }}"
+          echo "  - Commit: ${{ github.sha }}"
+          echo "  - Author: ${{ github.actor }}"
+
+  build:
+    needs: validate
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build frontend
+        env:
+          VITE_API_URL: https://engineerstechbd.com/api
+          VITE_STORAGE_URL: https://engineerstechbd.com/storage
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: dist/
+          retention-days: 1
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: dist/
+
+      - name: Setup SSH
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          SSH_HOST: ${{ secrets.VPS_HOST }}
+          SSH_USER: ${{ secrets.VPS_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -t ed25519 -H $SSH_HOST >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Validate SSH Connection
+        env:
+          SSH_HOST: ${{ secrets.VPS_HOST }}
+          SSH_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST "echo '✓ SSH connection successful'"
+
+      - name: Deploy Frontend
+        env:
+          SSH_HOST: ${{ secrets.VPS_HOST }}
+          SSH_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH }}
+        run: |
+          # Create backup of current build
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'BACKUP_EOF'
+          set -e
+          echo "[$(date)] Creating backup of previous build..."
+          if [ -d $DEPLOY_PATH/dist ]; then
+            tar -czf $DEPLOY_PATH/dist-backup-$(date +%s).tar.gz -C $DEPLOY_PATH dist/
+            echo "[$(date)] Backup created successfully"
+          fi
+          BACKUP_EOF
+          
+          # Upload and deploy new build
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            dist/ $SSH_USER@$SSH_HOST:$DEPLOY_PATH/dist/
+          
+          # Set permissions and update git
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'DEPLOY_EOF'
+          set -e
+          echo "[$(date)] Finalizing deployment..."
+          
+          # Navigate to source directory
+          cd $(dirname $DEPLOY_PATH)/etwebsite-frontend-src
+          
+          # Update git repository
+          echo "[$(date)] Updating git repository..."
+          git fetch origin
+          git checkout $BRANCH
+          git pull origin $BRANCH --ff-only
+          
+          # Set permissions
+          echo "[$(date)] Setting file permissions..."
+          chown -R www-data:www-data $DEPLOY_PATH/dist/
+          chmod -R 755 $DEPLOY_PATH/dist/
+          
+          echo "[$(date)] ✓ Frontend deployment completed successfully"
+          DEPLOY_EOF
+
+      - name: Verify Deployment
+        env:
+          SSH_HOST: ${{ secrets.VPS_HOST }}
+          SSH_USER: ${{ secrets.VPS_USER }}
+          DEPLOY_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+          echo "[$(date)] Verifying frontend deployment..."
+          if [ -f $DEPLOY_PATH/dist/index.html ]; then
+            echo "✓ Frontend build verified (index.html exists)"
+            ls -lh $DEPLOY_PATH/dist/ | head -10
+          else
+            echo "❌ Frontend build verification failed"
+            exit 1
+          fi
+          EOF
+
+      - name: Deployment Success Notification
+        if: success()
+        run: |
+          echo "✅ Frontend deployed successfully"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "URL: https://engineerstechbd.com"
+
+      - name: Deployment Failed Notification
+        if: failure()
+        run: |
+          echo "❌ Frontend deployment failed"
+          echo "Check GitHub Actions logs for details"
+          exit 1
