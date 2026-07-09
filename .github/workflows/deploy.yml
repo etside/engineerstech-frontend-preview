@@ -10,20 +10,30 @@ jobs:
 
     steps:
       - name: Setup SSH
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          SSH_HOST: ${{ secrets.VPS_HOST }}
+          SSH_USER: ${{ secrets.VPS_USER }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -t ed25519 -H 103.132.96.251 >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -t ed25519 -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Deploy and build on VPS
+        env:
+          SSH_HOST: ${{ secrets.VPS_HOST }}
+          SSH_USER: ${{ secrets.VPS_USER }}
+          FRONTEND_DEPLOY_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH || '/var/www/engineerstech/etwebsite-frontend-src' }}
         run: |
-          ssh -i ~/.ssh/deploy_key root@103.132.96.251 \
-            "cd /var/www/engineerstech/etwebsite-frontend-src && \
-             git fetch origin && \
-             git checkout ${{ github.ref_name }} && \
-             git pull origin ${{ github.ref_name }} && \
-             npm install && \
-             npx playwright install --with-deps chromium && \
-             SITEMAP_URL=https://engineerstechbd.com/sitemap.xml SITE_URL=https://engineerstechbd.com npm run build:prerender && \
-             chown -R www-data:www-data dist/"
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes "$SSH_USER@$SSH_HOST" '
+            set -e
+            cd "$FRONTEND_DEPLOY_PATH"
+            git fetch origin
+            git checkout "${{ github.ref_name }}"
+            git pull origin "${{ github.ref_name }}"
+            npm install
+            npx playwright install --with-deps chromium
+            SITEMAP_URL=https://engineerstechbd.com/sitemap.xml SITE_URL=https://engineerstechbd.com npm run build:prerender
+            chown -R www-data:www-data dist/
+          '
