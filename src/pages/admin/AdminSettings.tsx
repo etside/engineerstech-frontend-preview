@@ -323,6 +323,7 @@ const ArrayEditor = ({
   onChange: (val: any[]) => void;
 }) => {
   const [expanded, setExpanded] = useState<number | null>(0);
+  const safeValue = Array.isArray(value) ? value : [];
 
   const addItem = () => {
     const newItem: any = {};
@@ -337,12 +338,12 @@ const ArrayEditor = ({
     if (config.arrayFields2) {
       newItem[config.arrayFields2.key] = [];
     }
-    onChange([...(value || []), newItem]);
-    setExpanded((value || []).length);
+    onChange([...safeValue, newItem]);
+    setExpanded(safeValue.length);
   };
 
   const removeItem = (index: number) => {
-    const next = [...value];
+    const next = [...safeValue];
     next.splice(index, 1);
     onChange(next);
     if (expanded === index) setExpanded(null);
@@ -350,14 +351,14 @@ const ArrayEditor = ({
   };
 
   const updateItem = (index: number, field: string, val: any) => {
-    const next = [...value];
+    const next = [...safeValue];
     next[index] = setNestedValue(next[index], field, val);
     onChange(next);
   };
 
   return (
     <div className="space-y-3">
-      {(value || []).map((item: any, index: number) => (
+      {safeValue.map((item: any, index: number) => (
         <div key={index} className="glass-card rounded-lg border border-border/30 overflow-hidden">
           {/* Header */}
           <button
@@ -404,7 +405,7 @@ const ArrayEditor = ({
               {config.arrayFields && (
                 <NestedArrayEditor
                   config={config.arrayFields}
-                  items={item[config.arrayFields.key] || []}
+                  items={Array.isArray(item[config.arrayFields.key]) ? item[config.arrayFields.key] : []}
                   onChange={(val) => updateItem(index, config.arrayFields!.key, val)}
                 />
               )}
@@ -413,7 +414,7 @@ const ArrayEditor = ({
               {config.arrayFields2 && (
                 <NestedArrayEditor
                   config={config.arrayFields2}
-                  items={item[config.arrayFields2.key] || []}
+                  items={Array.isArray(item[config.arrayFields2.key]) ? item[config.arrayFields2.key] : []}
                   onChange={(val) => updateItem(index, config.arrayFields2!.key, val)}
                 />
               )}
@@ -438,26 +439,27 @@ const NestedArrayEditor = ({
   items: any[];
   onChange: (val: any[]) => void;
 }) => {
+  const safeItems = Array.isArray(items) ? items : [];
   const isSimple = config.itemFields.length === 1 && config.itemFields[0].path === "_value";
 
   const addItem = () => {
     if (isSimple) {
-      onChange([...items, ""]);
+      onChange([...safeItems, ""]);
     } else {
       const newItem: any = {};
       config.itemFields.forEach((f) => { newItem[f.path] = ""; });
-      onChange([...items, newItem]);
+      onChange([...safeItems, newItem]);
     }
   };
 
   const updateItem = (index: number, val: any) => {
-    const next = [...items];
+    const next = [...safeItems];
     next[index] = val;
     onChange(next);
   };
 
   const removeItem = (index: number) => {
-    const next = [...items];
+    const next = [...safeItems];
     next.splice(index, 1);
     onChange(next);
   };
@@ -465,7 +467,7 @@ const NestedArrayEditor = ({
   return (
     <div className="space-y-2 pl-4 border-l-2 border-primary/10">
       <Label className="text-xs text-muted-foreground">{config.label}</Label>
-      {items.map((item: any, index: number) => (
+      {safeItems.map((item: any, index: number) => (
         <div key={index} className="flex items-center gap-2">
           {isSimple ? (
             <Input

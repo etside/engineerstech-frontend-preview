@@ -5,6 +5,7 @@ interface AuthUser {
   id: number;
   name: string;
   email: string;
+  is_admin?: boolean;
 }
 
 interface AuthContextType {
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin: !!user, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, isAdmin: !!user && (user.is_admin === true), loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -22,9 +22,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const baseUrl = import.meta.env.VITE_API_URL || "http://localhost/engineerstech/public/api";
-    fetch(`${baseUrl}/settings`)
-      .then((res) => res.json())
+    api.settings()
       .then((data) => {
         setSettings(data);
         setLoading(false);

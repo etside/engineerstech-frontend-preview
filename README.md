@@ -50,9 +50,12 @@ src/
 Create a `.env` file in the root:
 
 ```env
-VITE_API_URL="http://127.0.0.1:8000/api"
-VITE_STORAGE_URL="http://127.0.0.1:8000/storage"
+VITE_API_URL="/api"
+VITE_STORAGE_URL="/storage"
+VITE_API_TARGET="http://127.0.0.1:8000"
 ```
+
+For production deployments, set `VITE_API_URL` and `VITE_STORAGE_URL` to your public CDN or reverse-proxy paths, and set `VITE_API_TARGET` only for local Vite dev proxying.
 
 ## Backend
 

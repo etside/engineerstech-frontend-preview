@@ -2,7 +2,7 @@ import { Outlet, Link, useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import {
   LayoutDashboard, Layers, Package, FileText, Users, MessageSquare,
-  Image, Settings, Mail, LogOut, Menu, X, Star, Navigation, Globe, FolderOpen
+  Image, Settings, Mail, LogOut, Menu, X, Star, Navigation, Globe, FolderOpen, Building2, Plug
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -22,7 +22,9 @@ const navItems = [
   { to: "/admin/navigation", icon: Navigation, label: "Navigation" },
   { to: "/admin/case-studies", icon: FileText, label: "Case Studies" },
   { to: "/admin/resources", icon: FolderOpen, label: "Resources" },
+  { to: "/admin/businesses", icon: Building2, label: "Businesses" },
   { to: "/admin/settings", icon: Settings, label: "Site Settings" },
+  { to: "/admin/mcp-configs", icon: Plug, label: "MCP Config" },
 ];
 
 const AdminLayout = () => {
