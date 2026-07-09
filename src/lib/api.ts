@@ -106,6 +106,7 @@ export const api = {
     return request('/businesses/search?' + qs.toString());
   },
   recommendBusinesses: (intent: string) => request('/businesses/recommend', { method: 'POST', body: JSON.stringify({ intent }) }),
+  getBusiness: (slug: string) => request(`/businesses/${slug}`),
 };
 
 // ─── Admin ─────────────────────────────────────────────────────

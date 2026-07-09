@@ -100,7 +100,7 @@ const AdminBlog = () => {
       const result = await adminApi.importBlogPosts(file);
       toast({
         title: "Import successful",
-        description: `Created ${result.created}, Updated ${result.updated}${result.errors.length > 0 ? ` (${result.errors.length} errors)` : ""}`,
+        description: `Created ${result.created}, Updated ${result.updated}${(result.errors || []).length > 0 ? ` (${result.errors.length} errors)` : ""}`,
       });
       setShowImport(false);
       fetchItems();

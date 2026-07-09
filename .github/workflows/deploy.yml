@@ -1,29 +1,64 @@
-name: Build & Deploy to VPS
+name: Deploy Frontend
 
 on:
   push:
-    branches: [main, feat/mega-menu-navigation]
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm ci
+      - name: TypeScript Check
+        run: npx tsc --noEmit
+      - name: Build
+        run: npx vite build
+        env:
+          VITE_API_URL: https://engineerstechbd.com/api
+          VITE_STORAGE_URL: https://engineerstechbd.com/storage
+          VITE_APP_NAME: engineersTech
+
   deploy:
     runs-on: ubuntu-latest
-
+    needs: build
     steps:
-      - name: Setup SSH
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install & Build
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -t ed25519 -H 103.132.96.251 >> ~/.ssh/known_hosts 2>/dev/null
-
-      - name: Deploy and build on VPS
-        run: |
-          ssh -i ~/.ssh/deploy_key root@103.132.96.251 \
-            "cd /var/www/engineerstech/etwebsite-frontend-src && \
-             git fetch origin && \
-             git checkout ${{ github.ref_name }} && \
-             git pull origin ${{ github.ref_name }} && \
-             npm install && \
-             npx playwright install --with-deps chromium && \
-             SITEMAP_URL=https://engineerstechbd.com/sitemap.xml SITE_URL=https://engineerstechbd.com npm run build:prerender && \
-             chown -R www-data:www-data dist/"
+          npm ci
+          npx vite build
+        env:
+          VITE_API_URL: https://engineerstechbd.com/api
+          VITE_STORAGE_URL: https://engineerstechbd.com/storage
+      - name: Deploy via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          source: "dist/*"
+          target: /var/www/engineerstechbd/public_html
+          strip_components: 1
+          overwrite: true
+      - name: Verify Deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            echo "Frontend deployed: $(date)"
+            ls -la /var/www/engineerstechbd/public_html/index.html
