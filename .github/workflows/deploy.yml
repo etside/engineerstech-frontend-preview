@@ -1,128 +1,29 @@
-name: Build & Deploy Frontend to VPS
+name: Build & Deploy to VPS
 
 on:
   push:
-    branches: [main, develop]
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'vite.config.ts'
-      - 'tsconfig.json'
-      - '.github/workflows/deploy.yml'
+    branches: [main, feat/mega-menu-navigation]
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Validate frontend deployment workflow
-        run: |
-          echo "✓ Validating frontend deployment workflow"
-          echo "  Repository: ${{ github.repository }}"
-          echo "  Branch: ${{ github.ref_name }}"
-          echo "  Commit: ${{ github.sha }}"
-
-  build:
-    needs: validate
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Build frontend
-        env:
-          VITE_API_URL: https://engineerstechbd.com/api
-          VITE_STORAGE_URL: https://engineerstechbd.com/storage
-        run: npm run build
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: dist/
-          retention-days: 1
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
-    environment: production
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-build
-          path: dist/
       - name: Setup SSH
-        env:
-          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-          SSH_HOST: ${{ secrets.VPS_HOST }}
-          SSH_USER: ${{ secrets.VPS_USER }}
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -t ed25519 "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
-      - name: Validate SSH connection
-        env:
-          SSH_HOST: ${{ secrets.VPS_HOST }}
-          SSH_USER: ${{ secrets.VPS_USER }}
+          ssh-keyscan -t ed25519 -H 103.132.96.251 >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy and build on VPS
         run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes "$SSH_USER@$SSH_HOST" "echo '✓ SSH connection successful'"
-      - name: Deploy Frontend
-        env:
-          SSH_HOST: ${{ secrets.VPS_HOST }}
-          SSH_USER: ${{ secrets.VPS_USER }}
-          DEPLOY_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH }}
-        run: |
-          DEPLOY_PATH=${DEPLOY_PATH:-/var/www/engineerstech/etwebsite-frontend-src}
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes "$SSH_USER@$SSH_HOST" "mkdir -p '$DEPLOY_PATH'"
-          rsync -avz --delete -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes" dist/ "$SSH_USER@$SSH_HOST:$DEPLOY_PATH/dist/"
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes "$SSH_USER@$SSH_HOST" <<'EOF'
-            set -e
-            echo "[$(date)] Finalizing frontend deployment..."
-            chmod -R 755 "$DEPLOY_PATH/dist"
-            chown -R www-data:www-data "$DEPLOY_PATH/dist"
-            echo "[$(date)] Frontend deployment completed successfully"
-          EOF
-      - name: Verify Frontend Deployment
-        env:
-          SSH_HOST: ${{ secrets.VPS_HOST }}
-          SSH_USER: ${{ secrets.VPS_USER }}
-          DEPLOY_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH }}
-        run: |
-          DEPLOY_PATH=${DEPLOY_PATH:-/var/www/engineerstech/etwebsite-frontend-src}
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -o BatchMode=yes "$SSH_USER@$SSH_HOST" <<'EOF'
-            set -e
-            echo "[$(date)] Verifying frontend deployment..."
-            if [ -f "$DEPLOY_PATH/dist/index.html" ]; then
-              echo "✓ Frontend build verified"
-              ls -lh "$DEPLOY_PATH/dist/" | head -10
-            else
-              echo "❌ Frontend build verification failed"
-              exit 1
-            fi
-          EOF
-      - name: Deployment Success Notification
-        if: success()
-        run: |
-          echo "✅ Frontend deployed successfully"
-          echo "Repository: ${{ github.repository }}"
-          echo "Branch: ${{ github.ref_name }}"
-          echo "Commit: ${{ github.sha }}"
-          echo "Author: ${{ github.actor }}"
-          echo "Timestamp: $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
-      - name: Deployment Failed Notification
-        if: failure()
-        run: |
-          echo "❌ Frontend deployment failed"
-          exit 1
+          ssh -i ~/.ssh/deploy_key root@103.132.96.251 \
+            "cd /var/www/engineerstech/etwebsite-frontend-src && \
+             git fetch origin && \
+             git checkout ${{ github.ref_name }} && \
+             git pull origin ${{ github.ref_name }} && \
+             npm install && \
+             npx playwright install --with-deps chromium && \
+             SITEMAP_URL=https://engineerstechbd.com/sitemap.xml SITE_URL=https://engineerstechbd.com npm run build:prerender && \
+             chown -R www-data:www-data dist/"
