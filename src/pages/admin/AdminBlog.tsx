@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, X, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Eye, EyeOff, Upload } from "lucide-react";
 import ImageUpload from "@/components/admin/ImageUpload";
 import RichTextEditor from "@/components/admin/RichTextEditor";
 
@@ -27,6 +27,8 @@ const AdminBlog = () => {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [importing, setImporting] = useState(false);
   const [form, setForm] = useState({ title: "", slug: "", excerpt: "", content: "", cover_image: "", category: "", is_published: false });
 
   const fetchItems = async () => {
@@ -89,14 +91,61 @@ const AdminBlog = () => {
     }
   };
 
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setImporting(true);
+    try {
+      const result = await adminApi.importBlogPosts(file);
+      toast({
+        title: "Import successful",
+        description: `Created ${result.created}, Updated ${result.updated}${result.errors.length > 0 ? ` (${result.errors.length} errors)` : ""}`,
+      });
+      setShowImport(false);
+      fetchItems();
+    } catch (err: any) {
+      toast({ title: "Import failed", description: err.message, variant: "destructive" });
+    } finally {
+      setImporting(false);
+      if (e.target) e.target.value = "";
+    }
+  };
+
   if (loading) return <div className="flex justify-center py-12"><div className="h-6 w-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-lg font-bold">Blog Posts</h2>
-        <Button onClick={openNew} size="sm" className="gradient-bg border-0"><Plus size={14} className="mr-1" /> New Post</Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setShowImport(!showImport)} size="sm" className="border-primary/30 hover:bg-primary/10" variant="outline">
+            <Upload size={14} className="mr-1" /> Import
+          </Button>
+          <Button onClick={openNew} size="sm" className="gradient-bg border-0"><Plus size={14} className="mr-1" /> New Post</Button>
+        </div>
       </div>
+
+      {showImport && (
+        <div className="glass-card rounded-xl p-5 mb-6 space-y-4 border border-primary/20">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-sm">Bulk Import Posts</h3>
+            <button onClick={() => setShowImport(false)}><X size={16} className="text-muted-foreground" /></button>
+          </div>
+          <p className="text-xs text-muted-foreground">Upload a CSV or JSON file with blog posts. CSV should have headers: slug, title, meta_title, meta_description, category, excerpt, featured_image, image_alt, canonical_url, tags, content, is_published</p>
+          <div className="space-y-2">
+            <Label>Select File</Label>
+            <input
+              type="file"
+              accept=".csv,.json"
+              onChange={handleImportFile}
+              disabled={importing}
+              className="block w-full text-sm border border-border rounded-lg p-2 cursor-pointer file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+            />
+          </div>
+          {importing && <p className="text-xs text-muted-foreground flex items-center gap-2"><div className="h-3 w-3 border border-primary/30 border-t-primary rounded-full animate-spin" /> Importing...</p>}
+        </div>
+      )}
 
       {showForm && (
         <div className="glass-card rounded-xl p-5 mb-6 space-y-4">

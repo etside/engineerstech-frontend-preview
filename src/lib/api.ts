@@ -1,4 +1,7 @@
-const BASE = import.meta.env.VITE_API_URL || 'http://localhost/engineerstech/public/api';
+const BASE = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
+const STORAGE_BASE = import.meta.env.VITE_STORAGE_URL 
+  ? import.meta.env.VITE_STORAGE_URL.replace(/\/$/, '')
+  : `${BASE}/storage`;
 
 function getToken() {
   return localStorage.getItem('et_token');
@@ -12,6 +15,10 @@ function clearToken() {
   localStorage.removeItem('et_token');
 }
 
+function normalizeUrl(url: string) {
+  return url.startsWith('http') ? url : `${STORAGE_BASE}${url}`;
+}
+
 async function request(path: string, options: RequestInit = {}) {
   const token = getToken();
   const headers: Record<string, string> = {
@@ -23,13 +30,25 @@ async function request(path: string, options: RequestInit = {}) {
 
   const res = await fetch(`${BASE}${path}`, { ...options, headers });
 
+  if (res.status === 204) return null;
+
+  const text = await res.text();
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(err.message || 'Request failed');
+    let err: any = { message: 'Request failed' };
+    try {
+      err = JSON.parse(text);
+    } catch {
+      err = { message: text || 'Request failed' };
+    }
+    throw new Error(err.message || err.error || 'Request failed');
   }
 
-  if (res.status === 204) return null;
-  return res.json();
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
 }
 
 // ─── Auth ──────────────────────────────────────────────────────
@@ -72,8 +91,21 @@ export const api = {
   caseStudies:  () => request('/case-studies'),
   caseStudy:    (slug: string) => request(`/case-studies/${slug}`),
   resources:    () => request('/resources'),
+  settings:     () => request('/settings'),
   requestResource: (id: number | string, data: { name?: string; email: string }) =>
     request(`/resources/${id}/request`, { method: 'POST', body: JSON.stringify(data) }),
+  // Businesses public
+  searchBusinesses: (opts?: { q?: string; city?: string; country?: string; lat?: number; lon?: number; radius?: number }) => {
+    const qs = new URLSearchParams();
+    if (opts?.q) qs.set('q', opts.q);
+    if (opts?.city) qs.set('city', opts.city);
+    if (opts?.country) qs.set('country', opts.country);
+    if (opts?.lat) qs.set('lat', String(opts.lat));
+    if (opts?.lon) qs.set('lon', String(opts.lon));
+    if (opts?.radius) qs.set('radius', String(opts.radius));
+    return request('/businesses/search?' + qs.toString());
+  },
+  recommendBusinesses: (intent: string) => request('/businesses/recommend', { method: 'POST', body: JSON.stringify({ intent }) }),
 };
 
 // ─── Admin ─────────────────────────────────────────────────────
@@ -111,6 +143,24 @@ export const adminApi = {
   createPost:     (d: unknown) => adminRequest('/blog', { method: 'POST', body: body(d) }),
   updatePost:     (id: number|string, d: unknown) => adminRequest(`/blog/${id}`, { method: 'PUT', body: body(d) }),
   deletePost:     (id: number|string) => adminRequest(`/blog/${id}`, { method: 'DELETE' }),
+  importBlogPosts: async (file: File) => {
+    const token = getToken();
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(`${BASE}/admin/blog/import`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+      },
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: 'Import failed' }));
+      throw new Error(err.message || 'Import failed');
+    }
+    return res.json();
+  },
 
   // Team
   getTeam:        () => adminRequest('/team'),
@@ -148,9 +198,23 @@ export const adminApi = {
   deleteResource:  (id: number|string) => adminRequest(`/resources/${id}`, { method: 'DELETE' }),
   getResourceLeads: () => adminRequest('/resource-leads'),
 
+  // Businesses
+  getBusinesses:    () => adminRequest('/businesses'),
+  createBusiness:   (d: unknown) => adminRequest('/businesses', { method: 'POST', body: body(d) }),
+  updateBusiness:   (id: number|string, d: unknown) => adminRequest(`/businesses/${id}`, { method: 'PUT', body: body(d) }),
+  deleteBusiness:   (id: number|string) => adminRequest(`/businesses/${id}`, { method: 'DELETE' }),
+
   // Settings
   getSettings:    () => adminRequest('/settings'),
   updateSettings: (d: unknown) => adminRequest('/settings', { method: 'POST', body: body(d) }),
+
+  // MCP Configs
+  getMcpConfigs:    () => adminRequest('/mcp-configs'),
+  createMcpConfig:  (d: unknown) => adminRequest('/mcp-configs', { method: 'POST', body: body(d) }),
+  updateMcpConfig:  (id: number|string, d: unknown) => adminRequest(`/mcp-configs/${id}`, { method: 'PUT', body: body(d) }),
+  deleteMcpConfig:  (id: number|string) => adminRequest(`/mcp-configs/${id}`, { method: 'DELETE' }),
+  previewMcpConfig: (d: unknown) => adminRequest('/mcp-configs/preview', { method: 'POST', body: body(d) }),
+  testMcpConfig:    (d: unknown) => adminRequest('/mcp-configs/test', { method: 'POST', body: body(d) }),
 
   // Upload image
   async upload(file: File, folder = 'general'): Promise<string> {
