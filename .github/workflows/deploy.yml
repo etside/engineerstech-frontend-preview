@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
@@ -22,9 +25,39 @@ jobs:
           ssh -i ~/.ssh/deploy_key root@103.132.96.251 \
             "cd /var/www/engineerstech/etwebsite-frontend-src && \
              git fetch origin && \
-             git checkout ${{ github.ref_name }} && \
-             git pull origin ${{ github.ref_name }} && \
+             git checkout main && \
+             git pull origin main && \
              npm install && \
              npx playwright install --with-deps chromium && \
              SITEMAP_URL=https://engineerstechbd.com/sitemap.xml SITE_URL=https://engineerstechbd.com npm run build:prerender && \
-             chown -R www-data:www-data dist/"
+             chown -R www-data:www-data dist/ && \
+             echo '[Frontend] Build complete'"
+
+      - name: Copy nginx config and reload
+        run: |
+          scp -i ~/.ssh/deploy_key \
+            nginx/engineerstechbd.conf \
+            root@103.132.96.251:/etc/nginx/sites-available/engineerstechbd.com
+
+          ssh -i ~/.ssh/deploy_key root@103.132.96.251 << 'ENDSSH'
+          set -e
+          # Enable site if not already
+          if [ ! -f /etc/nginx/sites-enabled/engineerstechbd.com ]; then
+            ln -sf /etc/nginx/sites-available/engineerstechbd.com /etc/nginx/sites-enabled/engineerstechbd.com
+            echo "[nginx] Site enabled"
+          fi
+
+          # Remove default nginx welcome page if present
+          rm -f /etc/nginx/sites-enabled/default
+
+          # Test and reload
+          nginx -t && systemctl reload nginx
+          echo "[nginx] Config applied and reloaded"
+          ENDSSH
+
+      - name: Smoke test
+        run: |
+          sleep 3
+          HTTP=$(curl -o /dev/null -s -w "%{http_code}" https://engineerstechbd.com/)
+          echo "HTTP status: $HTTP"
+          [ "$HTTP" = "200" ] && echo "[OK] Site is up" || echo "[WARN] Unexpected status $HTTP"
