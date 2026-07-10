@@ -11,7 +11,7 @@ describe("cn", () => {
   });
 
   it("handles conditional classes", () => {
-    expect(cn("base", false && "hidden", "active")).toBe("base active");
+    expect(cn("base", undefined, "active")).toBe("base active");
   });
 
   it("handles empty input", () => {

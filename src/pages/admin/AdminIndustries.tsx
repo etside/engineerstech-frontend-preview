@@ -123,7 +123,7 @@ const AdminIndustries = () => {
         } else if (previousTo) {
           await removeNavLink("Industries", previousTo);
         }
-      } catch {}
+      } catch { /* nav sync non-critical */ }
 
       setShowForm(false);
       fetchItems();

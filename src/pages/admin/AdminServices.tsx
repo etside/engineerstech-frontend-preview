@@ -124,7 +124,7 @@ const AdminServices = () => {
         } else if (previousTo) {
           await removeNavLink("Services", previousTo);
         }
-      } catch {}
+      } catch { /* nav sync non-critical */ }
 
       setShowForm(false);
       fetchItems();

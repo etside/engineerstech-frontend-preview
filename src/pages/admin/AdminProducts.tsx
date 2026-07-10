@@ -135,7 +135,7 @@ const AdminProducts = () => {
         } else if (previousTo) {
           await removeNavLink("Products", previousTo);
         }
-      } catch {}
+      } catch { /* nav sync non-critical */ }
 
       setShowForm(false);
       fetchItems();

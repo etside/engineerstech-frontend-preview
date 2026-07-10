@@ -204,12 +204,12 @@ const HeroSection = () => {
   const next = useCallback(() => {
     setDirection(1);
     setCurrent((prev) => (prev + 1) % slides.length);
-  }, []);
+  }, [slides.length]);
 
   const prev = useCallback(() => {
     setDirection(-1);
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-  }, []);
+  }, [slides.length]);
 
   // Auto-play
   useEffect(() => {
