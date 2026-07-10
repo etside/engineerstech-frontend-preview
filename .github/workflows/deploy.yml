@@ -42,34 +42,12 @@ jobs:
           ssh -i ~/.ssh/deploy_key root@103.132.96.251 << 'ENDSSH'
           set -e
 
-          # Disable configs that claim engineerstechbd.com (without hyphen)
-          # to avoid "conflicting server name" — our config must win.
-          # Only match exact engineerstechbd.com, NOT engineers-techbd.com (different domain).
-          for f in /etc/nginx/sites-enabled/*; do
-            if [ "$f" = "/etc/nginx/sites-enabled/engineerstechbd.com" ]; then
-              continue
-            fi
-            if grep -qE 'server_name[^;]*\bengineerstechbd\.com\b' "$f" 2>/dev/null && \
-               ! grep -qE 'server_name[^;]*\bengineers-techbd\.com\b' "$f" 2>/dev/null; then
-              echo "[nginx] Disabling conflicting config: $f"
-              rm -f "$f"
-            fi
-          done
-
-          # Also check conf.d
-          for f in /etc/nginx/conf.d/*.conf; do
-            if grep -qE 'server_name[^;]*\bengineerstechbd\.com\b' "$f" 2>/dev/null && \
-               ! grep -qE 'server_name[^;]*\bengineers-techbd\.com\b' "$f" 2>/dev/null; then
-              echo "[nginx] Disabling conflicting conf.d config: $f"
-              rm -f "$f"
-            fi
-          done
-
           # Remove default nginx welcome page
           rm -f /etc/nginx/sites-enabled/default
 
-          # Enable our site
-          ln -sf /etc/nginx/sites-available/engineerstechbd.com /etc/nginx/sites-enabled/engineerstechbd.com
+          # Only ensure OUR config is symlinked — do NOT touch other sites.
+          ln -sf /etc/nginx/sites-available/engineerstechbd.com \
+                 /etc/nginx/sites-enabled/engineerstechbd.com
           echo "[nginx] Site enabled"
 
           # Test and reload
