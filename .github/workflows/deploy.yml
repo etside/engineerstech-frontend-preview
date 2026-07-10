@@ -1,134 +1,29 @@
-name: Build & Deploy Frontend to VPS
+name: Build & Deploy to VPS
 
 on:
   push:
     branches: [main, feat/mega-menu-navigation]
-  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: './package-lock.json'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build frontend
-        run: npm run build
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build
-          path: dist/
-          retention-days: 1
-
   deploy:
-    needs: build
     runs-on: ubuntu-latest
-    environment: production
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-build
-          path: dist/
-
-      - name: Setup SSH key
-        env:
-          SSH_KEY: ${{ secrets.VPS_SSH_KEY || secrets.DEPLOY_SSH_KEY }}
-          SSH_HOST: ${{ secrets.VPS_HOST || secrets.DEPLOY_HOST }}
-          SSH_USER: ${{ secrets.VPS_USER || secrets.DEPLOY_USER }}
+      - name: Setup SSH
         run: |
-          set -e
-          if [ -z "$SSH_KEY" ]; then
-            echo "❌ VPS_SSH_KEY or DEPLOY_SSH_KEY secret is not set"
-            exit 1
-          fi
-          if [ -z "$SSH_HOST" ]; then
-            echo "❌ VPS_HOST or DEPLOY_HOST secret is not set"
-            exit 1
-          fi
-          if [ -z "$SSH_USER" ]; then
-            echo "❌ VPS_USER or DEPLOY_USER secret is not set"
-            exit 1
-          fi
           mkdir -p ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -t ed25519 -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
-          echo "✓ SSH key configured"
+          ssh-keyscan -t ed25519 -H 103.132.96.251 >> ~/.ssh/known_hosts 2>/dev/null
 
-      - name: Deploy to VPS
-        env:
-          SSH_HOST: ${{ secrets.VPS_HOST || secrets.DEPLOY_HOST }}
-          SSH_USER: ${{ secrets.VPS_USER || secrets.DEPLOY_USER }}
-          FRONTEND_DEPLOY_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH || '/var/www/engineerstech/et-website-frontend' }}
-          VPS_PORT: ${{ secrets.VPS_PORT || secrets.DEPLOY_PORT || '22' }}
+      - name: Deploy and build on VPS
         run: |
-          set -euo pipefail
-          echo "Deploying Frontend to $SSH_USER@$SSH_HOST:$FRONTEND_DEPLOY_PATH"
-          
-          ssh -i ~/.ssh/deploy_key -o ConnectTimeout=10 -o StrictHostKeyChecking=no -p "$VPS_PORT" "$SSH_USER@$SSH_HOST" << 'DEPLOY_FRONTEND'
-          set -euo pipefail
-          FRONTEND_DEPLOY_PATH="${{ secrets.FRONTEND_DEPLOY_PATH || '/var/www/engineerstech/et-website-frontend' }}"
-          cd "$FRONTEND_DEPLOY_PATH"
-          
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] 🚀 Starting frontend deployment..."
-          
-          # Pull latest code
-          git fetch origin main
-          git checkout main
-          git pull origin main --ff-only
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✓ Git updated"
-          
-          # Install dependencies
-          npm ci --production
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✓ Dependencies installed"
-          
-          # Build
-          npm run build
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✓ Build completed"
-          
-          # Fix permissions
-          chmod -R 755 dist/
-          chown -R www-data:www-data dist/ || true
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✓ Permissions updated"
-          
-          echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✅ Frontend deployment completed"
-          DEPLOY_FRONTEND
-
-      - name: Deployment Status
-        if: success()
-        run: |
-          cat << 'EOF'
-          
-          ╔════════════════════════════════════════════════════════════╗
-          ║          ✅ FRONTEND DEPLOYMENT SUCCESSFUL                ║
-          ╚════════════════════════════════════════════════════════════╝
-          
-          📊 Deployment Info:
-            Repository: ${{ github.repository }}
-            Branch:     ${{ github.ref_name }}
-            Commit:     ${{ github.sha }}
-            Time:       $(date -u +'%Y-%m-%d %H:%M:%S UTC')
-          
-          🔗 Access:
-            • Frontend: https://engineerstechbd.com
-          
-          EOF
+          ssh -i ~/.ssh/deploy_key root@103.132.96.251 \
+            "cd /var/www/engineerstech/etwebsite-frontend-src && \
+             git fetch origin && \
+             git checkout ${{ github.ref_name }} && \
+             git pull origin ${{ github.ref_name }} && \
+             npm install && \
+             npx playwright install --with-deps chromium && \
+             SITEMAP_URL=https://engineerstechbd.com/sitemap.xml SITE_URL=https://engineerstechbd.com npm run build:prerender && \
+             chown -R www-data:www-data dist/"
