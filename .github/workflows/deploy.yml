@@ -51,21 +51,21 @@ jobs:
 
       - name: Setup SSH key
         env:
-          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
-          SSH_HOST: ${{ secrets.VPS_HOST }}
-          SSH_USER: ${{ secrets.VPS_USER }}
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY || secrets.DEPLOY_SSH_KEY }}
+          SSH_HOST: ${{ secrets.VPS_HOST || secrets.DEPLOY_HOST }}
+          SSH_USER: ${{ secrets.VPS_USER || secrets.DEPLOY_USER }}
         run: |
           set -e
           if [ -z "$SSH_KEY" ]; then
-            echo "❌ VPS_SSH_KEY secret is not set"
+            echo "❌ VPS_SSH_KEY or DEPLOY_SSH_KEY secret is not set"
             exit 1
           fi
           if [ -z "$SSH_HOST" ]; then
-            echo "❌ VPS_HOST secret is not set"
+            echo "❌ VPS_HOST or DEPLOY_HOST secret is not set"
             exit 1
           fi
           if [ -z "$SSH_USER" ]; then
-            echo "❌ VPS_USER secret is not set"
+            echo "❌ VPS_USER or DEPLOY_USER secret is not set"
             exit 1
           fi
           mkdir -p ~/.ssh
@@ -76,10 +76,10 @@ jobs:
 
       - name: Deploy to VPS
         env:
-          SSH_HOST: ${{ secrets.VPS_HOST }}
-          SSH_USER: ${{ secrets.VPS_USER }}
+          SSH_HOST: ${{ secrets.VPS_HOST || secrets.DEPLOY_HOST }}
+          SSH_USER: ${{ secrets.VPS_USER || secrets.DEPLOY_USER }}
           FRONTEND_DEPLOY_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH || '/var/www/engineerstech/et-website-frontend' }}
-          VPS_PORT: ${{ secrets.VPS_PORT || '22' }}
+          VPS_PORT: ${{ secrets.VPS_PORT || secrets.DEPLOY_PORT || '22' }}
         run: |
           set -euo pipefail
           echo "Deploying Frontend to $SSH_USER@$SSH_HOST:$FRONTEND_DEPLOY_PATH"
