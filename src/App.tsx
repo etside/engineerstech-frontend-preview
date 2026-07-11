@@ -68,7 +68,16 @@ const AppRoutes = () => {
       "/admin": "Admin Dashboard | engineersTech",
       "/admin/login": "Admin Login | engineersTech",
     };
-    document.title = titleMap[location.pathname] || "engineersTech";
+    const dynamicTitle = [
+      { matcher: /^\/services\/[^/]+$/, title: "Service | engineersTech" },
+      { matcher: /^\/industries\/[^/]+$/, title: "Industry | engineersTech" },
+      { matcher: /^\/products\/[^/]+$/, title: "Product | engineersTech" },
+      { matcher: /^\/blog\/[^/]+$/, title: "Blog Post | engineersTech" },
+      { matcher: /^\/case-studies\/[^/]+$/, title: "Case Study | engineersTech" },
+      { matcher: /^\/businesses\/[^/]+$/, title: "Business | engineersTech" },
+    ].find((entry) => entry.matcher.test(location.pathname))?.title;
+
+    document.title = titleMap[location.pathname] || dynamicTitle || "engineersTech";
   }, [location.pathname]);
 
   return (
@@ -87,7 +96,7 @@ const AppRoutes = () => {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/case-studies" element={<CaseStudies />} />
           <Route path="/case-studies/:slug" element={<CaseStudyDetail />} />
           <Route path="/team" element={<Team />} />

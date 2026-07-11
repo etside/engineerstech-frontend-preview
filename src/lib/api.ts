@@ -28,19 +28,29 @@ async function request(path: string, options: RequestInit = {}) {
   };
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(`${BASE}${path}`, { ...options, headers });
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}${path}`, { ...options, headers });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Network request failed';
+    throw new Error(`Network error: ${message}`);
+  }
 
   if (res.status === 204) return null;
 
   const text = await res.text();
   if (!res.ok) {
-    let err: any = { message: 'Request failed' };
+    if (res.status === 401) {
+      clearToken();
+    }
+    let err: any = { message: `Request failed (${res.status})` };
     try {
       err = JSON.parse(text);
     } catch {
-      err = { message: text || 'Request failed' };
+      err = { message: text || `Request failed (${res.status})` };
     }
-    throw new Error(err.message || err.error || 'Request failed');
+    const message = err.message || err.error || `Request failed (${res.status})`;
+    throw new Error(res.status === 401 ? `Unauthorized: ${message}` : message);
   }
 
   if (!text) return null;
@@ -120,6 +130,23 @@ function body(data: unknown) {
 
 export const adminApi = {
   stats: () => adminRequest('/stats'),
+
+  async getSettings() {
+    const data = await adminRequest('/settings');
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      for (const key of Object.keys(data)) {
+        const value = data[key];
+        if (typeof value === 'string' && (value.startsWith('{') || value.startsWith('['))) {
+          try {
+            data[key] = JSON.parse(value);
+          } catch {
+            // keep raw string when parsing fails
+          }
+        }
+      }
+    }
+    return data;
+  },
 
   // Services
   getServices:    () => adminRequest('/services'),
@@ -231,7 +258,17 @@ export const adminApi = {
       },
       body: formData,
     });
-    if (!res.ok) throw new Error('Upload failed');
+    if (!res.ok) {
+      const text = await res.text();
+      let message = `Upload failed (${res.status})`;
+      try {
+        const body = JSON.parse(text);
+        message = body.message || body.error || message;
+      } catch {
+        message = text || message;
+      }
+      throw new Error(message);
+    }
     const data = await res.json();
     return data.url;
   },

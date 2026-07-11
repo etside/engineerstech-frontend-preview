@@ -27,7 +27,7 @@ function formatDate(dateStr: string) {
 }
 
 const BlogPost = () => {
-  const { id: slug } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<ApiBlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [useStatic, setUseStatic] = useState(false);
