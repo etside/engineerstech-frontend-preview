@@ -233,7 +233,6 @@ export const adminApi = {
   deleteBusiness:   (id: number|string) => adminRequest(`/businesses/${id}`, { method: 'DELETE' }),
 
   // Settings
-  getSettings:    () => adminRequest('/settings'),
   updateSettings: (d: unknown) => adminRequest('/settings', { method: 'POST', body: body(d) }),
 
   // MCP Configs

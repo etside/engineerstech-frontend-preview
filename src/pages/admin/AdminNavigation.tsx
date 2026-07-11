@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { defaultNavigation, serializeNavigation } from "@/data/navigation";
+import { defaultNavigation, parseNavigation, serializeNavigation } from "@/data/navigation";
 import {
   Save, Plus, Trash2, ChevronDown, ChevronRight, GripVertical,
   FolderOpen, Folder, Link2, ArrowUp, ArrowDown,
@@ -299,8 +299,25 @@ const AdminNavigation = () => {
     adminApi
       .getSettings()
       .then((data) => {
+        const rawNav = data?.navigation;
+        let parsedNav;
+
+        if (Array.isArray(rawNav)) {
+          parsedNav = rawNav;
+        } else if (typeof rawNav === "string") {
+          try {
+            const trimmed = rawNav.trim();
+            const candidate = trimmed.startsWith("{") || trimmed.startsWith("[")
+              ? JSON.parse(trimmed)
+              : null;
+            parsedNav = Array.isArray(candidate) ? candidate : null;
+          } catch {
+            parsedNav = null;
+          }
+        }
+
         setNavItems(
-          data?.navigation?.length ? data.navigation : serializeNavigation(defaultNavigation)
+          parseNavigation(parsedNav ?? serializeNavigation(defaultNavigation))
         );
       })
       .catch((err: any) => {
