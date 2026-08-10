@@ -75,7 +75,7 @@ const faqSchema = {
 };
 
 const Index = () => {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   return (
     <>
       <SEO
