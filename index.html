@@ -86,9 +86,9 @@
       // GitHub Pages SPA routing: restore real path from query string before React loads
       (function(l){
         if (l.search && l.search.startsWith('?/')) {
-          var path = l.search.slice(1).replace(/~and~/g, '&');
+          var path = l.search.slice(2).replace(/~and~/g, '&');
           if (l.hash) path += l.hash;
-          l.replace(l.pathname + path);
+          l.replace(l.pathname.replace(/\/$/, '') + '/' + path);
         }
       })(window.location);
     </script>
