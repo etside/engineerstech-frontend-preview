@@ -82,6 +82,16 @@
   </head>
 
   <body class="bg-[#0a0b0d] text-white">
+    <script>
+      // GitHub Pages SPA routing: restore real path from query string before React loads
+      (function(l){
+        if (l.search && l.search.startsWith('?/')) {
+          var path = l.search.slice(1).replace(/~and~/g, '&');
+          if (l.hash) path += l.hash;
+          l.replace(l.pathname + path);
+        }
+      })(window.location);
+    </script>
     <div id="root">
       <!-- Loading fallback for slow connections -->
       <div id="initial-loader" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #0a0b0d;">
