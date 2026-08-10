@@ -212,7 +212,7 @@ const App = () => (
     <SettingsProvider>
       <AuthProvider>
         <TooltipProvider>
-          <BrowserRouter>
+          <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
             <LanguageProvider>
               <AppRoutes />
             </LanguageProvider>
