@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { resolveIcon } from "@/data/navigation";
 import SEO, { breadcrumbSchema } from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=1200&auto=format&fit=crop";
 
 const ServiceDetail = () => {
+  const { lang } = useLanguage();
   const { slug } = useParams();
   const [service, setService] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -19,11 +21,11 @@ const ServiceDetail = () => {
     if (!slug) return;
     setLoading(true);
     api
-      .service(slug)
+      .service(slug, lang)
       .then((data: any) => setService(data))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, lang]);
 
   if (loading) {
     return (
@@ -57,6 +59,7 @@ const ServiceDetail = () => {
         title={service.title}
         description={service.description || `Learn about engineersTech's ${service.title} service.`}
         path={`/services/${service.slug}`}
+        lang={lang}
         image={heroImage}
         schema={[
           {

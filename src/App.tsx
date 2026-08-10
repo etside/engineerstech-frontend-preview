@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { SettingsProvider } from "@/hooks/useSettings";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 
@@ -46,6 +47,14 @@ const AdminResources = lazy(() => import("./pages/admin/AdminResources"));
 const AdminBusinesses = lazy(() => import("./pages/admin/AdminBusinesses"));
 const AdminMcpConfig = lazy(() => import("./pages/admin/AdminMcpConfig"));
 
+const AffiliateLayout = lazy(() => import("./components/affiliate/AffiliateLayout"));
+const AffiliateLogin = lazy(() => import("./pages/affiliate/AffiliateLogin"));
+const AffiliateSignup = lazy(() => import("./pages/affiliate/AffiliateSignup"));
+const AffiliateDashboard = lazy(() => import("./pages/affiliate/AffiliateDashboard"));
+const AffiliateLinks = lazy(() => import("./pages/affiliate/AffiliateLinks"));
+const AffiliateClicks = lazy(() => import("./pages/affiliate/AffiliateClicks"));
+const AffiliateConversions = lazy(() => import("./pages/affiliate/AffiliateConversions"));
+
 const queryClient = new QueryClient();
 
 const RouteFallback = () => (
@@ -59,31 +68,70 @@ const AppRoutes = () => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    const isBn = location.pathname.startsWith("/bn");
     const titleMap: Record<string, string> = {
       "/": "engineersTech — Software, Apps & AI",
       "/services": "Services | engineersTech",
       "/products": "Products | engineersTech",
       "/blog": "Blog | engineersTech",
       "/contact": "Contact | engineersTech",
+      "/about": "About | engineersTech",
+      "/case-studies": "Case Studies | engineersTech",
+      "/team": "Team | engineersTech",
+      "/discover": "Discover Businesses | engineersTech",
+      "/resources": "Resources | engineersTech",
+      "/privacy-policy": "Privacy Policy | engineersTech",
+      "/terms": "Terms of Service | engineersTech",
+      "/data-protection-policy": "Data Protection Policy | engineersTech",
       "/admin": "Admin Dashboard | engineersTech",
       "/admin/login": "Admin Login | engineersTech",
     };
+
+    // Build bn title map by prefixing paths
+    const bnTitleMap: Record<string, string> = {};
+    for (const [path, title] of Object.entries(titleMap)) {
+      bnTitleMap[`/bn${path}`] = title.replace(
+        /(?:engineersTech|Services|Products|Blog|Contact|About|Case Studies|Team|Discover Businesses|Resources|Privacy Policy|Terms of Service|Data Protection Policy)/g,
+        (match) => {
+          const bnTitles: Record<string, string> = {
+            engineersTech: "engineersTech",
+            Services: "সেবাসমূহ",
+            Products: "পণ্যসামগ্রী",
+            Blog: "ব্লগ",
+            Contact: "যোগাযোগ",
+            "About": "আমাদের সম্পর্কে",
+            "Case Studies": "কেস স্টাডি",
+            Team: "টিম",
+            "Discover Businesses": "ব্যবসা আবিষ্কার",
+            Resources: "রিসোর্স",
+            "Privacy Policy": "প্রাইভেসি পলিসি",
+            "Terms of Service": "সেবার শর্তাবলী",
+            "Data Protection Policy": "ডেটা প্রোটেকশন পলিসি",
+          };
+          return bnTitles[match] || match;
+        }
+      );
+    }
+
+    const allTitles = { ...titleMap, ...bnTitleMap };
+
     const dynamicTitle = [
-      { matcher: /^\/services\/[^/]+$/, title: "Service | engineersTech" },
-      { matcher: /^\/industries\/[^/]+$/, title: "Industry | engineersTech" },
-      { matcher: /^\/products\/[^/]+$/, title: "Product | engineersTech" },
-      { matcher: /^\/blog\/[^/]+$/, title: "Blog Post | engineersTech" },
-      { matcher: /^\/case-studies\/[^/]+$/, title: "Case Study | engineersTech" },
-      { matcher: /^\/businesses\/[^/]+$/, title: "Business | engineersTech" },
+      { matcher: /^\/(?:bn\/)?services\/[^/]+$/, title: isBn ? "সেবা | engineersTech" : "Service | engineersTech" },
+      { matcher: /^\/(?:bn\/)?industries\/[^/]+$/, title: isBn ? "শিল্প | engineersTech" : "Industry | engineersTech" },
+      { matcher: /^\/(?:bn\/)?products\/[^/]+$/, title: isBn ? "পণ্য | engineersTech" : "Product | engineersTech" },
+      { matcher: /^\/(?:bn\/)?blog\/[^/]+$/, title: isBn ? "ব্লগ পোস্ট | engineersTech" : "Blog Post | engineersTech" },
+      { matcher: /^\/(?:bn\/)?case-studies\/[^/]+$/, title: isBn ? "কেস স্টাডি | engineersTech" : "Case Study | engineersTech" },
+      { matcher: /^\/(?:bn\/)?businesses\/[^/]+$/, title: isBn ? "ব্যবসা | engineersTech" : "Business | engineersTech" },
     ].find((entry) => entry.matcher.test(location.pathname))?.title;
 
-    document.title = titleMap[location.pathname] || dynamicTitle || "engineersTech";
+    document.title = allTitles[location.pathname] || dynamicTitle || "engineersTech";
   }, [location.pathname]);
 
   return (
     <Suspense fallback={<RouteFallback />}>
       <Routes>
         <Route element={<Layout />}>
+          {/* English routes */}
           <Route path="/" element={<Index />} />
           <Route path="/services" element={<Services />} />
           <Route path="/services/:slug" element={<ServiceDetail />} />
@@ -104,6 +152,28 @@ const AppRoutes = () => {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/data-protection-policy" element={<DataProtectionPolicy />} />
+
+          {/* Bengali routes */}
+          <Route path="/bn" element={<Index />} />
+          <Route path="/bn/services" element={<Services />} />
+          <Route path="/bn/services/:slug" element={<ServiceDetail />} />
+          <Route path="/bn/discover" element={<Discover />} />
+          <Route path="/bn/businesses/:slug" element={<BusinessDetail />} />
+          <Route path="/bn/industries/:slug" element={<IndustryDetail />} />
+          <Route path="/bn/products" element={<Products />} />
+          <Route path="/bn/products/:slug" element={<ProductDetail />} />
+          <Route path="/bn/resources" element={<Resources />} />
+          <Route path="/bn/about" element={<About />} />
+          <Route path="/bn/contact" element={<Contact />} />
+          <Route path="/bn/blog" element={<Blog />} />
+          <Route path="/bn/blog/:slug" element={<BlogPost />} />
+          <Route path="/bn/case-studies" element={<CaseStudies />} />
+          <Route path="/bn/case-studies/:slug" element={<CaseStudyDetail />} />
+          <Route path="/bn/team" element={<Team />} />
+          <Route path="/bn/career" element={<Career />} />
+          <Route path="/bn/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/bn/terms" element={<Terms />} />
+          <Route path="/bn/data-protection-policy" element={<DataProtectionPolicy />} />
         </Route>
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
@@ -123,6 +193,14 @@ const AppRoutes = () => {
           <Route path="businesses" element={<AdminBusinesses />} />
           <Route path="mcp-configs" element={<AdminMcpConfig />} />
         </Route>
+        <Route path="/affiliate/login" element={<AffiliateLogin />} />
+        <Route path="/affiliate/signup" element={<AffiliateSignup />} />
+        <Route path="/affiliate" element={<AffiliateLayout />}>
+          <Route index element={<AffiliateDashboard />} />
+          <Route path="links" element={<AffiliateLinks />} />
+          <Route path="clicks" element={<AffiliateClicks />} />
+          <Route path="conversions" element={<AffiliateConversions />} />
+        </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
@@ -135,7 +213,9 @@ const App = () => (
       <AuthProvider>
         <TooltipProvider>
           <BrowserRouter>
-            <AppRoutes />
+            <LanguageProvider>
+              <AppRoutes />
+            </LanguageProvider>
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>

@@ -84,23 +84,34 @@ export const auth = {
   },
 };
 
+function langParam(lang?: string) {
+  return lang === 'bn' ? '?lang=bn' : '';
+}
+
+function appendLang(url: string, lang?: string) {
+  return lang === 'bn' ? `${url}${url.includes('?') ? '&' : '?'}lang=bn` : url;
+}
+
 // ─── Public ────────────────────────────────────────────────────
 export const api = {
-  services:     (opts?: { featured?: boolean }) => request(opts?.featured ? '/services?featured=1' : '/services'),
-  service:      (slug: string) => request(`/services/${slug}`),
-  industries:   () => request('/industries'),
-  industry:     (slug: string) => request(`/industries/${slug}`),
-  products:     () => request('/products'),
-  product:      (slug: string) => request(`/products/${slug}`),
-  blog:         () => request('/blog'),
-  blogPost:     (slug: string) => request(`/blog/${slug}`),
-  team:         () => request('/team'),
+  services:     (opts?: { featured?: boolean; lang?: string }) => {
+    let url = opts?.featured ? '/services?featured=1' : '/services';
+    return request(appendLang(url, opts?.lang));
+  },
+  service:      (slug: string, lang?: string) => request(appendLang(`/services/${slug}`, lang)),
+  industries:   (lang?: string) => request(appendLang('/industries', lang)),
+  industry:     (slug: string, lang?: string) => request(appendLang(`/industries/${slug}`, lang)),
+  products:     (lang?: string) => request(appendLang('/products', lang)),
+  product:      (slug: string, lang?: string) => request(appendLang(`/products/${slug}`, lang)),
+  blog:         (lang?: string) => request(appendLang('/blog', lang)),
+  blogPost:     (slug: string, lang?: string) => request(appendLang(`/blog/${slug}`, lang)),
+  team:         (lang?: string) => request(appendLang('/team', lang)),
   testimonials: () => request('/testimonials'),
   logos:        () => request('/logos'),
   contact:      (data: Record<string, string | null | undefined>) => request('/contact', { method: 'POST', body: JSON.stringify(data) }),
-  caseStudies:  () => request('/case-studies'),
-  caseStudy:    (slug: string) => request(`/case-studies/${slug}`),
-  resources:    () => request('/resources'),
+  caseStudies:  (lang?: string) => request(appendLang('/case-studies', lang)),
+  caseStudy:    (slug: string, lang?: string) => request(appendLang(`/case-studies/${slug}`, lang)),
+  resources:    (lang?: string) => request(appendLang('/resources', lang)),
   settings:     () => request('/settings'),
   requestResource: (id: number | string, data: { name?: string; email: string }) =>
     request(`/resources/${id}/request`, { method: 'POST', body: JSON.stringify(data) }),

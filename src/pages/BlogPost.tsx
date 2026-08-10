@@ -5,7 +5,8 @@ import { Calendar, ArrowLeft, Share2 } from "lucide-react";
 import etIcon from "@/assets/eticon.svg";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import SEO from "@/components/SEO";
+import SEO, { breadcrumbSchema } from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { api } from "@/lib/api";
 import { blogPosts as staticPosts } from "@/data/blogPosts";
 
@@ -27,6 +28,7 @@ function formatDate(dateStr: string) {
 }
 
 const BlogPost = () => {
+  const { lang } = useLanguage();
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<ApiBlogPost | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,14 +36,14 @@ const BlogPost = () => {
 
   useEffect(() => {
     if (!slug) return;
-    api.blogPost(slug)
+    api.blogPost(slug, lang)
       .then((data: ApiBlogPost) => {
         if (data) setPost(data);
         else setUseStatic(true);
       })
       .catch(() => setUseStatic(true))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, lang]);
 
   // Static fallback
   const staticPost = staticPosts.find((p) => p.id === slug);
@@ -79,9 +81,40 @@ const BlogPost = () => {
   const excerpt = post?.excerpt ?? staticPost!.excerpt;
   const postSlug = post?.slug ?? staticPost!.id;
 
+  const articleSchema = post ? {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: title,
+    image: image || undefined,
+    datePublished: post.published_at,
+    dateModified: post.published_at,
+    author: { "@type": "Organization", name: "engineersTech", url: "https://engineerstechbd.com" },
+    publisher: {
+      "@type": "Organization",
+      name: "engineersTech",
+      logo: { "@type": "ImageObject", url: "https://engineerstechbd.com/favicon.svg" }
+    },
+    description: excerpt,
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://engineerstechbd.com/blog/${postSlug}` }
+  } : null;
+
+  const breadcrumbCrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: title, path: `/blog/${postSlug}` }
+  ];
+
   return (
     <div className="min-h-screen">
-      <SEO title={title} description={excerpt} path={`/blog/${postSlug}`} image={image} type="article" />
+      <SEO
+        title={post?.meta_title || title}
+        description={post?.meta_description || excerpt}
+        path={`/blog/${postSlug}`}
+        lang={lang}
+        image={image}
+        type="article"
+        schema={[...(articleSchema ? [articleSchema] : []), breadcrumbSchema(breadcrumbCrumbs)]}
+      />
       {/* Hero Image */}
       <section className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">
         {image ? (

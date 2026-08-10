@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { resolveIcon } from "@/data/navigation";
 import SEO, { breadcrumbSchema } from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const fallbackServices = [
   {
@@ -74,11 +75,12 @@ const techIcons = [
 ];
 
 const Services = () => {
+  const { lang, t } = useLanguage();
   const [serviceCategories, setServiceCategories] = useState(fallbackServices);
 
   useEffect(() => {
     api
-      .services()
+      .services({ lang })
       .then((data: any[]) => {
         if (data && data.length > 0) {
           setServiceCategories(
@@ -94,14 +96,15 @@ const Services = () => {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [lang]);
 
   return (
     <>
       <SEO
-        title="Software Development Services"
-        description="Enterprise & SaaS development, web & mobile apps, staff augmentation, AI/ML, cloud & DevOps, and more — custom software solutions for clients in Bangladesh and worldwide."
+        title={t("Software Development Services", "সফটওয়্যার ডেভেলপমেন্ট সেবাসমূহ")}
+        description={t("Enterprise & SaaS development, web & mobile apps, staff augmentation, AI/ML, cloud & DevOps, and more — custom software solutions for clients in Bangladesh and worldwide.", "এন্টারপ্রাইজ ও SaaS ডেভেলপমেন্ট, ওয়েব ও মোবাইল অ্যাপ, স্টাফ অ্যাগমেন্টেশন, AI/ML, ক্লাউড ও DevOps, এবং আরও — বাংলাদেশ ও বিশ্বব্যাপী ক্লায়েন্টদের জন্য কাস্টম সফটওয়্যার সমাধান।")}
         path="/services"
+        lang={lang}
         schema={[breadcrumbSchema([{ name: "Home", path: "/" }, { name: "Services", path: "/services" }])]}
       />
       {/* Hero */}

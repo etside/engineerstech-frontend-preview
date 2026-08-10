@@ -1,9 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Phone, CalendarDays } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { defaultNavigation, parseNavigation, type NavItem } from "@/data/navigation";
 import { useSettings } from "@/hooks/useSettings";
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { MegaMenuDesktop, MegaMenuMobile } from "@/components/MegaMenu";
 import { cn } from "@/lib/utils";
 import logoDark from "@/assets/logo-dark-bg.svg";
@@ -35,15 +37,24 @@ const Navbar = () => {
     setOpenMobileMenu(null);
   }, [location.pathname]);
 
-  const isParentActive = (item: (typeof navigation)[number]) => {
-    if (item.to) return location.pathname === item.to;
-    if (item.megaMenu) {
-      return item.megaMenu.some((group) =>
-        group.items.some((sub) => sub.to !== "#" && location.pathname === sub.to)
-      );
-    }
-    return false;
-  };
+  const isParentActive = useCallback(
+    (item: NavItem) => {
+      // Strip /bn prefix for comparison so active state works on both lang routes
+      const path = location.pathname.replace(/^\/bn/, "") || "/";
+      if (item.to) return path === item.to;
+      if (item.megaMenu) {
+        return item.megaMenu.some((group) =>
+          group.items.some((sub) => sub.to !== "#" && path === sub.to)
+        );
+      }
+      return false;
+    },
+    [location.pathname]
+  );
+
+  const { lang } = useLanguage();
+  const isBn = lang === "bn";
+  const logoPath = isBn ? "/bn" : "/";
 
   return (
     <>
@@ -57,7 +68,7 @@ const Navbar = () => {
       >
         <div className="container flex items-center justify-between h-16 md:h-[72px]">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
+          <Link to={logoPath} className="flex items-center gap-2 shrink-0">
             <img src={logoDark} alt="engineersTech" className="h-5 sm:h-6 md:h-7" />
           </Link>
 
@@ -75,6 +86,7 @@ const Navbar = () => {
 
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-3">
+            <LanguageSwitcher />
             <a
               href="tel:+8801314443311"
               className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
@@ -130,6 +142,11 @@ const Navbar = () => {
           <div className="h-16" style={{ marginTop: "var(--announcement-height, 0px)" }} />
 
           <div className="px-6 py-6">
+            {/* Language switcher */}
+            <div className="mb-4">
+              <LanguageSwitcher />
+            </div>
+
             {/* Nav items */}
             <div className="space-y-1">
               {navigation.map((item) => (

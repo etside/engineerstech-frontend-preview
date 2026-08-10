@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SEO from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { api } from "@/lib/api";
 
 const recognitions = [
@@ -111,6 +112,7 @@ const ResourceCard = ({ resource, i }: { resource: any; i: number }) => {
 };
 
 const Resources = () => {
+  const { lang } = useLanguage();
   const location = useLocation();
   const [resources, setResources] = useState<any[]>([]);
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
@@ -119,16 +121,16 @@ const Resources = () => {
 
   useEffect(() => {
     Promise.all([
-      api.resources().catch(() => []),
-      api.blog().catch(() => []),
-      api.caseStudies().catch(() => []),
+      api.resources(lang).catch(() => []),
+      api.blog(lang).catch(() => []),
+      api.caseStudies(lang).catch(() => []),
     ]).then(([res, blog, cases]) => {
       setResources(res || []);
       setBlogPosts((blog || []).slice(0, 3));
       setCaseStudies((cases || []).slice(0, 3));
       setLoading(false);
     });
-  }, []);
+  }, [lang]);
 
   useEffect(() => {
     if (!loading && location.hash) {
@@ -140,9 +142,10 @@ const Resources = () => {
   return (
     <div className="pt-28 pb-20">
       <SEO
-        title="Resources"
-        description="Whitepapers, guides, case studies and blog round-ups from engineersTech — practical insights on enterprise software, SaaS, and digital transformation."
+        title={t("Resources", "রিসোর্স")}
+        description={t("Whitepapers, guides, case studies and blog round-ups from engineersTech — practical insights on enterprise software, SaaS, and digital transformation.", "engineersTech থেকে ওয়াইটপেপার, গাইড, কেস স্টাডি এবং ব্লগ রাউন্ডআপ — এন্টারপ্রাইজ সফটওয়্যার, SaaS এবং ডিজিটাল রূপান্তর সম্পর্কিত ব্যবহারিক অন্তর্দৃষ্টি।")}
         path="/resources"
+        lang={lang}
       />
       {/* Hero */}
       <section className="container relative overflow-hidden mb-16">

@@ -5,11 +5,13 @@ import { ArrowLeft, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { resolveIcon } from "@/data/navigation";
-import SEO from "@/components/SEO";
+import SEO, { breadcrumbSchema } from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=1600&auto=format&fit=crop";
 
 const IndustryDetail = () => {
+  const { lang } = useLanguage();
   const { slug } = useParams();
   const [industry, setIndustry] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -19,11 +21,11 @@ const IndustryDetail = () => {
     if (!slug) return;
     setLoading(true);
     api
-      .industry(slug)
+      .industry(slug, lang)
       .then((data: any) => setIndustry(data))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, lang]);
 
   if (loading) {
     return (
@@ -57,7 +59,24 @@ const IndustryDetail = () => {
         title={`${industry.name} Solutions`}
         description={industry.description || `How engineersTech serves the ${industry.name} industry.`}
         path={`/industries/${industry.slug}`}
+        lang={lang}
         image={bgImage}
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Industry",
+            name: industry.name,
+            description: industry.description,
+            url: `https://engineerstechbd.com/industries/${industry.slug}`,
+            image: bgImage || undefined,
+            provider: { "@type": "Organization", name: "engineersTech", url: "https://engineerstechbd.com" },
+          },
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Industries", path: "/industries" },
+            { name: industry.name, path: `/industries/${industry.slug}` },
+          ]),
+        ]}
       />
       {/* Full-bleed image hero with color-tinted overlay */}
       <section className="relative h-[55vh] min-h-[380px] flex items-end overflow-hidden">

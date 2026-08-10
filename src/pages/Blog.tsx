@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Calendar, Clock, ArrowRight, BookOpen } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import SEO from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { api } from "@/lib/api";
 import { blogPosts as staticPosts } from "@/data/blogPosts";
 
@@ -23,20 +24,21 @@ function formatDate(dateStr: string) {
 }
 
 const Blog = () => {
+  const { lang, t } = useLanguage();
   const [active, setActive] = useState("All");
   const [posts, setPosts] = useState<ApiBlogPost[]>([]);
   const [useStatic, setUseStatic] = useState(false);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
   useEffect(() => {
-    api.blog()
+    api.blog(lang)
       .then((data: ApiBlogPost[]) => {
         if (data && data.length > 0) setPosts(data);
         else setUseStatic(true);
       })
       .catch(() => setUseStatic(true))
       .finally(() => setLoadingPosts(false));
-  }, []);
+  }, [lang]);
 
   // Derive categories and filtered list
   const allPosts = useStatic
@@ -49,9 +51,10 @@ const Blog = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title="Blog"
-        description="Insights on software engineering, SaaS, AI, and digital transformation from the engineersTech team."
+        title={t("Blog", "ব্লগ")}
+        description={t("Insights on software engineering, SaaS, AI, and digital transformation from the engineersTech team.", "engineersTech টিম থেকে সফটওয়্যার ইঞ্জিনিয়ারিং, SaaS, AI এবং ডিজিটাল রূপান্তর সম্পর্কিত অন্তর্দৃষ্টি।")}
         path="/blog"
+        lang={lang}
       />
       {/* Hero */}
       <section className="relative pt-16 md:pt-20 overflow-hidden">

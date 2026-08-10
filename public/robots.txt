@@ -1,3 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+
 User-agent: Googlebot
 Allow: /
 
@@ -10,7 +15,13 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
+User-agent: GPTBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
 Allow: /
 
 Sitemap: https://engineerstechbd.com/sitemap.xml

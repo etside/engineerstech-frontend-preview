@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import SEO from "@/components/SEO";
+import SEO, { breadcrumbSchema } from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Checkbox } from "@/components/ui/checkbox";
 import { z } from "zod";
 
@@ -48,6 +49,7 @@ const contactInfo = [
 ];
 
 const Contact = () => {
+  const { lang, t } = useLanguage();
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [form, setForm] = useState<ContactForm>({
@@ -99,9 +101,35 @@ const Contact = () => {
   return (
     <div className="min-h-screen">
       <SEO
-        title="Contact Us"
-        description="Get in touch with engineersTech for your next software project. Reach us by phone, email, or visit our Dhaka office — we typically reply within 24 hours."
+        title={t("Contact Us", "যোগাযোগ করুন")}
+        description={t("Get in touch with engineersTech for your next software project. Reach us by phone, email, or visit our Dhaka office — we typically reply within 24 hours.", "আপনার পরবর্তী সফটওয়্যার প্রজেক্টের জন্য engineersTech এর সাথে যোগাযোগ করুন। ফোন, ইমেইলের মাধ্যমে অথবা আমাদের ঢাকা অফিসে আসুন — আমরা সাধারণত ২৪ ঘণ্টার মধ্যে উত্তর দিই।")}
         path="/contact"
+        lang={lang}
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            name: "Contact engineersTech",
+            url: "https://engineerstechbd.com/contact",
+            mainEntity: {
+              "@type": "Organization",
+              name: "engineersTech",
+              telephone: "+880-1314-443311",
+              email: "info@engineerstechbd.com",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "Rashi International, Level 6, Flat B6, Plot 9, Road 4, Sector 16/A",
+                addressLocality: "Uttara, Dhaka",
+                postalCode: "1230",
+                addressCountry: "BD"
+              }
+            }
+          },
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Contact", path: "/contact" }
+          ])
+        ]}
       />
       {/* Hero */}
       <section className="relative pt-16 md:pt-20 overflow-hidden">

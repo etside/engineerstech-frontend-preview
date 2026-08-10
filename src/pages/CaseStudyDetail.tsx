@@ -3,10 +3,12 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Clock, Users, CheckCircle2, Target, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import SEO from "@/components/SEO";
+import SEO, { breadcrumbSchema } from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { api } from "@/lib/api";
 
 const CaseStudyDetail = () => {
+  const { lang } = useLanguage();
   const { slug } = useParams();
   const [study, setStudy] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -15,7 +17,7 @@ const CaseStudyDetail = () => {
   useEffect(() => {
     if (!slug) return;
     api
-      .caseStudy(slug)
+      .caseStudy(slug, lang)
       .then((data: any) => {
         const parsed = {
           ...data,
@@ -27,7 +29,7 @@ const CaseStudyDetail = () => {
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, lang]);
 
   if (loading) {
     return (
@@ -62,7 +64,29 @@ const CaseStudyDetail = () => {
         title={study.title}
         description={study.summary || `${study.title} — a case study by engineersTech.`}
         path={`/case-studies/${study.slug}`}
+        lang={lang}
         image={study.cover_image}
+        type="article"
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: study.title,
+            description: study.summary,
+            image: study.cover_image || undefined,
+            author: { "@type": "Organization", name: "engineersTech", url: "https://engineerstechbd.com" },
+            publisher: { "@type": "Organization", name: "engineersTech",
+              logo: { "@type": "ImageObject", url: "https://engineerstechbd.com/favicon.svg" } },
+            mainEntityOfPage: { "@type": "WebPage", "@id": `https://engineerstechbd.com/case-studies/${study.slug}` },
+            about: study.industry ? { "@type": "Thing", name: study.industry } : undefined,
+            keywords: study.tags?.join(", ") || undefined,
+          },
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Case Studies", path: "/case-studies" },
+            { name: study.title, path: `/case-studies/${study.slug}` },
+          ]),
+        ]}
       />
       {/* Hero */}
       <section className="pt-28 pb-12 relative overflow-hidden">

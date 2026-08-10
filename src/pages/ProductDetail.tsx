@@ -3,12 +3,14 @@ import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowUpRight, CheckCircle2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import SEO from "@/components/SEO";
+import SEO, { breadcrumbSchema } from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { api } from "@/lib/api";
 
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1551434678-e076c223a692?q=80&w=1200&auto=format&fit=crop";
 
 const ProductDetail = () => {
+  const { lang } = useLanguage();
   const { slug } = useParams();
   const [product, setProduct] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -20,11 +22,11 @@ const ProductDetail = () => {
     setLoading(true);
     setActiveImg(0);
     api
-      .product(slug)
+      .product(slug, lang)
       .then((data: any) => setProduct(data))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [slug, lang]);
 
   if (loading) {
     return (
@@ -50,13 +52,38 @@ const ProductDetail = () => {
   const gallery: string[] = product.gallery?.length ? product.gallery : [product.image_url || FALLBACK_IMAGE];
   const features: string[] = product.features || [];
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description || product.long_description,
+    image: gallery[0],
+    brand: { "@type": "Organization", name: "engineersTech" },
+    category: product.category,
+    offers: {
+      "@type": "Offer",
+      price: product.price || "0",
+      priceCurrency: "BDT",
+      availability: "https://schema.org/InStock",
+      url: `https://engineerstechbd.com/products/${product.slug}`
+    }
+  };
+
+  const productBreadcrumbCrumbs = [
+    { name: "Home", path: "/" },
+    { name: "Products", path: "/products" },
+    { name: product.name, path: `/products/${product.slug}` }
+  ];
+
   return (
     <div className="pt-28 pb-20">
       <SEO
-        title={product.name}
-        description={product.description || `Learn about ${product.name}, a SaaS product by engineersTech.`}
+        title={product.meta_title || product.name}
+        description={product.meta_description || product.description || `Learn about ${product.name}, a SaaS product by engineersTech.`}
         path={`/products/${product.slug}`}
+        lang={lang}
         image={gallery[0]}
+        schema={[productSchema, breadcrumbSchema(productBreadcrumbCrumbs)]}
       />
       <div className="container max-w-6xl">
         <Link to="/products" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-6">

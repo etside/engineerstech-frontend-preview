@@ -6,7 +6,8 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import SEO from "@/components/SEO";
+import SEO, { breadcrumbSchema } from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { api } from "@/lib/api";
 
 const stats = [
@@ -41,20 +42,21 @@ const colorPalette = [
 ];
 
 const Products = () => {
+  const { lang } = useLanguage();
   const [products, setProducts] = useState<any[]>([]);
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      api.products().catch(() => []),
+      api.products(lang).catch(() => []),
       api.testimonials().catch(() => []),
     ]).then(([prods, tests]) => {
       setProducts(prods || []);
       setTestimonials((tests || []).slice(0, 3));
       setLoading(false);
     });
-  }, []);
+  }, [lang]);
 
   const spotlight = products[0];
   const restProducts = products.slice(1);
@@ -62,9 +64,34 @@ const Products = () => {
   return (
     <>
       <SEO
-        title="Products"
-        description="Ready-to-deploy SaaS products from engineersTech — GlowUp, Restaurant POS, HRM Suite, CRM Platform and more, with full source code ownership and 24/7 support."
+        title={t("Products", "পণ্যসামগ্রী")}
+        description={t("Ready-to-deploy SaaS products from engineersTech — GlowUp, Restaurant POS, HRM Suite, CRM Platform and more, with full source code ownership and 24/7 support.", "engineersTech থেকে রেডি-টু-ডেপ্লয় SaaS পণ্য — GlowUp, Restaurant POS, HRM Suite, CRM Platform এবং আরও, সম্পূর্ণ সোর্স কোড মালিকানা ও ২৪/৭ সাপোর্ট সহ।")}
         path="/products"
+        lang={lang}
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "engineersTech Products",
+            description: "Ready-to-deploy SaaS products from engineersTech",
+            itemListElement: products.map((p, i) => ({
+              "@type": "ListItem",
+              position: i + 1,
+              item: {
+                "@type": "Product",
+                name: p.name,
+                description: p.description,
+                url: `https://engineerstechbd.com/products/${p.slug}`,
+                image: p.image_url || undefined,
+                brand: { "@type": "Organization", name: "engineersTech" },
+              },
+            })),
+          },
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Products", path: "/products" },
+          ]),
+        ]}
       />
       {/* Hero */}
       <section className="relative pt-16 md:pt-20 overflow-hidden">

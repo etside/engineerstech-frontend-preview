@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Briefcase, MapPin, Clock, ArrowRight, Users, Zap, Heart, Coffee } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SEO from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const perks = [
   { icon: Users, title: "Great Team", desc: "Work with talented engineers who push each other to grow." },
@@ -12,12 +13,14 @@ const perks = [
 ];
 
 const Career = () => {
+  const { lang, t } = useLanguage();
   return (
     <div className="pt-28 pb-20">
       <SEO
-        title="Careers"
-        description="Join engineersTech — build enterprise software with a talented, remote-friendly team. Explore open roles and our engineering culture."
+        title={t("Careers", "ক্যারিয়ার")}
+        description={t("Join engineersTech — build enterprise software with a talented, remote-friendly team. Explore open roles and our engineering culture.", "engineersTech এ যোগ দিন — একটি প্রতিভাবান, রিমোট-বান্ধব টিমের সাথে এন্টারপ্রাইজ সফটওয়্যার তৈরি করুন। ওপেন পজিশন এবং আমাদের ইঞ্জিনিয়ারিং কালচার অনুসন্ধান করুন।")}
         path="/career"
+        lang={lang}
       />
       {/* Hero */}
       <section className="container text-center mb-20">

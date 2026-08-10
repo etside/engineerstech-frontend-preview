@@ -10,8 +10,8 @@ interface SEOProps {
   path?: string;
   image?: string;
   type?: "website" | "article";
-  /** Extra JSON-LD objects (Service, Product, BreadcrumbList, etc.) to inject on this page. */
   schema?: Record<string, unknown>[];
+  lang?: "en" | "bn";
 }
 
 /** Builds a BreadcrumbList JSON-LD block from a list of {name, path} crumbs. */
@@ -26,21 +26,28 @@ export const breadcrumbSchema = (crumbs: { name: string; path: string }[]) => ({
   })),
 });
 
-const SEO = ({ title, description, path = "", image = DEFAULT_IMAGE, type = "website", schema = [] }: SEOProps) => {
+const SEO = ({ title, description, path = "", image = DEFAULT_IMAGE, type = "website", schema = [], lang }: SEOProps) => {
   const fullTitle = `${title} | ${SITE_NAME}`;
   const url = `${SITE_URL}${path}`;
+  const enPath = lang === "bn" ? path.replace(/^\/bn/, "") || "/" : path;
+  const bnPath = lang === "bn" ? path : `/bn${path}`;
 
   return (
-    <Helmet>
+    <Helmet htmlAttributes={{ lang: lang || "en" }}>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={url} />
+      <link rel="alternate" hreflang="en" href={`${SITE_URL}${enPath}`} />
+      <link rel="alternate" hreflang="bn" href={`${SITE_URL}${bnPath}`} />
+      <link rel="alternate" hreflang="x-default" href={`${SITE_URL}${enPath}`} />
 
       <meta property="og:type" content={type} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={image} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content={SITE_NAME} />
 
       <meta name="twitter:card" content="summary_large_image" />

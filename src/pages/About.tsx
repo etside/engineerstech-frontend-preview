@@ -6,7 +6,8 @@ import {
   Award, Globe, Linkedin, MessageCircle, Code2, Zap, Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import SEO from "@/components/SEO";
+import SEO, { breadcrumbSchema } from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { api } from "@/lib/api";
 
 const timeline = [
@@ -32,20 +33,48 @@ const staticTeam = [
 interface TeamMember { name: string; designation: string | null; bio: string | null; photo_url: string | null; linkedin_url: string | null; whatsapp_number: string | null; }
 
 const About = () => {
+  const { lang, t } = useLanguage();
   const [team, setTeam] = useState<TeamMember[]>(staticTeam);
 
   useEffect(() => {
-    api.team().then((data: TeamMember[]) => {
+    api.team(lang).then((data: TeamMember[]) => {
       if (data && data.length > 0) setTeam(data);
     }).catch(() => {});
-  }, []);
+  }, [lang]);
 
   return (
     <>
       <SEO
-        title="About Us"
-        description="Founded in 2017, engineersTech grew from freelance roots into a full-scale Bangladesh-based software engineering firm — BASIS & e-CAB registered, trusted by global clients."
+        title={t("About Us", "আমাদের সম্পর্কে")}
+        description={t("Founded in 2017, engineersTech grew from freelance roots into a full-scale Bangladesh-based software engineering firm — BASIS & e-CAB registered, trusted by global clients.", "২০১৭ সালে প্রতিষ্ঠিত, engineersTech ফ্রিল্যান্স থেকে শুরু করে বাংলাদেশভিত্তিক একটি পূর্ণাঙ্গ সফটওয়্যার ইঞ্জিনিয়ারিং ফার্মে রূপান্তরিত হয়েছে — BASIS ও e-CAB নিবন্ধিত, বৈশ্বিক ক্লায়েন্টদের বিশ্বাসের মালিক।")}
         path="/about"
+        lang={lang}
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            name: "About engineersTech",
+            description: "Learn about engineersTech — a BASIS & e-CAB registered software company in Dhaka, Bangladesh.",
+            url: "https://engineerstechbd.com/about",
+            mainEntity: {
+              "@type": "Organization",
+              name: "engineersTech",
+              url: "https://engineerstechbd.com",
+              foundingDate: "2023",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "Rashi International, Level 6, Flat B6, Plot 9, Road 4, Sector 16/A",
+                addressLocality: "Uttara, Dhaka",
+                postalCode: "1230",
+                addressCountry: "BD"
+              }
+            }
+          },
+          breadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "About", path: "/about" }
+          ])
+        ]}
       />
       {/* Hero */}
       <section className="relative pt-16 md:pt-20 overflow-hidden">

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Linkedin, MessageCircle, Mail } from "lucide-react";
 import SEO from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { api } from "@/lib/api";
 
 interface TeamMember {
@@ -15,23 +16,25 @@ interface TeamMember {
 }
 
 const Team = () => {
+  const { lang, t } = useLanguage();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api
-      .team()
+      .team(lang)
       .then((data: any) => setMembers(data || []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [lang]);
 
   return (
     <div className="pt-28 pb-20">
       <SEO
-        title="Our Team"
-        description="Meet the engineers, designers, and leaders behind engineersTech — a Bangladesh-based team delivering enterprise software to clients worldwide."
+        title={t("Our Team", "আমাদের টিম")}
+        description={t("Meet the engineers, designers, and leaders behind engineersTech — a Bangladesh-based team delivering enterprise software to clients worldwide.", "engineersTech এর পেছনের ইঞ্জিনিয়ার, ডিজাইনার এবং নেতৃবৃন্দের সাথে পরিচিত হোন — বাংলাদেশভিত্তিক একটি টিম যারা বিশ্বব্যাপী ক্লায়েন্টদের জন্য এন্টারপ্রাইজ সফটওয়্যার সরবরাহ করে।")}
         path="/team"
+        lang={lang}
       />
       {/* Hero */}
       <section className="container text-center mb-16">

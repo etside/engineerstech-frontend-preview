@@ -4,8 +4,10 @@ import { api } from '@/lib/api';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Discover = () => {
+  const { lang, t } = useLanguage();
   const [q, setQ] = useState('');
   const [lat, setLat] = useState('');
   const [lon, setLon] = useState('');
@@ -26,10 +28,24 @@ const Discover = () => {
 
   return (
     <div className="min-h-screen">
-      <SEO 
-        title="Discover Businesses" 
-        description="Search and discover businesses in Bangladesh by location, category, and more."
+      <SEO
+        title={t("Discover Businesses", "ব্যবসা আবিষ্কার")}
+        description={t("Search and discover businesses in Bangladesh by location, category, and more.", "বাংলাদেশে অবস্থান, ক্যাটাগরি এবং আরও অনেক কিছু দিয়ে ব্যবসা অনুসন্ধান ও আবিষ্কার করুন।")}
         path="/discover"
+        lang={lang}
+        schema={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "engineersTech",
+            url: "https://engineerstechbd.com",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://engineerstechbd.com/discover?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          },
+        ]}
       />
       <div className="max-w-4xl mx-auto py-12 px-4">
         <h1 className="text-3xl font-bold mb-2">Discover Businesses</h1>

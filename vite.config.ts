@@ -7,6 +7,7 @@ import { componentTagger } from "lovable-tagger";
 const apiTarget = process.env.VITE_API_TARGET || 'http://127.0.0.1:8000';
 
 export default defineConfig(({ mode }) => ({
+  base: process.env.BASE_PATH || '/',
   server: {
     host: "::",
     port: 8080,

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Clock } from "lucide-react";
 import SEO from "@/components/SEO";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { api } from "@/lib/api";
 
 interface CaseStudy {
@@ -20,13 +21,14 @@ interface CaseStudy {
 }
 
 const CaseStudies = () => {
+  const { lang } = useLanguage();
   const [studies, setStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState("All");
 
   useEffect(() => {
     api
-      .caseStudies()
+      .caseStudies(lang)
       .then((data: any[]) => {
         const parsed = data.map((s) => ({
           ...s,
@@ -37,7 +39,7 @@ const CaseStudies = () => {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [lang]);
 
   // Build filters with counts
   const filterMap = new Map<string, number>();
@@ -67,9 +69,10 @@ const CaseStudies = () => {
   return (
     <>
       <SEO
-        title="Case Studies"
-        description="Real client results from engineersTech — explore how we've helped fintech, healthcare, e-commerce and more businesses ship software that works."
+        title={t("Case Studies", "কেস স্টাডি")}
+        description={t("Real client results from engineersTech — explore how we've helped fintech, healthcare, e-commerce and more businesses ship software that works.", "engineersTech থেকে প্রকৃত ক্লায়েন্ট ফলাফল — আমরা কীভাবে ফিনটেক, হেলথকেয়ার, ই-কমার্স এবং আরও ব্যবসাকে কার্যকর সফটওয়্যার সরবরাহ করেছি তা অনুসন্ধান করুন।")}
         path="/case-studies"
+        lang={lang}
       />
       {/* Hero Section */}
       <section className="pt-28 pb-12 relative overflow-hidden">
